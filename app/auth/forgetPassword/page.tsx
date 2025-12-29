@@ -9,7 +9,7 @@ export default function ForgetPassword() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = `/auth/verifycode`;
+    window.location.href = `/auth/verifyCode`;
     console.log('Reset password submitted');
   };
 
