@@ -131,7 +131,7 @@ export default function OTPVerification() {
 
             <h2 className="text-2xl font-bold mb-2">OTP Verification</h2>
             <p className="text-slate-600 mb-6 text-sm">
-              Enter the 6-digit code sent to your email
+              Enter the 6-character code sent to your email
             </p>
 
             <div className="flex justify-between mb-6">
