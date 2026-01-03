@@ -16,11 +16,11 @@ export default function Header() {
 
   const { user, accessToken } = useAppSelector((state) => state.auth);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(user?.accountInfo.role)
     console.log(accessToken)
 
-  },[accessToken])
+  }, [accessToken])
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -29,11 +29,9 @@ export default function Header() {
     router.replace("/auth/login");
   };
 
-  const profileImage =
-    user?.accountInfo?.profileImage &&
-    user.accountInfo.profileImage !== "لا توجد صورة"
-      ? user.accountInfo.profileImage
-      : "/Hero.png";
+  const profileImage = `http://localhost:5000${user?.accountInfo?.profileImage}`
+
+  console.log("Profile Image:", profileImage);
 
   return (
     <>
@@ -65,12 +63,12 @@ export default function Header() {
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="flex items-center gap-2"
               >
-                <Image
+                <img
                   src={profileImage}
                   alt="User"
-                  width={25}
-                  height={25}
-                  className="w-9 h-9 rounded-full object-cover border"
+                  width={35}
+                  height={35}
+                  className="w-10 h-10 rounded-full object-cover border"
                 />
               </button>
 
@@ -105,9 +103,8 @@ export default function Header() {
 
       <div
         onClick={() => setOpen(false)}
-        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
-          open ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${open ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
       />
 
       <aside
@@ -157,13 +154,14 @@ export default function Header() {
           ) : (
             <>
               <div className="flex items-center gap-3">
-                <Image
-                  src={profileImage}
-                  alt="User"
-                  width={25}
-                  height={25}
-                  className="w-9 h-9 rounded-full object-cover border"
-                />
+                {user?.accountInfo?.profileImage && (
+                  <img
+                    src={`http://localhost:5000${user.accountInfo.profileImage}`}
+                    alt="User"
+                    className="w-9 h-9 rounded-full object-cover border"
+                  />
+                )}
+
                 <div>
                   <p className="font-semibold">
                     {user?.personalInfo?.fullName}
