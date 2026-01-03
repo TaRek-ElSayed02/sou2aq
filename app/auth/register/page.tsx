@@ -2013,8 +2013,8 @@ import Image from "next/image";
 import { Toaster } from "react-hot-toast";
 import { useRegisterForm } from "../../hooks/useRegisterForm";
 import { useOtpVerification } from "../../hooks/useOtpVerification";
-import { ActivateEmail } from "../../components/ActivateEmail/ActivateEmail";
-import { OtpModal } from "../../components/OtpModal/OtpModal";
+import { ActivateEmail } from "../../Components/ActivateEmail/ActivateEmail";
+import { OtpModal } from "../../Components/OtpModal/OtpModal";
 
 export default function Register() {
   const background = "/background.png";
