@@ -18,7 +18,7 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { loading, error,accessToken } = useAppSelector((state) => state.auth);
+  const { loading, error,accessToken } = useAppSelector((state:strnig) => state.auth);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
