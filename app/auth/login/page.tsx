@@ -123,7 +123,7 @@ export default function Login() {
                 </button>
 
                 <p className="text-center text-sm text-slate-600">
-                  Don't have an account?{' '}
+                  Don&apos;t have an account?{' '}
                   <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-medium">
                     Sign up
                   </Link>
@@ -227,7 +227,7 @@ export default function Login() {
               </button>
 
               <p className="text-center text-sm text-slate-600 pt-2">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/auth/register" className="text-blue-600 cursor-pointer hover:text-blue-700 font-semibold">
                   Sign up
                 </Link>
