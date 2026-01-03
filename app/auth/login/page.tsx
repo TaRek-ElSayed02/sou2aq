@@ -18,7 +18,7 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { loading, error,accessToken } = useAppSelector((state:strnig) => state.auth);
+  const { loading, error,accessToken } = useAppSelector((state) => state.auth);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -362,7 +362,3 @@ export default function Login() {
     </>
   );
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> a69cd7201d872d9a389041920706b463be9f1b54
