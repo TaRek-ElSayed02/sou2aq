@@ -1,17 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { logout } from "@/store/slices/authSlice";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Header() {
   const Logo = "/logo.png";
   const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const { user, accessToken } = useAppSelector((state) => state.auth);
+
+  useEffect(()=>{
+    console.log(user?.accountInfo.role)
+    console.log(accessToken)
+
+  },[accessToken])
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.replace("/auth/login");
+  };
+
+  const profileImage =
+    user?.accountInfo?.profileImage &&
+    user.accountInfo.profileImage !== "لا توجد صورة"
+      ? user.accountInfo.profileImage
+      : "/Hero.png";
 
   return (
     <>
       <header className="w-full px-6 md:px-12 py-4 flex items-center justify-between">
-
         <img src={Logo} className="h-8 w-auto" alt="Logo" />
 
         <nav className="hidden md:flex gap-10 items-center">
@@ -22,14 +48,51 @@ export default function Header() {
           <Link href="/">Contacts</Link>
         </nav>
 
-        <div className="hidden md:flex gap-6 items-center">
-          <Link href="/auth/login">Log in</Link>
-          <Link
-            href="/auth/register"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            Sign up
-          </Link>
+        <div className="hidden md:flex gap-6 items-center relative">
+          {!accessToken ? (
+            <>
+              <Link href="/auth/login">Log in</Link>
+              <Link
+                href="/auth/register"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+              >
+                Sign up
+              </Link>
+            </>
+          ) : (
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center gap-2"
+              >
+                <Image
+                  src={profileImage}
+                  alt="User"
+                  width={25}
+                  height={25}
+                  className="w-9 h-9 rounded-full object-cover border"
+                />
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-3 w-44 bg-white rounded-lg shadow-lg border z-50">
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <button
@@ -63,27 +126,67 @@ export default function Header() {
         </div>
 
         <nav className="flex flex-col gap-6 px-6 py-8 text-lg">
-          <Link onClick={() => setOpen(false)} href="/">Home</Link>
-          <Link onClick={() => setOpen(false)} href="/">About</Link>
-          <Link onClick={() => setOpen(false)} href="/">Our App</Link>
-          <Link onClick={() => setOpen(false)} href="/">Contacts</Link>
+          <Link onClick={() => setOpen(false)} href="/">
+            Home
+          </Link>
+          <Link onClick={() => setOpen(false)} href="/">
+            About
+          </Link>
+          <Link onClick={() => setOpen(false)} href="/">
+            Our App
+          </Link>
+          <Link onClick={() => setOpen(false)} href="/">
+            Contacts
+          </Link>
         </nav>
 
         <div className="mt-auto px-6 pb-8 flex flex-col gap-4">
-          <Link
-            href="/auth/login"
-            className="text-center"
-            onClick={() => setOpen(false)}
-          >
-            Log in
-          </Link>
-          <Link
-            href="/auth/register"
-            className="bg-blue-600 text-white text-center py-2 rounded-lg"
-            onClick={() => setOpen(false)}
-          >
-            Sign up
-          </Link>
+          {!accessToken ? (
+            <>
+              <Link href="/auth/login" onClick={() => setOpen(false)}>
+                Log in
+              </Link>
+              <Link
+                href="/auth/register"
+                className="bg-blue-600 text-white text-center py-2 rounded-lg"
+                onClick={() => setOpen(false)}
+              >
+                Sign up
+              </Link>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-3">
+                <Image
+                  src={profileImage}
+                  alt="User"
+                  width={25}
+                  height={25}
+                  className="w-9 h-9 rounded-full object-cover border"
+                />
+                <div>
+                  <p className="font-semibold">
+                    {user?.personalInfo?.fullName}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {user?.personalInfo?.email}
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/profile"
+                onClick={() => setOpen(false)}
+                className="text-left"
+              >
+                Profile
+              </Link>
+
+              <button onClick={handleLogout} className="text-left text-red-600">
+                Logout
+              </button>
+            </>
+          )}
         </div>
       </aside>
     </>
