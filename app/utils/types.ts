@@ -27,3 +27,20 @@ export interface RegisterFormValues {
     email: string;
     otp: string;
   }
+
+  export interface User {
+  id: string;
+  personalInfo: {
+    fullName: string;
+    userName: string;
+    email: string;
+    phone: string;
+    dateOfBirth: string;
+  };
+  accountInfo: {
+    role: string;
+    status: string;
+    profileImage: string;
+    emailVerified: boolean;
+  };
+}
