@@ -1,7 +1,7 @@
 'use client';
 import React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Package, Heart, Inbox, List, Archive, DollarSign, Calendar, CheckSquare, Users, Phone, FileText, Grid3x3, User, Settings, LogOut, Menu, X, Bell, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, Package, Heart, Inbox, List, Archive, DollarSign, Calendar, CheckSquare, Users, Phone, FileText, Grid3x3, User, Settings, LogOut, Menu, X, Bell, ChevronDown,ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 interface SidebarProps {
@@ -26,13 +26,13 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         },
         { 
             icon: Heart, 
-            label: 'Favorites', 
-            path: '/dashboard/favorites' 
+            label: 'Wishlist', 
+            path: '/dashboard/wishlist' 
         },
         { 
-            icon: List, 
-            label: 'Order Lists', 
-            path: '/dashboard/orders' 
+            icon: ShoppingCart, 
+            label: 'Cart', 
+            path: '/dashboard/cart' 
         },
         { 
             icon: Archive, 

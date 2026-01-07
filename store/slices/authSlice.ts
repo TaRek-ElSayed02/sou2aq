@@ -72,5 +72,45 @@ const authSlice = createSlice({
   },
 });
 
+// app/utils/authHelpers.ts
+export const saveTokensToCookies = (accessToken: string, refreshToken?: string) => {
+  if (typeof window !== 'undefined') {
+    // تخزين في localStorage (لـ Redux persist)
+    localStorage.setItem('accessToken', accessToken)
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken)
+    }
+    
+    // تخزين في الكوكيز (للميدل وير)
+    document.cookie = `accessToken=${accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict`
+    if (refreshToken) {
+      document.cookie = `refreshToken=${refreshToken}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`
+    }
+  }
+}
+
+export const removeTokensFromCookies = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    
+    document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+  }
+}
+
+export const getTokenFromCookies = () => {
+  if (typeof window !== 'undefined') {
+    const cookies = document.cookie.split(';')
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=')
+      if (name === 'accessToken') {
+        return value
+      }
+    }
+  }
+  return null
+}
+
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;

@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { login } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
+import { saveTokensToCookies } from '../../../store/slices/authSlice';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +18,7 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { loading, error,accessToken } = useAppSelector((state) => state.auth);
+  const { loading, error,accessToken, refreshToken } = useAppSelector((state) => state.auth);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +31,13 @@ export default function Login() {
     );
   };
 
-  useEffect(() => {
-  if (accessToken) {
-    router.replace("/"); 
-  }
-}, [accessToken, router]);
+ useEffect(() => {
+    if (accessToken) {
+      // حفظ التوكن في الكوكيز
+      saveTokensToCookies(accessToken, refreshToken || undefined)
+      router.push("/dashboard") // توجيه للداشبورد بدلاً من الصفحة الرئيسية
+    }
+  }, [accessToken, refreshToken, router])
 
   return (
     <>
