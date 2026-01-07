@@ -742,44 +742,7 @@ export default function CartPage() {
                         </div>
                     </div>
 
-                    {/* خيارات الشحن */}
-                    {cartItems.length > 0 && (
-                        <div className="mt-4 sm:mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Shipping Options</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                                <div className={`border-2 rounded-xl p-3 sm:p-4 cursor-pointer transition-all ${shipping === 0 ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                                    <div className="flex items-start gap-3">
-                                        <Truck className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                                        <div className="min-w-0">
-                                            <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Free Shipping</h4>
-                                            <p className="text-xs sm:text-sm text-gray-600 mt-1">Orders over $500</p>
-                                            <div className="mt-2 text-base sm:text-lg font-bold text-gray-900">$0.00</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="border-2 border-gray-200 rounded-xl p-3 sm:p-4 cursor-pointer hover:border-gray-300 transition-all">
-                                    <div className="flex items-start gap-3">
-                                        <Truck className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
-                                        <div className="min-w-0">
-                                            <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Standard</h4>
-                                            <p className="text-xs sm:text-sm text-gray-600 mt-1">5-7 business days</p>
-                                            <div className="mt-2 text-base sm:text-lg font-bold text-gray-900">$9.99</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="border-2 border-gray-200 rounded-xl p-3 sm:p-4 cursor-pointer hover:border-gray-300 transition-all">
-                                    <div className="flex items-start gap-3">
-                                        <Truck className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
-                                        <div className="min-w-0">
-                                            <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Express</h4>
-                                            <p className="text-xs sm:text-sm text-gray-600 mt-1">2-3 business days</p>
-                                            <div className="mt-2 text-base sm:text-lg font-bold text-gray-900">$29.99</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    
                 </div>
 
                 {/* القسم الأيمن: ملخص الطلب */}
