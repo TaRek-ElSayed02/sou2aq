@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-    Search, Filter, Heart, Edit,
+    Search, Filter, Edit,
     Star, X, Tag, DollarSign, Package,
     ChevronDown, ChevronUp, Upload, ImageIcon, Plus, Trash2
 } from 'lucide-react';
@@ -22,7 +22,6 @@ interface Product {
     material: string;
     seoTitle: string;
     seoDescription: string;
-    inWishlist: boolean;
     sku: string;
 }
 
@@ -60,7 +59,6 @@ const ProductsPage = () => {
             material: 'Aluminum & Ceramic',
             seoTitle: 'Apple Watch Series 8 - Premium Smartwatch',
             seoDescription: 'Buy the latest Apple Watch Series 8 with advanced features and health monitoring.',
-            inWishlist: false,
             sku: 'AWS8-2024'
         },
         {
@@ -71,13 +69,12 @@ const ProductsPage = () => {
             rating: 4.5,
             reviews: 856,
             description: 'Revolutionary sneakers with maximum cushioning and iconic Air Max technology for all-day comfort.',
-            image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop',
+            image: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=400&fit=crop',
             stock: 120,
             sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12'],
             material: 'Mesh & Synthetic Leather',
             seoTitle: 'Nike Air Max 270 - Premium Running Shoes',
             seoDescription: 'Experience ultimate comfort with Nike Air Max 270 running shoes.',
-            inWishlist: true,
             sku: 'NAM270-2024'
         },
         {
@@ -95,7 +92,6 @@ const ProductsPage = () => {
             material: 'Oak Wood & Premium Fabric',
             seoTitle: 'Modern Minimalist Chair - Contemporary Furniture',
             seoDescription: 'Stylish minimalist chair for modern interiors and workspaces.',
-            inWishlist: false,
             sku: 'MMC-001'
         },
         {
@@ -112,7 +108,6 @@ const ProductsPage = () => {
             material: 'Aluminum',
             seoTitle: 'MacBook Pro 16-inch - Professional Laptop',
             seoDescription: 'Professional-grade laptop with M2 Pro chip and stunning display.',
-            inWishlist: true,
             sku: 'MBP16-M2'
         },
         {
@@ -130,7 +125,6 @@ const ProductsPage = () => {
             material: 'Titanium',
             seoTitle: 'iPhone 15 Pro Max - Premium Smartphone',
             seoDescription: 'Experience the latest iPhone 15 Pro Max with titanium design.',
-            inWishlist: false,
             sku: 'IP15PM-2024'
         },
         {
@@ -147,7 +141,6 @@ const ProductsPage = () => {
             material: 'Plastic & Memory Foam',
             seoTitle: 'Sony WH-1000XM5 - Noise Cancelling Headphones',
             seoDescription: 'Premium noise cancelling headphones with exceptional audio quality.',
-            inWishlist: false,
             sku: 'SONY-XM5'
         },
         {
@@ -165,7 +158,6 @@ const ProductsPage = () => {
             material: 'Aluminum',
             seoTitle: 'iPad Pro 12.9-inch - Professional Tablet',
             seoDescription: 'Professional tablet with M2 chip for creative work.',
-            inWishlist: true,
             sku: 'IPADPRO-129'
         },
         {
@@ -182,7 +174,6 @@ const ProductsPage = () => {
             material: 'Glass & Aluminum',
             seoTitle: 'Samsung Galaxy S23 Ultra - Android Flagship',
             seoDescription: 'Premium Android smartphone with advanced camera features.',
-            inWishlist: false,
             sku: 'SGS23U-2024'
         },
         {
@@ -200,7 +191,6 @@ const ProductsPage = () => {
             material: 'Steel & Bamboo',
             seoTitle: 'Ergonomic Office Desk - Standing Desk',
             seoDescription: 'Height-adjustable standing desk for home office setup.',
-            inWishlist: false,
             sku: 'EOD-001'
         },
         {
@@ -217,7 +207,6 @@ const ProductsPage = () => {
             material: 'Stainless Steel & Plastic',
             seoTitle: 'Premium Coffee Maker - Smart Coffee Machine',
             seoDescription: 'Smart coffee maker with built-in grinder and milk frother.',
-            inWishlist: false,
             sku: 'PCM-500'
         },
         {
@@ -235,7 +224,6 @@ const ProductsPage = () => {
             material: 'Plastic & Rubber',
             seoTitle: 'Wireless Gaming Mouse - Gaming Accessory',
             seoDescription: 'High-performance wireless gaming mouse for gamers.',
-            inWishlist: true,
             sku: 'WGM-2024'
         },
         {
@@ -252,7 +240,6 @@ const ProductsPage = () => {
             material: 'Nylon & Polyester',
             seoTitle: 'Designer Backpack - Laptop Backpack',
             seoDescription: 'Stylish and functional backpack for daily use and travel.',
-            inWishlist: false,
             sku: 'DBP-001'
         }
     ];
@@ -263,8 +250,8 @@ const ProductsPage = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
     const [showFilters, setShowFilters] = useState(false);
-    const [editModal, setEditModal] = useState<{ 
-        isOpen: boolean; 
+    const [editModal, setEditModal] = useState<{
+        isOpen: boolean;
         data: EditModalData | null;
         mode: 'add' | 'edit';
     }>({
@@ -295,6 +282,7 @@ const ProductsPage = () => {
         message: '',
         type: 'success'
     });
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     // استخراج التصنيفات الفريدة
     const allCategories = ['All', ...Array.from(new Set([...customCategories, ...products.map(p => p.category)]))];
@@ -358,21 +346,18 @@ const ProductsPage = () => {
         const productToDelete = products.find(p => p.id === deleteModal.productId);
         if (!productToDelete) return;
 
-        // حذف المنتج من القائمة
         setProducts(products.filter(product => product.id !== deleteModal.productId));
-        
-        // إغلاق مودال الحذف
+
         setDeleteModal({
             isOpen: false,
             productId: null,
             productName: ''
         });
 
-        // عرض إشعار النجاح
         showToast(`تم حذف المنتج "${productToDelete.name}" بنجاح`, 'success');
     };
 
-    // فلترة وترتيب المنتجات - FIXED: فلترة السعر تعمل مع الأسعار المحدثة
+    // فلترة وترتيب المنتجات
     const filteredProducts = useMemo(() => {
         return products
             .filter(product => {
@@ -421,24 +406,14 @@ const ProductsPage = () => {
     // دالة حساب السعر بعد الخصم
     const calculateDiscountedPrice = (price: number, discount?: number) => {
         if (!discount || discount <= 0) return price;
-        if (discount > 100) return 0; // إذا كان الخصم أكبر من 100%، السعر يصبح 0
+        if (discount > 100) return 0;
         return price * (1 - Math.min(discount, 100) / 100);
-    };
-
-    // معالجة تبديل الويش ليست
-    const toggleWishlist = (id: number) => {
-        setProducts(products.map(product =>
-            product.id === id
-                ? { ...product, inWishlist: !product.inWishlist }
-                : product
-        ));
     };
 
     // فتح مودال التعديل
     const openEditModal = (product: Product) => {
         const slug = generateSlug(product.name);
-        
-        // إعادة تعيين الصورة المرفوعة عند فتح مودال جديد
+
         setUploadedImage(null);
 
         setEditModal({
@@ -467,13 +442,11 @@ const ProductsPage = () => {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        // التحقق من نوع الملف
         if (!file.type.startsWith('image/')) {
             alert('Please upload an image file (JPEG, PNG, GIF, etc.)');
             return;
         }
 
-        // التحقق من حجم الملف (بحد أقصى 5MB)
         if (file.size > 5 * 1024 * 1024) {
             alert('Image size should be less than 5MB');
             return;
@@ -481,21 +454,19 @@ const ProductsPage = () => {
 
         setIsUploading(true);
 
-        // محاكاة عملية الرفع
         setTimeout(() => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64String = reader.result as string;
                 setUploadedImage(base64String);
-                
-                // تحديث رابط الصورة في البيانات
+
                 if (editModal.data) {
                     setEditModal(prev => ({
                         ...prev,
                         data: { ...prev.data!, imageUrl: base64String }
                     }));
                 }
-                
+
                 setIsUploading(false);
             };
             reader.readAsDataURL(file);
@@ -504,7 +475,6 @@ const ProductsPage = () => {
 
     // حفظ التعديلات أو إضافة منتج جديد
     const handleSaveEdit = (updatedData: EditModalData) => {
-        // التحقق من البيانات المطلوبة
         if (!updatedData.name.trim()) {
             showToast('اسم المنتج مطلوب', 'error');
             return;
@@ -525,20 +495,16 @@ const ProductsPage = () => {
             return;
         }
 
-        // التحقق من أن الخصم لا يتجاوز 100%
         if (updatedData.discount && updatedData.discount > 100) {
             showToast('الخصم لا يمكن أن يتجاوز 100%', 'error');
             return;
         }
 
-        // إضافة تصنيف جديد إذا لم يكن موجوداً
         if (!customCategories.includes(updatedData.category)) {
             setCustomCategories([...customCategories, updatedData.category]);
         }
 
-        // تحديث أو إضافة المنتج
         if (editModal.mode === 'edit' && updatedData.id) {
-            // تحديث المنتج الموجود
             const imageToUse = uploadedImage || updatedData.imageUrl;
 
             setProducts(products.map(product =>
@@ -560,10 +526,9 @@ const ProductsPage = () => {
                     }
                     : product
             ));
-            
+
             showToast(`تم تعديل المنتج "${updatedData.name}" بنجاح`, 'success');
         } else {
-            // إضافة منتج جديد
             const newId = generateNewId();
             const imageToUse = uploadedImage || updatedData.imageUrl || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&fit=crop';
 
@@ -573,8 +538,8 @@ const ProductsPage = () => {
                 category: updatedData.category,
                 price: updatedData.price,
                 discount: updatedData.discount && updatedData.discount <= 100 ? updatedData.discount : undefined,
-                rating: 4.5, // تقييم افتراضي للمنتج الجديد
-                reviews: 0, // عدد مراجعات ابتدائي
+                rating: 4.5,
+                reviews: 0,
                 description: updatedData.description,
                 image: imageToUse,
                 stock: updatedData.stock,
@@ -582,7 +547,6 @@ const ProductsPage = () => {
                 material: updatedData.material,
                 seoTitle: updatedData.seoTitle || `${updatedData.name} - ${updatedData.category}`,
                 seoDescription: updatedData.seoDescription || `Buy ${updatedData.name} - High quality ${updatedData.category.toLowerCase()} product`,
-                inWishlist: false,
                 sku: `${updatedData.category.substring(0, 3).toUpperCase()}-${updatedData.slug.substring(0, 6).toUpperCase() || 'NEW'}`
             };
 
@@ -590,7 +554,6 @@ const ProductsPage = () => {
             showToast(`تم إضافة المنتج "${updatedData.name}" بنجاح`, 'success');
         }
 
-        // إعادة تعيين الحالة بعد الحفظ
         setUploadedImage(null);
         setEditModal({ isOpen: false, data: null, mode: 'edit' });
     };
@@ -620,10 +583,9 @@ const ProductsPage = () => {
         if (products.length > 0) {
             const minPrice = Math.min(...products.map(p => p.price));
             const maxPrice = Math.max(...products.map(p => p.price));
-            
-            // تحديث نطاق السعر ليشمل الأسعار الجديدة
+
             if (maxPrice > priceRange[1]) {
-                setPriceRange([priceRange[0], Math.ceil(maxPrice / 500) * 500]); // تقريب لأعلى مضاعف 500
+                setPriceRange([priceRange[0], Math.ceil(maxPrice / 500) * 500]);
             }
         }
     }, [products]);
@@ -637,8 +599,7 @@ const ProductsPage = () => {
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">Products Management</h1>
                         <p className="text-gray-600">Manage your products, inventory, and pricing</p>
                     </div>
-                    
-                    {/* زر إضافة منتج جديد - CHANGED: بنفس لون الأزرار الأخرى */}
+
                     <button
                         onClick={openAddModal}
                         className="flex items-center gap-3 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
@@ -652,7 +613,6 @@ const ProductsPage = () => {
             {/* شريط البحث والفلترة */}
             <div className="bg-white rounded-xl p-4 md:p-6 mb-6 shadow-sm border border-gray-200">
                 <div className="flex flex-col md:flex-row gap-4">
-                    {/* حقل البحث */}
                     <div className="flex-1">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -666,7 +626,6 @@ const ProductsPage = () => {
                         </div>
                     </div>
 
-                    {/* أزرار التحكم */}
                     <div className="flex flex-wrap gap-3">
                         <button
                             onClick={() => setShowFilters(!showFilters)}
@@ -696,11 +655,9 @@ const ProductsPage = () => {
                     </div>
                 </div>
 
-                {/* الفلاتر المتقدمة */}
                 {showFilters && (
                     <div className="mt-6 pt-6 border-t border-gray-200">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {/* فلترة التصنيف */}
                             <div>
                                 <h3 className="text-sm font-medium text-gray-700 mb-3">Category</h3>
                                 <div className="flex flex-wrap gap-2">
@@ -719,7 +676,6 @@ const ProductsPage = () => {
                                 </div>
                             </div>
 
-                            {/* فلترة السعر - FIXED: تحديث السعر أقصى تلقائياً */}
                             <div>
                                 <h3 className="text-sm font-medium text-gray-700 mb-3">
                                     Price Range: ${priceRange[0]} - ${priceRange[1]}
@@ -748,18 +704,9 @@ const ProductsPage = () => {
                                         <span>$2500</span>
                                         <span>$5000</span>
                                     </div>
-                                    <div className="text-xs text-gray-400 mt-2">
-                                        <div className="flex items-center gap-1">
-                                            <svg className="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span>نطاق السعر يتضمن جميع المنتجات بما فيهم المحدثة</span>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
-                            {/* فلترة المخزون */}
                             <div>
                                 <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Filters</h3>
                                 <div className="flex flex-wrap gap-2">
@@ -768,12 +715,6 @@ const ProductsPage = () => {
                                         className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
                                     >
                                         All Products
-                                    </button>
-                                    <button
-                                        onClick={() => setProducts(products.filter(p => p.inWishlist))}
-                                        className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
-                                    >
-                                        In Wishlist
                                     </button>
                                     <button
                                         onClick={() => setProducts(products.filter(p => p.discount))}
@@ -798,7 +739,6 @@ const ProductsPage = () => {
                 )}
             </div>
 
-            {/* عرض عدد النتائج */}
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-gray-600">
                     Showing <span className="font-semibold">{filteredProducts.length}</span> products
@@ -809,7 +749,7 @@ const ProductsPage = () => {
             </div>
 
             {/* شبكة المنتجات */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => {
                     const discountedPrice = calculateDiscountedPrice(product.price, product.discount);
                     const savings = product.price - discountedPrice;
@@ -817,152 +757,94 @@ const ProductsPage = () => {
                     return (
                         <div
                             key={product.id}
-                            className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 flex flex-col relative group"
+                            className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full group border border-gray-200"
                         >
-
-                            {/* صورة المنتج مع القلب */}
-                            <div className="relative h-56 overflow-hidden bg-gray-100">
+                            {/* صورة المنتج مع شارات */}
+                            <div
+                                className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 cursor-pointer"
+                                onClick={() => setSelectedProduct(product)}
+                            >
                                 <img
                                     src={product.image}
                                     alt={product.name}
-                                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
-                                <button
-                                    onClick={() => toggleWishlist(product.id)}
-                                    className="absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
-                                >
-                                    <Heart
-                                        className={`w-5 h-5 ${product.inWishlist
-                                            ? 'fill-red-500 text-red-500'
-                                            : 'text-gray-400 hover:text-red-400'
-                                            }`}
-                                    />
-                                </button>
 
                                 {/* شارة الخصم */}
                                 {product.discount && (
-                                    <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
-                                        -{product.discount}% OFF
+                                    <div className="absolute top-4 left-4 z-10">
+                                        <div className="bg-gradient-to-r from-red-500 to-rose-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-xl">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm">-{product.discount}%</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
 
-                            {/* محتوى المنتج */}
-                            <div className="p-5 flex-grow flex flex-col">
-                                {/* التصنيف والاسم */}
-                                <div className="mb-3">
-                                    <span className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+                            {/* محتوى الكارد */}
+                            <div className="p-5 flex flex-col flex-grow">
+                                {/* التصنيف */}
+                                <div className="mb-2">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg">
                                         <Tag className="w-3 h-3" />
                                         {product.category}
                                     </span>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-1">
+
+                                {/* اسم المنتج */}
+                                <h3
+                                    className="text-lg font-bold text-gray-900 mb-2 line-clamp-1 cursor-pointer hover:text-blue-600 transition-colors"
+                                    onClick={() => setSelectedProduct(product)}
+                                >
                                     {product.name}
                                 </h3>
-
                                 {/* التقييم */}
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-2">
-                                        {renderStars(product.rating)}
-                                        <span className="text-sm text-gray-500">({product.reviews})</span>
-                                    </div>
+                                <div className="flex items-center gap-2 mb-4">
+                                    {renderStars(product.rating)}
+                                    <span className="text-xs text-gray-500">({product.reviews})</span>
                                 </div>
 
-                                {/* السعر مع تصميم محسّن */}
-                                <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-white rounded-lg border border-gray-100">
-                                    <div className="flex flex-col gap-2">
-                                        {product.discount ? (
-                                            <>
-                                                <div className="flex items-baseline gap-3">
-                                                    <div className="relative">
-                                                        <span className="text-3xl font-bold text-gray-900">
-                                                            ${discountedPrice.toFixed(2)}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-lg text-gray-400 line-through">
-                                                            ${product.price.toFixed(2)}
-                                                        </span>
-                                                        <span className="text-xs text-red-600 font-semibold">
-                                                            {product.discount}% OFF
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-2 rounded-lg border border-green-100">
-                                                    <Package className="w-4 h-4 text-green-600" />
-                                                    <span className="text-sm font-medium text-green-700">
-                                                        Save ${savings.toFixed(2)}
-                                                    </span>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="flex items-baseline gap-2">
-                                                    <span className="text-3xl font-bold text-gray-900">
-                                                        ${product.price.toFixed(2)}
-                                                    </span>
-                                                    <span className="text-sm text-gray-500">USD</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-4 mt-5 rounded-lg border border-green-100">
-                                                    {/* مساحة فارغة للحفاظ على التصميم */}
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* التفاصيل */}
-                                <p className="text-gray-600 text-sm mb-5 line-clamp-2 flex-grow">
-                                    {product.description}
-                                </p>
-
-                                {/* المعلومات الإضافية */}
-                                <div className="space-y-3 mb-5">
-                                    <div className="flex items-center justify-between text-sm p-2 bg-gray-50 rounded-lg">
-                                        <span className="text-gray-500">Material:</span>
-                                        <span className="font-semibold text-gray-700">{product.material}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between text-sm p-2 bg-gray-50 rounded-lg">
-                                        <span className="text-gray-500">Stock:</span>
-                                        <span className={`font-semibold px-3 py-1 rounded-full ${product.stock > 20 ? 'bg-green-100 text-green-800' :
-                                            product.stock > 5 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                                            }`}>
-                                            {product.stock} units
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* المقاسات */}
+                                {/* السعر والخصم */}
                                 <div className="mb-5">
-                                    <p className="text-sm text-gray-500 mb-2">Available Sizes:</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {product.sizes.map((size) => (
-                                            <span
-                                                key={size}
-                                                className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg text-sm font-medium border border-blue-100"
-                                            >
-                                                {size}
+                                    {product.discount ? (
+                                        <div className="flex items-baseline gap-2 mb-1">
+                                            <span className="text-2xl font-bold text-gray-900">
+                                                ${discountedPrice.toFixed(2)}
                                             </span>
-                                        ))}
-                                    </div>
+                                            <span className="text-sm text-gray-400 line-through">
+                                                ${product.price.toFixed(2)}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            ${product.price.toFixed(2)}
+                                        </div>
+                                    )}
+                                    {product.discount && (
+                                        <p className="text-xs text-green-600 font-medium">
+                                            Save ${savings.toFixed(2)}
+                                        </p>
+                                    )}
                                 </div>
-
-                                {/* أزرار التعديل والحذف في أسفل الكارد */}
-                                <div className="mt-auto flex gap-3">
-                                    <button
-                                        onClick={() => openEditModal(product)}
-                                        className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                                    >
-                                        <Edit className="w-5 h-5" />
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => openDeleteModal(product.id, product.name)}
-                                        className="w-12 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                                        title="Delete product"
-                                    >
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
+                                {/* أزرار التحكم - في أسفل الكارد */}
+                                <div className="mt-auto pt-4 border-t border-gray-100">
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => openEditModal(product)}
+                                            className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                                        >
+                                            <Edit className="w-4 h-4" />
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => openDeleteModal(product.id, product.name)}
+                                            className="px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg"
+                                            title="Delete"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -970,7 +852,6 @@ const ProductsPage = () => {
                 })}
             </div>
 
-            {/* رسالة عدم وجود منتجات */}
             {filteredProducts.length === 0 && (
                 <div className="text-center py-12">
                     <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -1000,86 +881,164 @@ const ProductsPage = () => {
                 </div>
             )}
 
-            {/* مودال حذف المنتج */}
-            {deleteModal.isOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform transition-all">
-                        <div className="p-8">
-                            {/* أيقونة تحذير */}
-                            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-red-100 to-red-50 rounded-full flex items-center justify-center">
-                                <Trash2 className="w-8 h-8 text-red-600" />
+            {/* Product Details Overlay */}
+            {selectedProduct && (
+                <div
+                    className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+                    onClick={() => setSelectedProduct(null)}
+                >
+                    <div
+                        className="bg-white rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">{selectedProduct.name}</h2>
+                                <div className="flex items-center gap-3 mt-2">
+                                    <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+                                        <Tag className="w-3 h-3" />
+                                        {selectedProduct.category}
+                                    </span>
+                                    <span className="text-sm text-gray-500">SKU: {selectedProduct.sku}</span>
+                                </div>
                             </div>
+                            <button
+                                onClick={() => setSelectedProduct(null)}
+                                className="p-3 hover:bg-gray-100 rounded-full transition-all hover:scale-110"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
 
-                            {/* العنوان */}
-                            <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-                                Delete Product
-                            </h2>
-                            <p className="text-gray-500 text-center mb-6">
-                                Are you sure you want to delete this product?
-                            </p>
-
-                            {/* تفاصيل المنتج */}
-                            <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-xl p-4 mb-8 border border-red-200">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden">
+                        <div className="p-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="space-y-6">
+                                    <div className="relative rounded-2xl overflow-hidden bg-gray-100 shadow-xl">
                                         <img
-                                            src={products.find(p => p.id === deleteModal.productId)?.image || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=100&h=100&fit=crop'}
-                                            alt="Product"
-                                            className="w-full h-full object-cover"
+                                            src={selectedProduct.image}
+                                            alt={selectedProduct.name}
+                                            className="w-full h-96 object-cover"
                                         />
+                                        {selectedProduct.discount && (
+                                            <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                                                -{selectedProduct.discount}% OFF
+                                            </div>
+                                        )}
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-gray-900 mb-1">
-                                            {deleteModal.productName}
-                                        </h3>
+
+                                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 border-2 border-blue-100">
+                                        {selectedProduct.discount ? (
+                                            <div className="space-y-3">
+                                                <div className="flex items-baseline gap-3">
+                                                    <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                                        ${calculateDiscountedPrice(selectedProduct.price, selectedProduct.discount).toFixed(2)}
+                                                    </span>
+                                                    <span className="text-2xl text-gray-400 line-through">
+                                                        ${selectedProduct.price.toFixed(2)}
+                                                    </span>
+                                                </div>
+                                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full">
+                                                    <Package className="w-5 h-5" />
+                                                    <span className="text-sm font-bold">
+                                                        You Save ${(selectedProduct.price - calculateDiscountedPrice(selectedProduct.price, selectedProduct.discount)).toFixed(2)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                                    ${selectedProduct.price.toFixed(2)}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-xs font-medium px-2 py-1 bg-white rounded-full text-gray-700">
-                                                {products.find(p => p.id === deleteModal.productId)?.category || 'Unknown'}
-                                            </span>
-                                            <span className="text-xs font-medium px-2 py-1 bg-white rounded-full text-red-600">
-                                                ID: {deleteModal.productId}
-                                            </span>
+                                            {renderStars(selectedProduct.rating)}
+                                        </div>
+                                        <span className="text-gray-600">
+                                            {selectedProduct.rating.toFixed(1)} ({selectedProduct.reviews} reviews)
+                                        </span>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-3">Description</h3>
+                                        <p className="text-gray-700 leading-relaxed">{selectedProduct.description}</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-gray-50 rounded-xl p-4">
+                                            <div className="text-sm text-gray-500 mb-1">Material</div>
+                                            <div className="font-semibold text-gray-900">{selectedProduct.material}</div>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-xl p-4">
+                                            <div className="text-sm text-gray-500 mb-1">Stock</div>
+                                            <div className={`font-semibold inline-flex px-3 py-1 rounded-full text-sm ${selectedProduct.stock > 20 ? 'bg-green-100 text-green-800' :
+                                                selectedProduct.stock > 5 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                                                }`}>
+                                                {selectedProduct.stock} units
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* رسالة تحذير */}
-                            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 mb-8 border border-yellow-200">
-                                <div className="flex items-start gap-3">
-                                    <svg className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                    </svg>
                                     <div>
-                                        <p className="text-sm font-medium text-yellow-800 mb-1">
-                                            This action cannot be undone
-                                        </p>
-                                        <p className="text-sm text-yellow-700">
-                                            All product data including images, reviews, and inventory information will be permanently deleted.
-                                        </p>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-3">Available Sizes</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedProduct.sizes.map((size) => (
+                                                <span
+                                                    key={size}
+                                                    className="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg text-sm font-medium border-2 border-blue-100 hover:border-blue-300 transition-colors"
+                                                >
+                                                    {size}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-5 border border-gray-200">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                            SEO Information
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <div className="text-sm text-gray-500 mb-1">SEO Title</div>
+                                                <div className="text-gray-900 font-medium">{selectedProduct.seoTitle}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-sm text-gray-500 mb-1">SEO Description</div>
+                                                <div className="text-gray-700 text-sm">{selectedProduct.seoDescription}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 pt-4">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedProduct(null);
+                                                openEditModal(selectedProduct);
+                                            }}
+                                            className="flex-1 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                                        >
+                                            <Edit className="w-5 h-5" />
+                                            Edit Product
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setSelectedProduct(null);
+                                                openDeleteModal(selectedProduct.id, selectedProduct.name);
+                                            }}
+                                            className="px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* أزرار التحكم */}
-                            <div className="flex justify-end gap-4 pt-6 border-t">
-                                <button
-                                    onClick={() => setDeleteModal({
-                                        isOpen: false,
-                                        productId: null,
-                                        productName: ''
-                                    })}
-                                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all hover:scale-105 active:scale-95"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleDeleteProduct}
-                                    className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2"
-                                >
-                                    <Trash2 className="w-5 h-5" />
-                                    Delete Product
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -1091,7 +1050,6 @@ const ProductsPage = () => {
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
                     <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
                         <div className="p-8">
-                            {/* العنوان */}
                             <div className="flex items-center justify-between mb-8">
                                 <div>
                                     <h2 className="text-2xl font-bold text-gray-900">
@@ -1113,7 +1071,6 @@ const ProductsPage = () => {
                             </div>
 
                             <div className="space-y-8">
-                                {/* معلومات أساسية */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div>
                                         <label className="block text-sm font-semibold text-gray-700 mb-3">
@@ -1249,7 +1206,6 @@ const ProductsPage = () => {
                                                 value={editModal.data.discount || ''}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
-                                                    // التحقق من أن القيمة لا تتجاوز 100
                                                     const discountValue = value ? Math.min(parseFloat(value), 100) : undefined;
                                                     setEditModal(prev => ({
                                                         ...prev,
@@ -1266,44 +1222,29 @@ const ProductsPage = () => {
                                                 %
                                             </span>
                                         </div>
-                                        {editModal.data.discount && (
-                                            <div className="mt-3">
-                                                {editModal.data.discount > 100 ? (
-                                                    <div className="p-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg border border-red-200">
-                                                        <div className="flex items-center gap-2 text-red-700">
-                                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                                            </svg>
-                                                            <span className="text-sm font-semibold">Discount cannot exceed 100%</span>
-                                                        </div>
+                                        {editModal.data.discount && editModal.data.price > 0 && (
+                                            <div className="mt-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-sm font-medium text-gray-700">Final Price:</span>
+                                                    <div className="flex items-baseline gap-2">
+                                                        <span className="text-2xl font-bold text-gray-900">
+                                                            ${calculateDiscountedPrice(editModal.data.price, editModal.data.discount).toFixed(2)}
+                                                        </span>
+                                                        <span className="text-sm text-green-600 font-semibold">
+                                                            Save ${(editModal.data.price - calculateDiscountedPrice(editModal.data.price, editModal.data.discount)).toFixed(2)}
+                                                        </span>
                                                     </div>
-                                                ) : editModal.data.price > 0 && (
-                                                    <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="text-sm font-medium text-gray-700">Final Price:</span>
-                                                            <div className="flex items-baseline gap-2">
-                                                                <span className="text-2xl font-bold text-gray-900">
-                                                                    ${calculateDiscountedPrice(editModal.data.price, editModal.data.discount).toFixed(2)}
-                                                                </span>
-                                                                <span className="text-sm text-green-600 font-semibold">
-                                                                    Save ${(editModal.data.price - calculateDiscountedPrice(editModal.data.price, editModal.data.discount)).toFixed(2)}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
                                 </div>
 
-                                {/* رفع الصورة */}
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                                         Product Image
                                     </label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {/* منطقة رفع الصورة */}
                                         <div>
                                             <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer">
                                                 <input
@@ -1346,8 +1287,7 @@ const ProductsPage = () => {
                                                 </label>
                                             </div>
                                             <p className="text-sm text-gray-500 mt-3">
-                                                {uploadedImage ? 'Uploaded image will be used. To change, upload a new image above.' :
-                                                 'Or enter image URL:'}
+                                                Or enter image URL:
                                             </p>
                                             <input
                                                 type="url"
@@ -1361,7 +1301,6 @@ const ProductsPage = () => {
                                             />
                                         </div>
 
-                                        {/* معاينة الصورة */}
                                         <div className="flex flex-col items-center">
                                             <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-gray-100 shadow-lg">
                                                 <img
@@ -1372,13 +1311,6 @@ const ProductsPage = () => {
                                                         (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&fit=crop';
                                                     }}
                                                 />
-                                                {!uploadedImage && !editModal.data.imageUrl && (
-                                                    <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center">
-                                                        <ImageIcon className="w-12 h-12 text-gray-400 mb-3" />
-                                                        <p className="text-gray-500 font-medium">Image preview</p>
-                                                        <p className="text-sm text-gray-400">Will appear here</p>
-                                                    </div>
-                                                )}
                                             </div>
                                             <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1390,7 +1322,6 @@ const ProductsPage = () => {
                                     </div>
                                 </div>
 
-                                {/* المخزون والمقاسات */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div>
                                         <label className="block text-sm font-semibold text-gray-700 mb-3">
@@ -1427,7 +1358,6 @@ const ProductsPage = () => {
                                     </div>
                                 </div>
 
-                                {/* المادة */}
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                                         Material
@@ -1444,7 +1374,6 @@ const ProductsPage = () => {
                                     />
                                 </div>
 
-                                {/* الوصف */}
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                                         Description *
@@ -1461,7 +1390,6 @@ const ProductsPage = () => {
                                     />
                                 </div>
 
-                                {/* SEO */}
                                 <div className="space-y-6">
                                     <div className="border-l-4 border-blue-500 pl-4">
                                         <h3 className="text-lg font-bold text-gray-900">SEO Settings</h3>
@@ -1505,7 +1433,6 @@ const ProductsPage = () => {
                                     </div>
                                 </div>
 
-                                {/* الأزرار */}
                                 <div className="flex justify-end gap-4 pt-8 border-t">
                                     <button
                                         onClick={() => {
@@ -1529,16 +1456,48 @@ const ProductsPage = () => {
                 </div>
             )}
 
+            {/* مودال الحذف */}
+            {deleteModal.isOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6">
+                        <div className="text-center mb-6">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                                <Trash2 className="w-8 h-8 text-red-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Product</h3>
+                            <p className="text-gray-600">
+                                Are you sure you want to delete <span className="font-semibold">{deleteModal.productName}</span>? This action cannot be undone.
+                            </p>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setDeleteModal({ isOpen: false, productId: null, productName: '' })}
+                                className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteProduct}
+                                className="flex-1 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-lg hover:shadow-xl"
+                            >
+                                Delete Product
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* إشعارات Toast */}
             {toast.show && (
                 <div className="fixed top-6 right-6 z-50 animate-slide-in">
                     <div className={`rounded-xl shadow-2xl border-l-4 ${toast.type === 'success' ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-500' :
                         toast.type === 'error' ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-500' :
-                        'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-500'} p-4 min-w-80 max-w-md`}>
+                            'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-500'} p-4 min-w-80 max-w-md`}>
                         <div className="flex items-start gap-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-green-100 text-green-600' :
                                 toast.type === 'error' ? 'bg-red-100 text-red-600' :
-                                'bg-blue-100 text-blue-600'}`}>
+                                    'bg-blue-100 text-blue-600'}`}>
                                 {toast.type === 'success' ? (
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
@@ -1555,9 +1514,9 @@ const ProductsPage = () => {
                             </div>
                             <div className="flex-1">
                                 <p className="font-semibold text-gray-900">
-                                    {toast.type === 'success' ? 'تم بنجاح!' : 
-                                     toast.type === 'error' ? 'خطأ!' : 
-                                     'معلومة'}
+                                    {toast.type === 'success' ? 'تم بنجاح!' :
+                                        toast.type === 'error' ? 'خطأ!' :
+                                            'معلومة'}
                                 </p>
                                 <p className="text-sm text-gray-700 mt-0.5">{toast.message}</p>
                             </div>
