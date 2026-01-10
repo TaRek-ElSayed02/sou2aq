@@ -40,7 +40,7 @@ export const SalesChart = () => {
         </select>
       </div>
       
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto md:overflow-x-hidden">
         <div className="min-w-[800px] h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>

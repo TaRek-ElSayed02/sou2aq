@@ -14,7 +14,7 @@ export default function PricingPage() {
         { name: 'Plugins Integration', included: false },
         { name: 'Custom Content Management', included: false }
       ],
-      buttonStyle: 'outline'
+      buttonStyle: 'solid'
     },
     {
       name: 'Standard',
@@ -42,7 +42,7 @@ export default function PricingPage() {
         { name: 'Plugins Integration', included: true },
         { name: 'Custom Content Management', included: true }
       ],
-      buttonStyle: 'solid'
+      buttonStyle: 'outline'
     }
   ];
 

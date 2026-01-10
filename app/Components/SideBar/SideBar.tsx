@@ -3,6 +3,9 @@ import React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, Package, Heart, Inbox, List, Archive, DollarSign, Calendar, CheckSquare, Users, Phone, FileText, Grid3x3, User, Settings, LogOut, Menu, X, Bell, ChevronDown,ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { logout } from "@/store/slices/authSlice";
+
 
 interface SidebarProps {
     isOpen: boolean;
@@ -10,6 +13,8 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+      const dispatch = useAppDispatch();
+    //   const router = useRouter();
     const pathname = usePathname();
     const router = useRouter();
 
@@ -53,11 +58,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             path: '/dashboard/contact' 
         },
         { 
-            icon: FileText, 
-            label: 'Invoice', 
-            path: '/dashboard/invoice' 
-        },
-        { 
             icon: Users, 
             label: 'Team', 
             path: '/dashboard/team' 
@@ -81,12 +81,8 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
     const handleLogout = () => {
         // هنا منطق تسجيل الخروج
-        console.log('Logout clicked');
-        // مثال: router.push('/login');
-        
-        if (window.innerWidth < 1024) {
-            onClose();
-        }
+    dispatch(logout());
+    router.replace("/auth/login");
     };
 
     const handleItemClick = () => {
