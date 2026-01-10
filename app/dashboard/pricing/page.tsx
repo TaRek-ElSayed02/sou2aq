@@ -54,7 +54,7 @@ export default function PricingPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map((plan, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-sm p-8 flex flex-col">
+            <div key={index} className="bg-white rounded-2xl shadow-sm p-8 flex flex-col">
               <div className="text-center mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h2>
                 <p className="text-sm text-gray-500 mb-4">Monthly Charge</p>
