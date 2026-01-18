@@ -4,7 +4,7 @@ export interface RegisterFormValues {
     email: string;
     password: string;
     confirmPassword: string;
-    role: "admin" | "user";
+    role: "admin" | "user" ;
     dob: string;
     phone: string;
     profileImage: File | null;
@@ -44,3 +44,5 @@ export interface RegisterFormValues {
     emailVerified: boolean;
   };
 }
+
+

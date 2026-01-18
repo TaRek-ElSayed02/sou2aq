@@ -1,7 +1,7 @@
 'use client';
 import React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Package, Heart, Inbox, List, Archive, DollarSign, Calendar, CheckSquare, Users, Phone, FileText, Grid3x3, User, Settings, LogOut, Menu, X, Bell, ChevronDown,ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, Package, Heart, Inbox,BookOpen, List, Archive, DollarSign, Calendar, CheckSquare, Users, Phone, FileText, Grid3x3, User, Settings, LogOut, Menu, X, Bell, ChevronDown,ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
@@ -43,6 +43,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             icon: Archive, 
             label: 'Product Stock', 
             path: '/dashboard/stock' 
+        },
+        {
+            icon: BookOpen,
+            label:'Blogs',
+            path:'/dashboard/blog'
         }
     ];
 

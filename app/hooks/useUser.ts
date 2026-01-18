@@ -40,7 +40,7 @@ export const useUser = () => {
     
     // Getters
     isAuthenticated: !!userState.currentUser,
-    isAdmin: userState.currentUser?.role === 'admin' || userState.currentUser?.role === 'superAdmin',
-    isSuperAdmin: userState.currentUser?.role === 'superAdmin',
+    isAdmin: (userState.currentUser?.role || userState.currentUser?.accountInfo?.role) === 'admin' || (userState.currentUser?.role || userState.currentUser?.accountInfo?.role) === 'superAdmin',
+    isSuperAdmin: (userState.currentUser?.role || userState.currentUser?.accountInfo?.role) === 'superAdmin',
   };
 };

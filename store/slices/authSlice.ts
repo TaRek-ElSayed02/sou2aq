@@ -30,11 +30,16 @@ export const login = createAsyncThunk(
         "http://localhost:5000/api/auth/login",
         data
       );
-
       
+      console.log('=== Login Response ===');
+      console.log('Full response:', res.data);
+      console.log('response.data.data:', res.data.data);
+      console.log('user object:', res.data.data.user);
+      console.log('user.role:', res.data.data.user?.role);
 
       return res.data.data; 
     } catch (err: null) {
+      console.error('Login error:', err);
       return rejectWithValue(
         err.response?.data?.message || "Login failed"
       );
@@ -61,9 +66,16 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
 
+        console.log('=== Login Fulfilled ===');
+        console.log('action.payload:', action.payload);
+        console.log('action.payload.user:', action.payload.user);
+        console.log('setting state.user to:', action.payload.user);
+
         state.user = action.payload.user;
         state.accessToken = action.payload.tokens.accessToken;
         state.refreshToken = action.payload.tokens.refreshToken;
+        
+        console.log('state.user after set:', state.user);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
