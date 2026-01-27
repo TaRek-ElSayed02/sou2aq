@@ -1,10 +1,11 @@
 'use client';
 import React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Package, Heart, Inbox,BookOpen, List, Archive, DollarSign, Calendar, CheckSquare, Users, Phone, FileText, Grid3x3, User, Settings, LogOut, Menu, X, Bell, ChevronDown,ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, Package, Heart,BookOpen, Archive, DollarSign, Users, Phone, Settings, LogOut,  X, ShoppingCart ,Globe2 } from 'lucide-react';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
+import { getMenuItemsByRole } from '@/app/utils/roleConfig';
 
 
 interface SidebarProps {
@@ -12,62 +13,60 @@ interface SidebarProps {
     onClose: () => void;
 }
 
+interface MenuItem {
+    icon: React.ComponentType<{ className?: string }>;
+    label: string;
+    path: string;
+}
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    LayoutDashboard,
+    Globe2,
+    Package,
+    Heart,
+    ShoppingCart,
+    Archive,
+    BookOpen,
+    DollarSign,
+    Phone,
+    Users,
+};
+
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       const dispatch = useAppDispatch();
-    //   const router = useRouter();
     const pathname = usePathname();
     const router = useRouter();
+    const [mounted, setMounted] = React.useState(false);
 
-    const menuItems = [
-        { 
-            icon: LayoutDashboard, 
-            label: 'Dashboard', 
-            path: '/dashboard' 
-        },
-        { 
-            icon: Package, 
-            label: 'Products', 
-            path: '/dashboard/products' 
-        },
-        { 
-            icon: Heart, 
-            label: 'Wishlist', 
-            path: '/dashboard/wishlist' 
-        },
-        { 
-            icon: ShoppingCart, 
-            label: 'Cart', 
-            path: '/dashboard/cart' 
-        },
-        { 
-            icon: Archive, 
-            label: 'Product Stock', 
-            path: '/dashboard/stock' 
-        },
-        {
-            icon: BookOpen,
-            label:'Blogs',
-            path:'/dashboard/blog'
-        }
-    ];
+    // جلب الـ auth state
+    const auth = useAppSelector(state => (state as any).auth);
+    const user = auth?.user;
+    
+    // حاول الوصول للـ role بطرق مختلفة
+    const userRole = user?.role || (user as any)?.accountInfo?.role || (user as any)?.type;
 
-    const pageItems = [
-        { 
-            icon: DollarSign, 
-            label: 'Pricing', 
-            path: '/dashboard/pricing' 
-        },
-        { 
-            icon: Phone, 
-            label: 'Contact', 
-            path: '/dashboard/contact' 
-        },
-        { 
-            icon: Users, 
-            label: 'Team', 
-            path: '/dashboard/team' 
-        }
-    ];
+    // Debug لكل شيء
+    React.useEffect(() => {
+      setMounted(true);
+    }, [auth, user, userRole]);
+
+    if (!mounted) {
+      return null;
+    }
+
+    // الحصول على العناصر حسب الدور
+    const { menuItems: rawMenuItems, pageItems: rawPageItems } = getMenuItemsByRole(userRole);
+
+    // تحويل أسماء الـ icons إلى components
+    const menuItems: MenuItem[] = rawMenuItems.map(item => ({
+        ...item,
+        icon: iconMap[item.icon] || LayoutDashboard,
+    }));
+
+    const pageItems: MenuItem[] = rawPageItems.map(item => ({
+        ...item,
+        icon: iconMap[item.icon] || DollarSign,
+    }));
 
     // دالة للتحقق إذا كان الرابط نشطاً
     const isActive = (path: string) => {

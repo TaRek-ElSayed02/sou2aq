@@ -43,7 +43,7 @@ export default function Header() {
           <Link href="/About">About</Link>
           <Link href="/Blogs">Blogs</Link>
           <Link href="/">Our App</Link>
-          <Link href="/">Contacts</Link>
+          <Link href="/contacts">Contacts</Link>
         </nav>
 
         <div className="hidden md:flex gap-6 items-center relative">

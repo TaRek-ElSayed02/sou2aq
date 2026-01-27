@@ -80,16 +80,16 @@ export default function About() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
             {/* Simple Form */}
-            <div className="bg-[#1A2035] rounded-xl p-8 border border-gray-800">
+            <div className="bg-gray-100 rounded-xl p-8 border border-gray-300">
               <div className="flex gap-4 mb-6">
-                <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-black" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-2">
+                  <h3 className="text-2xl font-bold text-black mb-2">
                     Simple & Smart Form
                   </h3>
-                  <p className="text-gray-300">
+                  <p className="text-gray-700">
                     Fill out an easy form with your personal details, experience,
                     skills, and certifications. The form guides you step by step
                     with no complexity.
@@ -105,16 +105,16 @@ export default function About() {
             </div>
 
             {/* Instant Result */}
-            <div className="bg-[#1A2035] rounded-xl p-8 border border-gray-800">
+            <div className="bg-gray-100 rounded-xl p-8 border border-gray-300">
               <div className="flex gap-4 mb-6">
-                <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-black" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-2">
+                  <h3 className="text-2xl font-bold text-black mb-2">
                     Instant Results
                   </h3>
-                  <p className="text-gray-300">
+                  <p className="text-gray-700">
                     As soon as you finish entering your information, your resume
                     appears instantly with a professional design ready for
                     download.
@@ -131,16 +131,16 @@ export default function About() {
           </div>
 
           {/* Dashboard */}
-          <div className="bg-gradient-to-br from-[#1A2035] to-[#0F1525] rounded-2xl p-12 border border-gray-800">
+          <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl p-12 border border-gray-300">
             <div className="flex gap-4 mb-10">
-              <div className="w-14 h-14 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                <Layout className="w-7 h-7 text-blue-500" />
+              <div className="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Layout className="w-7 h-7 text-black" />
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-white">
+                <h3 className="text-3xl font-bold text-black">
                   Personal Dashboard
                 </h3>
-                <p className="text-gray-300">
+                <p className="text-gray-700">
                   Manage your account and resumes with ease
                 </p>
               </div>
@@ -208,8 +208,8 @@ export default function About() {
 function Feature({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-3">
-      <CheckCircle className="w-5 h-5 text-blue-500" />
-      <span className="text-gray-300">{text}</span>
+      <CheckCircle className="w-5 h-5 text-black" />
+      <span className="text-gray-700">{text}</span>
     </div>
   );
 }
@@ -224,12 +224,12 @@ function DashboardCard({
   text: string;
 }) {
   return (
-    <div className="bg-[#0A0F1F] rounded-lg p-6 border border-gray-800">
-      <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center mb-4 text-blue-500">
+    <div className="bg-gray-100 rounded-lg p-6 border border-gray-300">
+      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4 text-black">
         {icon}
       </div>
-      <h4 className="text-lg font-bold text-white mb-2">{title}</h4>
-      <p className="text-gray-400 text-sm">{text}</p>
+      <h4 className="text-lg font-bold text-black mb-2">{title}</h4>
+      <p className="text-gray-600 text-sm">{text}</p>
     </div>
   );
 }

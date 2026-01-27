@@ -5,16 +5,15 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   
-  console.log('🔍 Middleware checking:', pathname)
-  console.log('🍪 All cookies:', request.cookies.getAll())
-  console.log('🔑 AccessToken cookie:', request.cookies.get('accessToken')?.value)
-  
   // المسارات العامة
   const publicPaths = [
     '/',
     '/auth/login',
     '/auth/register',
     '/auth/forgotPassword',
+    '/auth/forgetPassword',
+    '/auth/resetPassword',
+    '/auth/verifyCode',
     '/api',
     '/_next',
     '/favicon.ico'
@@ -27,28 +26,22 @@ export function middleware(request: NextRequest) {
   )
   
   if (isPublicPath) {
-    console.log('✅ Public path, allowing access')
     return NextResponse.next()
   }
   
-  // تحقق إذا كان المسار محمياً
+  // تحقق من التوكن للمسارات المحمية
   if (pathname.startsWith('/dashboard')) {
     const token = request.cookies.get('accessToken')?.value
     
-    console.log('🔐 Checking token for dashboard:', {
-      path: pathname,
-      hasCookieToken: !!token,
-      tokenPreview: token ? `${token.substring(0, 20)}...` : 'none'
-    })
-    
     if (!token) {
-      console.log('❌ No token in cookies, redirecting to login')
       const loginUrl = new URL('/auth/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
-    
-    console.log('✅ Token found in cookies, allowing access')
+
+    // إذا كان في token، دع الطلب يمرر
+    // الـ layout سيتولى الـ role-based access
+    return NextResponse.next()
   }
   
   return NextResponse.next()

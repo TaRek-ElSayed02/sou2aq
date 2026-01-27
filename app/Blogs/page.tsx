@@ -8,173 +8,173 @@ import Header from '../Components/Header/Header';
 import Footer from '../Components/Footer.tsx/Footer';
 
 export default function Blog() {
-  const [selectedCategory, setSelectedCategory] = useState('جميع المقالات');
-  const [sortOrder, setSortOrder] = useState('الأحدث');
+  const [selectedCategory, setSelectedCategory] = useState('All Articles');
+  const [sortOrder, setSortOrder] = useState('Newest');
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 6; // عدد المقالات في كل صفحة
+  const postsPerPage = 6;
 
   const blogPosts = [
     {
       id: 1,
-      title: 'كيف تكتب سيرة ذاتية تجذب انتباه مسؤولي التوظيف في 2026',
-      excerpt: 'دليل شامل لكتابة سيرة ذاتية احترافية تجعلك تتفوق على مئات المتقدمين للوظيفة، مع نصائح عملية وأمثلة واقعية.',
-      author: 'أحمد محمد',
-      date: '15 مارس 2025',
-      category: 'نصائح مهنية',
+      title: 'How to Write a Resume That Gets Recruiter Attention in 2026',
+      excerpt: 'A comprehensive guide to writing a professional resume that helps you stand out from hundreds of job applicants, with practical tips and real examples.',
+      author: 'Ahmed Mohammed',
+      date: 'March 15, 2025',
+      category: 'Professional Tips',
       image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=800',
       featured: true,
       timestamp: new Date('2025-03-15').getTime()
     },
     {
       id: 2,
-      title: '10 أخطاء شائعة في السيرة الذاتية تسبب رفض طلبك',
-      excerpt: 'تجنب هذه الأخطاء الشائعة التي يرتكبها معظم الباحثين عن عمل والتي تؤدي إلى رفض سيرتهم الذاتية.',
-      author: 'سارة العلي',
-      date: '10 مارس 2025',
-      category: 'تطوير المهارات',
+      title: '10 Common Resume Mistakes That Get Your Application Rejected',
+      excerpt: 'Avoid these common mistakes that most job seekers make that lead to rejection of their resumes.',
+      author: 'Sarah Al Ali',
+      date: 'March 10, 2025',
+      category: 'Skill Development',
       image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-03-10').getTime()
     },
     {
       id: 3,
-      title: 'تصميم السيرة الذاتية: الدليل النهائي للألوان والخطوط',
-      excerpt: 'كيف تختار الألوان والخطوط المناسبة لسيرتك الذاتية لتعكس شخصيتك المهنية وتجذب انتباه القارئ.',
-      author: 'محمد الخالد',
-      date: '5 مارس 2025',
-      category: 'تصميم',
+      title: 'Resume Design: The Ultimate Guide to Colors and Fonts',
+      excerpt: 'How to choose the right colors and fonts for your resume to reflect your professional personality and catch the reader\'s attention.',
+      author: 'Mohammed Al-Khalid',
+      date: 'March 5, 2025',
+      category: 'Design',
       image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-03-05').getTime()
     },
     {
       id: 4,
-      title: 'كيفية تخصيص السيرة الذاتية لكل وظيفة تقدم لها',
-      excerpt: 'لماذا تحتاج إلى تخصيص سيرتك الذاتية لكل وظيفة، وكيف تفعل ذلك بفعالية لزيادة فرصك في القبول.',
-      author: 'نورة السعد',
-      date: '28 فبراير 2025',
-      category: 'استراتيجيات',
+      title: 'How to Customize Your Resume for Each Job Application',
+      excerpt: 'Why you need to customize your resume for each job and how to do it effectively to increase your chances of acceptance.',
+      author: 'Nora Al-Saad',
+      date: 'February 28, 2025',
+      category: 'Strategies',
       image: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-28').getTime()
     },
     {
       id: 5,
-      title: 'أسرار كتابة قسم المهارات في السيرة الذاتية',
-      excerpt: 'كيف تعرض مهاراتك بطريقة احترافية تجعل مسؤول التوظيف يدرك قيمتك الفورية للمؤسسة.',
-      author: 'خالد الفهد',
-      date: '22 فبراير 2025',
-      category: 'كتابة',
+      title: 'Secrets to Writing a Skills Section in Your Resume',
+      excerpt: 'How to showcase your skills professionally so that the hiring manager immediately realizes your value to the organization.',
+      author: 'Khaled Al-Fahad',
+      date: 'February 22, 2025',
+      category: 'Writing',
       image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-22').getTime()
     },
     {
       id: 6,
-      title: 'السيرة الذاتية الذكية: استخدام الكلمات المفتاحية',
-      excerpt: 'كيفية استخدام الكلمات المفتاحية المناسبة لتمرير أنظمة التصفية التلقائية ووصول سيرتك لمسؤول التوظيف.',
-      author: 'فاطمة القاسم',
-      date: '18 فبراير 2025',
-      category: 'تقنية',
+      title: 'Smart Resumes: Using Keywords to Your Advantage',
+      excerpt: 'How to use the right keywords to pass automated screening systems and reach the hiring manager.',
+      author: 'Fatema Al-Qassim',
+      date: 'February 18, 2025',
+      category: 'Technology',
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-18').getTime()
     },
     {
       id: 7,
-      title: 'نصائح لإجراء المقابلات الوظيفية الناجحة',
-      excerpt: 'كيفية الاستعداد للمقابلات الوظيفية والإجابة على الأسئلة الصعبة بثقة واحترافية.',
-      author: 'علي عبدالله',
-      date: '15 فبراير 2025',
-      category: 'نصائح مهنية',
+      title: 'Tips for Successful Job Interviews',
+      excerpt: 'How to prepare for job interviews and answer difficult questions with confidence and professionalism.',
+      author: 'Ali Abdullah',
+      date: 'February 15, 2025',
+      category: 'Professional Tips',
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-15').getTime()
     },
     {
       id: 8,
-      title: 'كيفية كتابة خطاب التغطية المؤثر',
-      excerpt: 'دليل عملي لكتابة خطاب تغطية يجذب انتباه مسؤولي التوظيف ويزيد من فرصك في الحصول على الوظيفة.',
-      author: 'منى الرشيد',
-      date: '12 فبراير 2025',
-      category: 'كتابة',
+      title: 'How to Write an Effective Cover Letter',
+      excerpt: 'A practical guide to writing a cover letter that catches the hiring manager\'s attention and increases your chances of getting the job.',
+      author: 'Mona Al-Rashid',
+      date: 'February 12, 2025',
+      category: 'Writing',
       image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-12').getTime()
     },
     {
       id: 9,
-      title: 'أفضل المنصات للبحث عن وظائف في 2025',
-      excerpt: 'دليل لأفضل المنصات والمواقع للبحث عن وظائف في مختلف المجالات والقطاعات.',
-      author: 'سالم الحربي',
-      date: '8 فبراير 2025',
-      category: 'استراتيجيات',
+      title: 'Best Job Search Platforms in 2025',
+      excerpt: 'A guide to the best platforms and websites for finding jobs in different fields and sectors.',
+      author: 'Salem Al-Harbi',
+      date: 'February 8, 2025',
+      category: 'Strategies',
       image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-08').getTime()
     },
     {
       id: 10,
-      title: 'كيفية بناء شبكة علاقات مهنية فعالة',
-      excerpt: 'استراتيجيات عملية لبناء وتطوير شبكة علاقات مهنية تساعدك في التقدم الوظيفي.',
-      author: 'لبنى القحطاني',
-      date: '5 فبراير 2025',
-      category: 'تطوير المهارات',
+      title: 'How to Build an Effective Professional Network',
+      excerpt: 'Practical strategies for building and developing a professional network that helps you advance in your career.',
+      author: 'Layla Al-Qahtani',
+      date: 'February 5, 2025',
+      category: 'Skill Development',
       image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-05').getTime()
     },
     {
       id: 11,
-      title: 'التطور المهني: كيف تخطط لمستقبلك الوظيفي',
-      excerpt: 'خطوات عملية للتخطيط لمستقبلك المهني وتحديد الأهداف والتطور المستمر.',
-      author: 'فهد العتيبي',
-      date: '1 فبراير 2025',
-      category: 'تطوير المهارات',
+      title: 'Career Development: How to Plan Your Professional Future',
+      excerpt: 'Practical steps to plan your professional future and set goals for continuous development.',
+      author: 'Fahad Al-Otaibi',
+      date: 'February 1, 2025',
+      category: 'Skill Development',
       image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-02-01').getTime()
     },
     {
       id: 12,
-      title: 'أدوات تقنية تساعدك في البحث عن عمل',
-      excerpt: 'أهم الأدوات والتطبيقات التقنية التي يمكن أن تساعدك في رحلة البحث عن الوظيفة المناسبة.',
-      author: 'نواف الشمري',
-      date: '28 يناير 2025',
-      category: 'تقنية',
+      title: 'Tech Tools That Help You in Your Job Search',
+      excerpt: 'The most important tools and apps that can help you in your journey to find the right job.',
+      author: 'Nawaf Al-Shammari',
+      date: 'January 28, 2025',
+      category: 'Technology',
       image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-01-28').getTime()
     },
     {
       id: 13,
-      title: 'كيفية التفاوض على الراتب والمزايا',
-      excerpt: 'استراتيجيات وحيل ذكية للتفاوض على الراتب والمزايا الوظيفية بثقة واحترافية.',
-      author: 'ريم السبيعي',
-      date: '25 يناير 2025',
-      category: 'نصائح مهنية',
+      title: 'How to Negotiate Salary and Benefits',
+      excerpt: 'Smart strategies and tricks for negotiating salary and job benefits with confidence and professionalism.',
+      author: 'Reem Al-Subaie',
+      date: 'January 25, 2025',
+      category: 'Professional Tips',
       image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-01-25').getTime()
     },
     {
       id: 14,
-      title: 'السيرة الذاتية الإبداعية: متى تكون مناسبة؟',
-      excerpt: 'متى يجب استخدام سيرة ذاتية إبداعية ومتى تكون السيرة الذاتية التقليدية هي الخيار الأفضل.',
-      author: 'محمد النجدي',
-      date: '22 يناير 2025',
-      category: 'تصميم',
+      title: 'Creative Resumes: When Are They Appropriate?',
+      excerpt: 'When you should use a creative resume and when a traditional resume is the better choice.',
+      author: 'Mohammed Al-Najdi',
+      date: 'January 22, 2025',
+      category: 'Design',
       image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-01-22').getTime()
     },
     {
       id: 15,
-      title: 'كيفية عرض المشاريع السابقة في السيرة الذاتية',
-      excerpt: 'طريقة فعالة لعرض مشاريعك السابقة وإنجازاتك في سيرتك الذاتية لجذب انتباه مسؤولي التوظيف.',
-      author: 'سلمى الحارثي',
-      date: '18 يناير 2025',
-      category: 'كتابة',
+      title: 'How to Showcase Your Previous Projects in Your Resume',
+      excerpt: 'An effective way to display your previous projects and achievements in your resume to attract the attention of hiring managers.',
+      author: 'Salma Al-Harthy',
+      date: 'January 18, 2025',
+      category: 'Writing',
       image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=800',
       featured: false,
       timestamp: new Date('2025-01-18').getTime()
@@ -182,39 +182,39 @@ export default function Blog() {
   ];
 
   const categories = [
-    'جميع المقالات',
-    'نصائح مهنية',
-    'تصميم',
-    'كتابة',
-    'استراتيجيات',
-    'تطوير المهارات',
-    'تقنية'
+    'All Articles',
+    'Professional Tips',
+    'Design',
+    'Writing',
+    'Strategies',
+    'Skill Development',
+    'Technology'
   ];
 
   const popularTags = [
-    'سيرة ذاتية',
-    'توظيف',
-    'مهنة',
-    'تصميم',
-    'نصائح',
-    'وظائف',
-    'مهارات',
-    'نجاح',
-    'تطوير',
-    'مهني'
+    'Resume',
+    'Job Search',
+    'Career',
+    'Design',
+    'Tips',
+    'Jobs',
+    'Skills',
+    'Success',
+    'Development',
+    'Professional'
   ];
 
   const filteredPosts = useMemo(() => {
     let filtered = [...blogPosts];
 
-    if (selectedCategory !== 'جميع المقالات') {
+    if (selectedCategory !== 'All Articles') {
       filtered = filtered.filter(post => post.category === selectedCategory);
     }
 
     filtered = filtered.filter(post => !post.featured);
 
     filtered.sort((a, b) => {
-      if (sortOrder === 'الأحدث') {
+      if (sortOrder === 'Newest') {
         return b.timestamp - a.timestamp;
       } else {
         return a.timestamp - b.timestamp;
@@ -269,7 +269,7 @@ export default function Blog() {
   };
 
   const handleShare = (postId :number) => {
-    console.log('مشاركة المقال:', postId);
+    console.log('Sharing article:', postId);
   };
 
   const handleReadMore = (postId:number) => {
@@ -277,38 +277,38 @@ export default function Blog() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-right">
+    <div className="min-h-screen flex flex-col bg-white text-left">
       <Header />
 
-      <main className="flex-grow" dir="rtl">
+      <main className="flex-grow">
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-[#0F172A] mb-6 leading-tight">
-              المدونة
+              Blog
             </h1>
             <p className="text-xl text-[#1E293B] mb-8 max-w-3xl mx-auto leading-relaxed">
-              اكتشف أحدث النصائح والأدوات والإرشادات لإنشاء سيرة ذاتية احترافية تساعدك في الحصول على الوظيفة التي تستحقها
+              Discover the latest tips, tools, and guidance to create a professional resume that helps you land the job you deserve
             </p>
           </div>
         </section>
 
         {featuredPost && (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-gradient-to-br from-[#1A2035] to-[#0F1525] rounded-2xl overflow-hidden border border-gray-800">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden border border-gray-300">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                 <div className="p-8 md:p-12 flex flex-col justify-center">
                   <div className="mb-4">
-                    <span className="inline-block bg-blue-700/30 text-blue-400 text-sm font-medium px-4 py-1 rounded-full">
-                      مقال مميز
+                    <span className="inline-block bg-blue-100 text-black text-sm font-medium px-4 py-1 rounded-full">
+                      Featured Article
                     </span>
                   </div>
-                  <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight">
+                  <h2 className="text-2xl md:text-4xl font-bold text-black mb-4 leading-tight">
                     {featuredPost.title}
                   </h2>
-                  <p className="text-gray-300 text-lg mb-6 leading-relaxed">
+                  <p className="text-gray-700 text-lg mb-6 leading-relaxed">
                     {featuredPost.excerpt}
                   </p>
-                  <div className="flex items-center gap-4 mb-6 text-gray-400">
+                  <div className="flex items-center gap-4 mb-6 text-gray-600">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4" />
                       <span>{featuredPost.author}</span>
@@ -322,8 +322,8 @@ export default function Blog() {
                     onClick={() => handleReadMore(featuredPost.id)}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition w-fit flex items-center gap-2"
                   >
-                    اقرأ المقال
-                    <ChevronLeft className="w-5 h-5" />
+                    Read Article
+                    <ChevronLeft className="w-5 h-5 rotate-180" />
                   </button>
                 </div>
                 <div
@@ -340,20 +340,20 @@ export default function Blog() {
             <div className="lg:w-2/3">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">
-                  {selectedCategory === 'جميع المقالات' ? 'أحدث المقالات' : selectedCategory}
-                  <span className="text-gray-400 text-sm font-normal mr-2">
-                    ({filteredPosts.length} مقال)
+                  {selectedCategory === 'All Articles' ? 'Latest Articles' : selectedCategory}
+                  <span className="text-gray-400 text-sm font-normal ml-2">
+                    ({filteredPosts.length} articles)
                   </span>
                 </h2>
                 <div className="flex items-center gap-4">
-                  <span className="text-gray-400 text-sm">فرز حسب:</span>
+                  <span className="text-gray-400 text-sm">Sort by:</span>
                   <select
                     value={sortOrder}
                     onChange={(e) => handleSortChange(e.target.value)}
-                    className="bg-[#1A2035] border border-gray-800 text-white rounded-lg px-4 py-2 text-sm"
+                    className="bg-gray-100 border border-gray-300 text-black rounded-lg px-4 py-2 text-sm"
                   >
-                    <option value="الأحدث">الأحدث</option>
-                    <option value="الأقدم">الأقدم</option>
+                    <option value="Newest">Newest</option>
+                    <option value="Oldest">Oldest</option>
                   </select>
                 </div>
               </div>
@@ -361,28 +361,28 @@ export default function Blog() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                 {currentPosts.length > 0 ? (
                   currentPosts.map(post => (
-                    <div key={post.id} className="bg-[#1A2035] rounded-xl overflow-hidden border border-gray-800 hover:border-blue-700/50 transition group">
+                    <div key={post.id} className="bg-gray-100 rounded-xl overflow-hidden border border-gray-300 hover:border-blue-700/50 transition group">
                       <div
                         className="h-48 bg-cover bg-center"
                         style={{ backgroundImage: `url(${post.image})` }}
                       />
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
-                          <span className="text-blue-400 text-sm font-medium">
+                          <span className="text-blue-600 text-sm font-medium">
                             {post.category}
                           </span>
-                          <span className="text-gray-400 text-sm">
+                          <span className="text-gray-600 text-sm">
                             {post.date}
                           </span>
                         </div>
-                        <h3 className="text-xl font-bold cursor-pointer text-white mb-3 group-hover:text-blue-400 transition">
+                        <h3 className="text-xl font-bold cursor-pointer text-black mb-3 group-hover:text-black transition">
                           {post.title}
                         </h3>
-                        <p className="text-gray-300 text-sm mb-4">
+                        <p className="text-gray-700 text-sm mb-4">
                           {post.excerpt}
                         </p>
-                        <div className="flex items-center justify-between pt-4 border-t border-gray-800">
-                          <div className="flex items-center gap-4 text-gray-400 text-sm">
+                        <div className="flex items-center justify-between pt-4 border-t border-gray-300">
+                          <div className="flex items-center gap-4 text-gray-600 text-sm">
                             <div className="flex items-center gap-1">
                               <User className="w-4 h-4" />
                               <span>{post.author}</span>
@@ -391,16 +391,16 @@ export default function Blog() {
                           <div className="flex items-center gap-3">
                             <button
                               onClick={() => handleShare(post.id)}
-                              className="text-gray-400 hover:text-white transition"
+                              className="text-gray-400 hover:text-blue-600 transition"
                             >
                               <Share2 className="w-5 h-5" />
                             </button>
                             <button
                               onClick={() => handleReadMore(post.id)}
-                              className="text-blue-400 hover:text-blue-300 transition flex items-center gap-1"
+                              className="text-black hover:text-blue-600 transition flex items-center gap-1"
                             >
-                              <span className="text-sm">اقرأ المزيد</span>
-                              <ChevronLeft className="w-4 h-4" />
+                              <span className="text-sm">Read More</span>
+                              <ChevronLeft className="w-4 h-4 rotate-180" />
                             </button>
                           </div>
                         </div>
@@ -409,7 +409,7 @@ export default function Blog() {
                   ))
                 ) : (
                   <div className="col-span-2 text-center py-12">
-                    <p className="text-gray-400 text-lg">لا توجد مقالات في هذه الفئة</p>
+                    <p className="text-gray-400 text-lg">No articles in this category</p>
                   </div>
                 )}
               </div>
@@ -419,25 +419,25 @@ export default function Blog() {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`w-10 h-10 flex items-center justify-center bg-[#1A2035] border border-gray-800 rounded-lg transition ${
+                    className={`w-10 h-10 flex items-center justify-center bg-gray-100 border border-gray-300 rounded-lg transition ${
                       currentPage === 1 
-                        ? 'text-gray-600 cursor-not-allowed' 
-                        : 'text-white hover:bg-blue-700/20 hover:border-blue-700/50'
+                        ? 'text-gray-400 cursor-not-allowed' 
+                        : 'text-black hover:bg-blue-200 hover:border-blue-300'
                     }`}
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-4 h-4 rotate-180" />
                   </button>
 
                   {currentPage > 3 && totalPages > 5 && (
                     <>
                       <button
                         onClick={() => handlePageChange(1)}
-                        className="w-10 h-10 flex items-center justify-center bg-[#1A2035] border border-gray-800 text-white rounded-lg hover:bg-blue-700/20 hover:border-blue-700/50 transition"
+                        className="w-10 h-10 flex items-center justify-center bg-gray-100 border border-gray-300 text-black rounded-lg hover:bg-blue-200 hover:border-blue-300 transition"
                       >
                         1
                       </button>
                       {currentPage > 4 && (
-                        <span className="text-gray-400 px-2">...</span>
+                        <span className="text-gray-600 px-2">...</span>
                       )}
                     </>
                   )}
@@ -449,7 +449,7 @@ export default function Blog() {
                       className={`w-10 h-10 flex items-center justify-center border rounded-lg transition ${
                         currentPage === number
                           ? 'bg-blue-600 border-blue-600 text-white'
-                          : 'bg-[#1A2035] border-gray-800 text-gray-400 hover:text-white hover:bg-blue-700/20 hover:border-blue-700/50'
+                          : 'bg-gray-100 border-gray-300 text-black hover:text-white hover:bg-blue-200 hover:border-blue-300'
                       }`}
                     >
                       {number}
@@ -463,7 +463,7 @@ export default function Blog() {
                       )}
                       <button
                         onClick={() => handlePageChange(totalPages)}
-                        className="w-10 h-10 flex items-center justify-center bg-[#1A2035] border border-gray-800 text-white rounded-lg hover:bg-blue-700/20 hover:border-blue-700/50 transition"
+                        className="w-10 h-10 flex items-center justify-center bg-gray-100 border border-gray-300 text-black rounded-lg hover:bg-blue-200 hover:border-blue-300 transition"
                       >
                         {totalPages}
                       </button>
@@ -473,42 +473,42 @@ export default function Blog() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`w-10 h-10 flex items-center justify-center bg-[#1A2035] border border-gray-800 rounded-lg transition ${
+                    className={`w-10 h-10 flex items-center justify-center bg-gray-100 border border-gray-300 rounded-lg transition ${
                       currentPage === totalPages 
-                        ? 'text-gray-600 cursor-not-allowed' 
-                        : 'text-white hover:bg-blue-700/20 hover:border-blue-700/50'
+                        ? 'text-gray-400 cursor-not-allowed' 
+                        : 'text-black hover:bg-blue-200 hover:border-blue-300'
                     }`}
                   >
-                    <ChevronLeft className="w-4 h-4 rotate-180" />
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
                 </div>
               )}
 
               {filteredPosts.length > 0 && (
-                <div className="text-center mt-4 text-gray-400 text-sm">
-                  عرض المقالات من {(currentPage - 1) * postsPerPage + 1} إلى{' '}
-                  {Math.min(currentPage * postsPerPage, filteredPosts.length)} من أصل{' '}
-                  {filteredPosts.length} مقال
+                <div className="text-center mt-4 text-gray-600 text-sm">
+                  Showing articles {(currentPage - 1) * postsPerPage + 1} to{' '}
+                  {Math.min(currentPage * postsPerPage, filteredPosts.length)} of{' '}
+                  {filteredPosts.length} articles
                 </div>
               )}
             </div>
 
             <div className="lg:w-1/3">
               <div className="sticky top-6 space-y-8">
-                <div className="bg-[#1A2035] rounded-xl p-6 border border-gray-800">
-                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-blue-400" />
-                    فئات المقالات
+                <div className="bg-gray-100 rounded-xl p-6 border border-gray-300">
+                  <h3 className="text-xl font-bold text-black mb-4 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-black" />
+                    Article Categories
                   </h3>
                   <div className="space-y-2">
                     {categories.map((category, index) => (
                       <button
                         key={index}
                         onClick={() => handleCategorySelect(category)}
-                        className={`flex items-center justify-between w-full p-3 text-right rounded-lg hover:bg-[#0A0F1F] transition group ${
+                        className={`flex items-center justify-between w-full p-3 text-left rounded-lg hover:bg-gray-200 transition group ${
                           selectedCategory === category 
-                            ? 'bg-[#0A0F1F] text-white' 
-                            : 'text-gray-300 hover:text-white'
+                            ? 'bg-gray-200 text-black' 
+                            : 'text-gray-600 hover:text-black'
                         }`}
                       >
                         <span>{category}</span>
@@ -530,11 +530,11 @@ export default function Blog() {
 
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              مقالات قد تعجبك
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
+              Articles You Might Like
             </h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              اكتشف المزيد من المحتوى القيم الذي يساعدك في تطوير مسارك المهني
+            <p className="text-black max-w-2xl mx-auto">
+              Discover more valuable content that helps you develop your professional journey
             </p>
           </div>
 
@@ -543,25 +543,25 @@ export default function Blog() {
               .filter(post => post.id !== featuredPost?.id)
               .slice(0, 3)
               .map(post => (
-                <div key={post.id} className="bg-[#1A2035] rounded-xl p-6 border border-gray-800 hover:border-blue-700/50 transition group">
+                <div key={post.id} className="bg-gray-100 rounded-xl p-6 border border-gray-300 hover:border-blue-300 transition group">
                   <div className="mb-4">
-                    <span className="inline-block bg-blue-700/20 text-blue-400 text-xs font-medium px-3 py-1 rounded-full">
+                    <span className="inline-block bg-blue-100 text-black text-xs font-medium px-3 py-1 rounded-full">
                       {post.category}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-3 group-hover:text-blue-400 transition">
+                  <h3 className="text-lg font-bold text-black mb-3 group-hover:text-black transition">
                     {post.title}
                   </h3>
-                  <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">
                     {post.excerpt}
                   </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-800">
-                    <span className="text-gray-400 text-sm">{post.date}</span>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-300">
+                    <span className="text-gray-600 text-sm">{post.date}</span>
                     <button
                       onClick={() => handleReadMore(post.id)}
-                      className="text-blue-400 hover:text-blue-300 transition flex items-center gap-1 text-sm"
+                      className="text-black hover:text-blue-600 transition flex items-center gap-1 text-sm"
                     >
-                      <span>اقرأ المقال</span>
+                      <span>Read Article</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -571,12 +571,12 @@ export default function Blog() {
         </section>
 
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl p-12 md:p-16 text-center border border-blue-800/30">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              هل أنت مستعد لإنشاء سيرتك الذاتية؟
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-12 md:p-16 text-center border border-blue-300/50">
+            <h2 className="text-3xl md:text-5xl font-bold text-black mb-6">
+              Ready to Create Your Resume?
             </h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              ابدأ الآن مجاناً وأنشئ سيرة ذاتية احترافية تفتح لك أبواب الفرص
+            <p className="text-xl text-black mb-8 max-w-2xl mx-auto">
+              Start now for free and create a professional resume that opens doors to opportunities
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -584,14 +584,14 @@ export default function Blog() {
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition"
                 style={{ color: "white" }}
               >
-                ابدأ مجاناً
+                Start Free
               </Link>
               <Link
                 href="/templates"
-                className="bg-transparent hover:bg-white/10 text-white border border-white/30 px-8 py-4 rounded-lg text-lg font-semibold transition"
-                style={{ color: "white" }}
+                className="bg-transparent hover:bg-white/10 text-black border border-black/30 px-8 py-4 rounded-lg text-lg font-semibold transition"
+                style={{ color: "black" }}
               >
-                استعرض القوالب
+                Browse Templates
               </Link>
             </div>
           </div>
