@@ -2195,7 +2195,7 @@ const ProductsPage = () => {
                                     {product.discount ? (
                                         <div className="flex items-baseline gap-2 mb-1">
                                             <span className="text-2xl font-bold text-gray-900">
-                                                ${discountedPrice.toFixed(2)}
+                                                ${discountedPrice}
                                             </span>
                                             <span className="text-sm text-gray-400 line-through">
                                                 ${product.price}
@@ -2620,7 +2620,7 @@ const ProductsPage = () => {
                                                     <span className="text-sm font-medium text-gray-700">Final Price:</span>
                                                     <div className="flex items-baseline gap-2">
                                                         <span className="text-2xl font-bold text-gray-900">
-                                                            ${calculateDiscountedPrice(editModal.data.price, editModal.data.discount).toFixed(2)}
+                                                            ${calculateDiscountedPrice(editModal.data.price, editModal.data.discount)}
                                                         </span>
                                                         <span className="text-sm text-green-600 font-semibold">
                                                             Save ${(editModal.data.price - calculateDiscountedPrice(editModal.data.price, editModal.data.discount)).toFixed(2)}
