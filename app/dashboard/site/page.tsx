@@ -426,7 +426,10 @@ const SiteCreationPage = () => {
         setIsSubmitting(true);
         
         try {
-            // Prepare form data
+            // Get subdomain from form data
+            const subdomain = formData.subdomain.toLowerCase().trim();
+            
+            // Prepare form data for API
             const formDataToSend = new FormData();
             
             // Add all form fields
@@ -465,39 +468,11 @@ const SiteCreationPage = () => {
             setSuccessMessage('Your site has been created successfully!');
             showToast('Site created successfully!', 'success');
             
-            // Reset form after successful submission
+            // Redirect to subdomain after successful submission
             setTimeout(() => {
-                setFormData({
-                    subdomain: '',
-                    name: '',
-                    description: '',
-                    mobile: '',
-                    about: '',
-                    image: null,
-                    imageUrl: '',
-                    imageAlt: '',
-                    email: '',
-                    address: '',
-                    phone: '',
-                    addressEmail: '',
-                    periodOpen: '9:00 AM - 6:00 PM',
-                    maps: [{ id: 1, title: 'Main Office', mapUrl: '', address: '' }],
-                    privacyPolicy: '',
-                    termsOfUse: '',
-                    returnPolicy: '',
-                    whyUs: [{ id: 1, text: '' }],
-                    faqs: [{ id: 1, question: '', answer: '' }],
-                    socialMedia: [
-                        { id: 1, name: 'Facebook', icon: 'facebook', link: '', isCustom: false },
-                        { id: 2, name: 'Instagram', icon: 'instagram', link: '', isCustom: false }
-                    ],
-                    activeTab: 'basic',
-                    customSocialName: '',
-                    customSocialIcon: ''
-                });
-                setPreviewImage('');
-                setSuccessMessage('');
-            }, 2000);
+                const siteUrl = `http://localhost:3000/${subdomain}`;
+                window.location.href = siteUrl;
+            }, 1500);
 
         } catch (error) {
             console.error('Error creating site:', error);

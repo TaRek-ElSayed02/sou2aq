@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Enable experimental multi-zone for subdomain support
+  experimental: {
+    allowedOrigins: ['localhost', '*.localhost'],
+  },
 };
 
 export default nextConfig;
