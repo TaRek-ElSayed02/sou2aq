@@ -9,7 +9,7 @@ import {
     Github, Slack, Music, Twitch, Smile, Heart, Star,
     Zap, Rocket, Award, Code, Palette, Briefcase,
     Camera, Book, Headphones, Radio, GitBranch,
-    Search, Settings, Bell, Shield, Lock
+    Search, Settings, Bell, Shield, Lock,File
 } from 'lucide-react';
 import { useUser } from '../../hooks/useUser';
 
@@ -176,7 +176,7 @@ const SiteCreationPage = () => {
         { id: 'basic', label: 'Basic Info', icon: Globe },
         { id: 'about', label: 'About & Media', icon: ImageIcon },
         { id: 'contact', label: 'Contact Info', icon: Phone },
-        { id: 'content', label: 'Content', icon: Share2 },
+        { id: 'content', label: 'Content', icon: File },
         { id: 'policies', label: 'Policies', icon: CheckCircle },
         { id: 'social', label: 'Social Media', icon: Share2 }
     ];
@@ -1520,20 +1520,20 @@ const SiteCreationPage = () => {
 
                 {/* Tabs Navigation */}
                 <div className="mb-8">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
                         {tabs.map((tab) => {
                             const Icon = tab.icon;
                             return (
                                 <button
                                     key={tab.id}
                                     onClick={() => setFormData(prev => ({ ...prev, activeTab: tab.id }))}
-                                    className={`flex items-center gap-3 px-5 py-3.5 rounded-xl font-semibold transition-all ${formData.activeTab === tab.id
-                                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg'
+                                    className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2.5 sm:py-3.5 text-sm sm:text-base rounded-xl font-semibold transition-all ${formData.activeTab === tab.id
+                                        ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700'
                                         : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
                                         }`}
                                 >
-                                    <Icon className="w-5 h-5" />
-                                    {tab.label}
+                                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <span className="hidden sm:inline">{tab.label}</span>
                                 </button>
                             );
                         })}
@@ -1543,25 +1543,25 @@ const SiteCreationPage = () => {
                 {/* Form Container */}
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
                     {/* Progress Bar */}
-                    <div className="px-8 pt-8">
-                        <div className="flex items-center justify-between mb-2">
+                    <div className="px-4 sm:px-6 md:px-8 pt-6 md:pt-8">
+                        <div className="flex items-center justify-between mb-2 gap-1 sm:gap-2">
                             {tabs.map((tab, index) => (
                                 <React.Fragment key={tab.id}>
-                                    <div className="flex items-center">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${formData.activeTab === tab.id
-                                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
+                                    <div className="flex items-center gap-1.5 sm:gap-2">
+                                        <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm ${formData.activeTab === tab.id
+                                            ? 'bg-blue-600 text-white'
                                             : index < tabs.findIndex(t => t.id === formData.activeTab)
-                                                ? 'bg-green-100 text-green-700'
+                                                ? 'bg-blue-100 text-blue-700'
                                                 : 'bg-gray-100 text-gray-400'
                                             }`}>
                                             {index + 1}
                                         </div>
-                                        <span className={`ml-2 text-sm font-medium ${formData.activeTab === tab.id ? 'text-blue-700' : 'text-gray-500'}`}>
+                                        <span className={`hidden md:inline text-xs sm:text-sm font-medium ${formData.activeTab === tab.id ? 'text-blue-700' : 'text-gray-500'}`}>
                                             {tab.label}
                                         </span>
                                     </div>
                                     {index < tabs.length - 1 && (
-                                        <div className={`flex-1 h-1 mx-4 ${index < tabs.findIndex(t => t.id === formData.activeTab) ? 'bg-green-400' : 'bg-gray-200'}`}></div>
+                                        <div className={`flex-1 h-1 mx-1 sm:mx-2 md:mx-4 ${index < tabs.findIndex(t => t.id === formData.activeTab) ? 'bg-blue-400' : 'bg-gray-200'}`}></div>
                                     )}
                                 </React.Fragment>
                             ))}
@@ -1587,13 +1587,13 @@ const SiteCreationPage = () => {
                                         }
                                     }}
                                     disabled={formData.activeTab === 'basic'}
-                                    className={`flex items-center gap-3 px-6 py-3.5 rounded-xl font-semibold transition-all ${formData.activeTab === 'basic'
+                                    className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2.5 sm:py-3.5 text-sm sm:text-base rounded-xl font-semibold transition-all ${formData.activeTab === 'basic'
                                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                        : 'bg-white text-gray-700 hover:bg-gray-50 border-2 border-gray-300'
+                                        : 'bg-blue-50 text-blue-600 hover:bg-blue-100 border-2 border-blue-300'
                                         }`}
                                 >
-                                    <ChevronLeft className="w-5 h-5" />
-                                    Previous
+                                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <span className="hidden sm:inline">Previous</span>
                                 </button>
 
                                 <div className="flex items-center gap-4">
@@ -1609,25 +1609,25 @@ const SiteCreationPage = () => {
                                                     }));
                                                 }
                                             }}
-                                            className="flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl"
+                                            className="flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-2.5 sm:py-3.5 text-sm sm:text-base bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
                                         >
-                                            Next
-                                            <ChevronRight className="w-5 h-5" />
+                                            <span className="hidden sm:inline">Next</span>
+                                            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </button>
                                     ) : (
                                         <button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                                            className="flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-2.5 sm:py-3.5 text-sm sm:text-base bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
                                         >
                                             {isSubmitting ? (
                                                 <>
-                                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                    Creating Site...
+                                                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                    <span className="hidden sm:inline">Creating Site...</span>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Save className="w-5 h-5" />
+                                                    <Save className="w-4 h-4 sm:w-5 sm:h-5" />
                                                     Create My Site
                                                 </>
                                             )}
