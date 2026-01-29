@@ -7,233 +7,51 @@ import {
     Plus, Trash2, ShoppingCart, Minus, Eye,
     Check, CreditCard, Truck, Shield, RefreshCw
 } from 'lucide-react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchCart, removeFromCart, updateQuantityLocally, updateCartQuantity, removeItemLocally } from '@/store/slices/cartSlice';
+import { useRouter } from 'next/navigation';
 
 // أنواع البيانات
 interface CartItem {
-    id: number;
-    productId: number;
-    name: string;
-    category: string;
-    price: number;
-    discount?: number;
-    rating: number;
-    description: string;
-    image: string;
-    stock: number;
-    sizes: string[];
-    material: string;
-    sku: string;
+    cart_id: number;
     quantity: number;
-    addedDate: string;
-}
-
-interface ProductDetails {
     id: number;
+    user_id: string;
     name: string;
+    url: string;
     category: string;
     price: number;
     discount?: number;
-    rating: number;
-    reviews: number;
+    image?: string;
+    imgAlt?: string;
+    quantityInStock: number;
+    availableSizes: string;
+    materials: string;
     description: string;
-    image: string;
-    stock: number;
-    sizes: string[];
-    material: string;
     seoTitle: string;
     seoDescription: string;
-    specifications: {
-        [key: string]: string;
-    };
+    created_at?: string;
 }
 
+
+
 export default function CartPage() {
-    // بيانات عربة التسوق الأولية
-    const initialCartItems: CartItem[] = [
-        {
-            id: 1,
-            productId: 2,
-            name: 'Nike Air Max 270',
-            category: 'Footwear',
-            price: 149.99,
-            rating: 4.5,
-            description: 'Revolutionary sneakers with maximum cushioning and iconic Air Max technology for all-day comfort.',
-            image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop',
-            stock: 120,
-            sizes: ['US 7', 'US 8', 'US 9'],
-            material: 'Mesh & Synthetic Leather',
-            sku: 'NAM270-2024',
-            quantity: 1,
-            addedDate: '2024-01-15'
-        },
-        {
-            id: 2,
-            productId: 4,
-            name: 'MacBook Pro 16-inch',
-            category: 'Electronics',
-            price: 2499.99,
-            rating: 4.9,
-            description: 'Powerful laptop with M2 Pro chip, stunning Liquid Retina XDR display, and all-day battery life for professionals.',
-            image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop',
-            stock: 18,
-            sizes: ['16-inch'],
-            material: 'Aluminum',
-            sku: 'MBP16-M2',
-            quantity: 1,
-            addedDate: '2024-01-14'
-        },
-        {
-            id: 3,
-            productId: 7,
-            name: 'iPad Pro 12.9-inch',
-            category: 'Electronics',
-            price: 1099.99,
-            discount: 12,
-            rating: 4.7,
-            description: 'Powerful tablet with M2 chip, stunning Liquid Retina display, and Apple Pencil support for creatives.',
-            image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop',
-            stock: 32,
-            sizes: ['256GB', '512GB'],
-            material: 'Aluminum',
-            sku: 'IPADPRO-129',
-            quantity: 2,
-            addedDate: '2024-01-13'
-        },
-        {
-            id: 4,
-            productId: 11,
-            name: 'Wireless Gaming Mouse',
-            category: 'Electronics',
-            price: 89.99,
-            discount: 30,
-            rating: 4.6,
-            description: 'High-precision gaming mouse with ultra-fast wireless connectivity and customizable RGB lighting.',
-            image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=400&fit=crop',
-            stock: 120,
-            sizes: ['One Size'],
-            material: 'Plastic & Rubber',
-            sku: 'WGM-2024',
-            quantity: 3,
-            addedDate: '2024-01-12'
-        }
-    ];
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+    const { items: cartItems, loading, error } = useAppSelector(state => state.cart);
+    const { user } = useAppSelector(state => state.auth);
 
-    // تفاصيل المنتجات الكاملة
-    const productDetails: ProductDetails[] = [
-        {
-            id: 2,
-            name: 'Nike Air Max 270',
-            category: 'Footwear',
-            price: 149.99,
-            rating: 4.5,
-            reviews: 856,
-            description: 'Revolutionary sneakers with maximum cushioning and iconic Air Max technology for all-day comfort. Features breathable mesh upper and responsive cushioning.',
-            image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop',
-            stock: 120,
-            sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12'],
-            material: 'Mesh & Synthetic Leather',
-            seoTitle: 'Nike Air Max 270 - Premium Running Shoes',
-            seoDescription: 'Experience ultimate comfort with Nike Air Max 270 running shoes.',
-            specifications: {
-                'Brand': 'Nike',
-                'Model': 'Air Max 270',
-                'Color': 'Black/White',
-                'Weight': '320g',
-                'Cushioning': 'Air Max Unit',
-                'Closure': 'Lace-up',
-                'Sole': 'Rubber',
-                'Warranty': '1 Year'
-            }
-        },
-        {
-            id: 4,
-            name: 'MacBook Pro 16-inch',
-            category: 'Electronics',
-            price: 2499.99,
-            rating: 4.9,
-            reviews: 2105,
-            description: 'Powerful laptop with M2 Pro chip, stunning Liquid Retina XDR display, and all-day battery life for professionals. Perfect for video editing, 3D rendering, and software development.',
-            image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop',
-            stock: 18,
-            sizes: ['16-inch'],
-            material: 'Aluminum',
-            seoTitle: 'MacBook Pro 16-inch - Professional Laptop',
-            seoDescription: 'Professional-grade laptop with M2 Pro chip and stunning display.',
-            specifications: {
-                'Brand': 'Apple',
-                'Model': 'MacBook Pro 16-inch',
-                'Processor': 'M2 Pro (12-core)',
-                'RAM': '16GB',
-                'Storage': '512GB SSD',
-                'Display': '16.2" Liquid Retina XDR',
-                'Graphics': '19-core GPU',
-                'Battery': 'Up to 22 hours',
-                'OS': 'macOS Ventura',
-                'Warranty': '1 Year Apple Care'
-            }
-        },
-        {
-            id: 7,
-            name: 'iPad Pro 12.9-inch',
-            category: 'Electronics',
-            price: 1099.99,
-            discount: 12,
-            rating: 4.7,
-            reviews: 945,
-            description: 'Powerful tablet with M2 chip, stunning Liquid Retina display, and Apple Pencil support for creatives. Ideal for artists, designers, and professionals on the go.',
-            image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop',
-            stock: 32,
-            sizes: ['128GB', '256GB', '512GB', '1TB'],
-            material: 'Aluminum',
-            seoTitle: 'iPad Pro 12.9-inch - Professional Tablet',
-            seoDescription: 'Professional tablet with M2 chip for creative work.',
-            specifications: {
-                'Brand': 'Apple',
-                'Model': 'iPad Pro 12.9-inch',
-                'Processor': 'M2 Chip',
-                'RAM': '8GB',
-                'Storage': '256GB',
-                'Display': '12.9" Liquid Retina XDR',
-                'Camera': '12MP Wide, 10MP Ultra Wide',
-                'Battery': 'Up to 10 hours',
-                'Apple Pencil': '2nd Generation Support',
-                'Magic Keyboard': 'Compatible',
-                'Warranty': '1 Year'
-            }
-        },
-        {
-            id: 11,
-            name: 'Wireless Gaming Mouse',
-            category: 'Electronics',
-            price: 89.99,
-            discount: 30,
-            rating: 4.6,
-            reviews: 765,
-            description: 'High-precision gaming mouse with ultra-fast wireless connectivity and customizable RGB lighting. Features programmable buttons and ergonomic design for extended gaming sessions.',
-            image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=400&fit=crop',
-            stock: 120,
-            sizes: ['One Size'],
-            material: 'Plastic & Rubber',
-            seoTitle: 'Wireless Gaming Mouse - Gaming Accessory',
-            seoDescription: 'High-performance wireless gaming mouse for gamers.',
-            specifications: {
-                'Brand': 'ProGamer',
-                'Model': 'PG-X1',
-                'Connectivity': '2.4GHz Wireless / Bluetooth',
-                'Sensor': 'Optical 16000 DPI',
-                'Buttons': '8 Programmable',
-                'RGB Lighting': '16.8 Million Colors',
-                'Battery': 'Rechargeable (40 hours)',
-                'Weight': '85g',
-                'Polling Rate': '1000Hz',
-                'Warranty': '2 Years'
-            }
+    // جلب السلة عند تحميل الصفحة
+    useEffect(() => {
+        if (user?.id) {
+            dispatch(fetchCart(user.id) as any);
+        } else {
+            // إذا لم يكن هناك مستخدم، أعد التوجيه إلى صفحة تسجيل الدخول
+            router.push('/auth/login');
         }
-    ];
-
+    }, [user?.id, dispatch, router]);
     // الحالات
-    const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
-    const [selectedProduct, setSelectedProduct] = useState<ProductDetails | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<CartItem | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [toast, setToast] = useState<{
         show: boolean;
@@ -298,48 +116,50 @@ export default function CartPage() {
     };
 
     // زيادة كمية المنتج
-    const increaseQuantity = (itemId: number) => {
-        setCartItems(prevItems => 
-            prevItems.map(item => {
-                if (item.id === itemId) {
-                    const newQuantity = item.quantity + 1;
-                    if (newQuantity <= item.stock) {
-                        showToast(`Increased quantity of ${item.name} to ${newQuantity}`, 'info');
-                        return { ...item, quantity: newQuantity };
-                    } else {
-                        showToast(`Cannot exceed available stock of ${item.stock}`, 'error');
-                    }
-                }
-                return item;
-            })
-        );
+    const increaseQuantity = async (cartId: number, currentQuantity: number, stock: number) => {
+        console.log('🔼 Increase clicked - cartId:', cartId, 'current:', currentQuantity, 'stock:', stock);
+        if (currentQuantity < stock) {
+            const newQuantity = currentQuantity + 1;
+            console.log('📤 Dispatching updateCartQuantity:', { cartId, quantity: newQuantity });
+            try {
+                const result = await dispatch(updateCartQuantity({ cartId, quantity: newQuantity }) as any);
+                console.log('✅ Dispatch result:', result);
+                showToast(`Quantity increased to ${newQuantity}`, 'success');
+            } catch (error) {
+                console.error('❌ Dispatch error:', error);
+                showToast('Failed to update quantity', 'error');
+            }
+        } else {
+            showToast(`Cannot exceed available stock of ${stock}`, 'error');
+        }
     };
 
     // تقليل كمية المنتج
-    const decreaseQuantity = (itemId: number) => {
-        setCartItems(prevItems => 
-            prevItems.map(item => {
-                if (item.id === itemId && item.quantity > 1) {
-                    const newQuantity = item.quantity - 1;
-                    showToast(`Decreased quantity of ${item.name} to ${newQuantity}`, 'info');
-                    return { ...item, quantity: newQuantity };
-                }
-                return item;
-            })
-        );
+    const decreaseQuantity = async (cartId: number, currentQuantity: number) => {
+        console.log('🔽 Decrease clicked - cartId:', cartId, 'current:', currentQuantity);
+        if (currentQuantity > 1) {
+            const newQuantity = currentQuantity - 1;
+            console.log('📤 Dispatching updateCartQuantity:', { cartId, quantity: newQuantity });
+            try {
+                const result = await dispatch(updateCartQuantity({ cartId, quantity: newQuantity }) as any);
+                console.log('✅ Dispatch result:', result);
+                showToast(`Quantity decreased to ${newQuantity}`, 'success');
+            } catch (error) {
+                console.error('❌ Dispatch error:', error);
+                showToast('Failed to update quantity', 'error');
+            }
+        } else {
+            showToast('Quantity cannot be less than 1', 'error');
+        }
     };
 
     // إزالة منتج من العربة
-    const removeItem = (itemId: number, itemName: string) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-        showToast(`"${itemName}" has been removed from cart`, 'success');
-    };
-
-    // فتح مودال تفاصيل المنتج
-    const openProductDetails = (productId: number) => {
-        const product = productDetails.find(p => p.id === productId);
-        if (product) {
-            setSelectedProduct(product);
+    const removeItem = async (cartId: number, itemName: string) => {
+        try {
+            await dispatch(removeFromCart(cartId) as any);
+            showToast(`"${itemName}" has been removed from cart`, 'success');
+        } catch (error) {
+            showToast('Failed to remove item from cart', 'error');
         }
     };
 
@@ -372,20 +192,13 @@ export default function CartPage() {
     // تأكيد الشراء
     const handleCheckout = () => {
         showToast('Your order has been placed successfully!', 'success');
-        // في تطبيق حقيقي، هنا ستكون عملية الدفع وإرسال الطلب
         console.log('Checkout processed:', cartItems);
     };
 
     // إعادة تعيين العربة
     const clearCart = () => {
-        setCartItems([]);
+        // سيتم حذف من Redux عند حذف جميع المنتجات
         showToast('Cart has been cleared', 'info');
-    };
-
-    // إضافة منتجات افتراضية للعربة (لأغراض العرض)
-    const addSampleItems = () => {
-        setCartItems(initialCartItems);
-        showToast('Sample items added to cart', 'info');
     };
 
     return (
@@ -418,14 +231,14 @@ export default function CartPage() {
                                     <span className="xs:hidden">Clear</span>
                                 </button>
                             )}
-                            {cartItems.length === 0 && (
+                            {cartItems.length === 0 && !loading && (
                                 <button
-                                    onClick={addSampleItems}
+                                    onClick={() => router.push('/mysite/products')}
                                     className="px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 rounded-xl font-medium hover:from-blue-100 hover:to-blue-200 transition-all flex items-center justify-center gap-2 flex-1 sm:flex-none text-sm sm:text-base"
                                 >
                                     <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                                    <span className="hidden xs:inline">Add Sample Items</span>
-                                    <span className="xs:hidden">Add Samples</span>
+                                    <span className="hidden xs:inline">Browse Products</span>
+                                    <span className="xs:hidden">Browse</span>
                                 </button>
                             )}
                         </div>
@@ -465,18 +278,18 @@ export default function CartPage() {
                                     const savings = item.discount ? (item.price - discountedPrice) * item.quantity : 0;
 
                                     return (
-                                        <div key={item.id} className="p-4 sm:p-5 md:p-6 hover:bg-gray-50 transition-colors">
+                                        <div key={item.cart_id} className="p-4 sm:p-5 md:p-6 hover:bg-gray-50 transition-colors">
                                             {/* تصميم للأجهزة المحمولة */}
                                             {isMobile ? (
                                                 <div className="space-y-4">
                                                     {/* صورة المنتج واسمه */}
                                                     <div className="flex items-start gap-3">
                                                         <div
-                                                            onClick={() => openProductDetails(item.productId)}
+                                                            onClick={() => setSelectedProduct(item)}
                                                             className="cursor-pointer w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0"
                                                         >
                                                             <img
-                                                                src={item.image}
+                                                                src={`http://localhost:5000${item.image}`}
                                                                 alt={item.name}
                                                                 className="w-full h-full object-cover"
                                                             />
@@ -484,7 +297,7 @@ export default function CartPage() {
                                                         
                                                         <div className="flex-1 min-w-0">
                                                             <button
-                                                                onClick={() => openProductDetails(item.productId)}
+                                                                onClick={() => setSelectedProduct(item)}
                                                                 className="text-left w-full"
                                                             >
                                                                 <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
@@ -495,9 +308,8 @@ export default function CartPage() {
                                                                 <span className="text-xs font-medium px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
                                                                     {item.category}
                                                                 </span>
-                                                                <span className="text-xs text-gray-500 truncate">SKU: {item.sku}</span>
+                                                                <span className="text-xs text-gray-500 truncate">ID: {item.id}</span>
                                                             </div>
-                                                            {renderStars(item.rating)}
                                                         </div>
                                                     </div>
 
@@ -528,8 +340,8 @@ export default function CartPage() {
                                                             <div className="text-gray-500 text-xs mb-1">Quantity</div>
                                                             <div className="flex items-center gap-2">
                                                                 <button
-                                                                    onClick={() => decreaseQuantity(item.id)}
-                                                                    className="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                                                                    onClick={() => decreaseQuantity(item.cart_id, item.quantity)}
+                                                                    className="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
                                                                     disabled={item.quantity <= 1}
                                                                 >
                                                                     <Minus className="w-3 h-3 text-gray-600" />
@@ -538,14 +350,15 @@ export default function CartPage() {
                                                                 <div className="w-12 text-center">
                                                                     <div className="font-bold text-gray-900">{item.quantity}</div>
                                                                     <div className="text-xs text-gray-500">
-                                                                        Max: {item.stock}
+                                                                        Max: {item.quantityInStock}
                                                                     </div>
                                                                 </div>
                                                                 
                                                                 <button
-                                                                    onClick={() => increaseQuantity(item.id)}
-                                                                    className="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                                                                    disabled={item.quantity >= item.stock}
+                                                                    onClick={() => increaseQuantity(item.cart_id, item.quantity, item.quantityInStock)}
+                                                                    className="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                                                                    disabled={item.quantity >= item.quantityInStock}
+                                                                    disabled={item.quantity >= item.quantityInStock}
                                                                 >
                                                                     <Plus className="w-3 h-3 text-gray-600" />
                                                                 </button>
@@ -568,7 +381,7 @@ export default function CartPage() {
                                                                 )}
                                                             </div>
                                                             <button
-                                                                onClick={() => removeItem(item.id, item.name)}
+                                                                onClick={() => removeItem(item.cart_id, item.name)}
                                                                 className="inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700 transition-colors"
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
@@ -579,14 +392,14 @@ export default function CartPage() {
 
                                                     {/* المقاسات المتاحة */}
                                                     <div className="border-t border-gray-100 pt-3">
-                                                        <p className="text-xs text-gray-500 mb-1">Selected Sizes:</p>
+                                                        <p className="text-xs text-gray-500 mb-1">Available Sizes:</p>
                                                         <div className="flex flex-wrap gap-1">
-                                                            {item.sizes.map((size) => (
+                                                            {item.availableSizes.split(',').map((size) => (
                                                                 <span
-                                                                    key={size}
+                                                                    key={size.trim()}
                                                                     className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded"
                                                                 >
-                                                                    {size}
+                                                                    {size.trim()}
                                                                 </span>
                                                             ))}
                                                         </div>
@@ -600,11 +413,11 @@ export default function CartPage() {
                                                         <div className="flex items-start gap-3 md:gap-4">
                                                             {/* صورة المنتج */}
                                                             <div
-                                                                onClick={() => openProductDetails(item.productId)}
+                                                                onClick={() => setSelectedProduct(item)}
                                                                 className="cursor-pointer w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0"
                                                             >
                                                                 <img
-                                                                    src={item.image}
+                                                                    src={`http://localhost:5000${item.image}`}
                                                                     alt={item.name}
                                                                     className="w-full h-full object-cover"
                                                                 />
@@ -613,7 +426,7 @@ export default function CartPage() {
                                                             {/* تفاصيل المنتج */}
                                                             <div className="flex-1 min-w-0">
                                                                 <button
-                                                                    onClick={() => openProductDetails(item.productId)}
+                                                                    onClick={() => setSelectedProduct(item)}
                                                                     className="text-left group w-full"
                                                                 >
                                                                     <h4 className="cursor-pointer font-semibold text-gray-900 text-sm sm:text-base mb-1 group-hover:text-blue-600 transition-colors truncate">
@@ -623,22 +436,20 @@ export default function CartPage() {
                                                                         <span className="text-xs font-medium px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
                                                                             {item.category}
                                                                         </span>
-                                                                        <span className="text-xs text-gray-500 truncate">SKU: {item.sku}</span>
+                                                                        <span className="text-xs text-gray-500 truncate">ID: {item.id}</span>
                                                                     </div>
                                                                 </button>
                                                                 
-                                                                {renderStars(item.rating)}
-                                                                
                                                                 {/* المقاسات المتاحة - مخفي على الشاشات الصغيرة */}
                                                                 <div className="hidden sm:block mt-3">
-                                                                    <p className="text-xs text-gray-500 mb-1">Selected Sizes:</p>
+                                                                    <p className="text-xs text-gray-500 mb-1">Available Sizes:</p>
                                                                     <div className="flex flex-wrap gap-1">
-                                                                        {item.sizes.map((size) => (
+                                                                        {item.availableSizes.split(',').map((size) => (
                                                                             <span
-                                                                                key={size}
+                                                                                key={size.trim()}
                                                                                 className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded"
                                                                             >
-                                                                                {size}
+                                                                                {size.trim()}
                                                                             </span>
                                                                         ))}
                                                                     </div>
@@ -674,8 +485,8 @@ export default function CartPage() {
                                                     <div className="col-span-6 sm:col-span-3">
                                                         <div className="flex items-center gap-2 sm:gap-3">
                                                             <button
-                                                                onClick={() => decreaseQuantity(item.id)}
-                                                                className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                                                                onClick={() => decreaseQuantity(item.cart_id, item.quantity)}
+                                                                className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
                                                                 disabled={item.quantity <= 1}
                                                             >
                                                                 <Minus className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
@@ -684,15 +495,14 @@ export default function CartPage() {
                                                             <div className="w-12 sm:w-16 text-center">
                                                                 <div className="font-bold text-gray-900 text-sm sm:text-base">{item.quantity}</div>
                                                                 <div className="text-xs text-gray-500">
-                                                                    Max: {item.stock} 
-                                                                    {/* العدد ف الستوك  */}
+                                                                    Max: {item.quantityInStock}
                                                                 </div>
                                                             </div>
                                                             
                                                             <button
-                                                                onClick={() => increaseQuantity(item.id)}
-                                                                className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                                                                disabled={item.quantity >= item.stock}
+                                                                onClick={() => increaseQuantity(item.cart_id, item.quantity, item.quantityInStock)}
+                                                                className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                                                                disabled={item.quantity >= item.quantityInStock}
                                                             >
                                                                 <Plus className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                                                             </button>
@@ -711,7 +521,7 @@ export default function CartPage() {
                                                                 </div>
                                                             )}
                                                             <button
-                                                                onClick={() => removeItem(item.id, item.name)}
+                                                                onClick={() => removeItem(item.cart_id, item.name)}
                                                                 className="cursor-pointer inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700 transition-colors"
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
@@ -729,14 +539,20 @@ export default function CartPage() {
                                     <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                                         <ShoppingCart className="w-8 h-8 text-gray-400" />
                                     </div>
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Your cart is empty</h3>
-                                    <p className="text-gray-600 mb-6">Add some products to your cart to see them here</p>
-                                    <button
-                                        onClick={addSampleItems}
-                                        className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl"
-                                    >
-                                        Browse Products
-                                    </button>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                        {loading ? 'Loading cart...' : 'Your cart is empty'}
+                                    </h3>
+                                    <p className="text-gray-600 mb-6">
+                                        {loading ? 'Please wait...' : 'Add some products to your cart to see them here'}
+                                    </p>
+                                    {!loading && (
+                                        <button
+                                            onClick={() => router.push('/mysite/products')}
+                                            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl"
+                                        >
+                                            Browse Products
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -867,45 +683,37 @@ export default function CartPage() {
                                 <div>
                                     <div className="rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100">
                                         <img
-                                            src={selectedProduct.image}
+                                            src={`http://localhost:5000${selectedProduct.image}`}
                                             alt={selectedProduct.name}
                                             className="w-full h-auto object-cover"
                                         />
                                     </div>
                                     
-                                    {/* السعر والتقييم */}
+                                    {/* السعر */}
                                     <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200">
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                                            <div>
-                                                <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-                                                    ${calculateDiscountedPrice(selectedProduct.price, selectedProduct.discount).toFixed(2)}
+                                        <div className="mb-4">
+                                            <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                                                ${calculateDiscountedPrice(selectedProduct.price, selectedProduct.discount).toFixed(2)}
+                                            </div>
+                                            {selectedProduct.discount && (
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <span className="text-base sm:text-lg text-gray-400 line-through">
+                                                        ${selectedProduct.price.toFixed(2)}
+                                                    </span>
+                                                    <span className="px-2 sm:px-3 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full text-xs sm:text-sm font-bold">
+                                                        -{selectedProduct.discount}% OFF
+                                                    </span>
                                                 </div>
-                                                {selectedProduct.discount && (
-                                                    <div className="flex items-center gap-2 mt-2">
-                                                        <span className="text-base sm:text-lg text-gray-400 line-through">
-                                                            ${selectedProduct.price.toFixed(2)}
-                                                        </span>
-                                                        <span className="px-2 sm:px-3 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full text-xs sm:text-sm font-bold">
-                                                            -{selectedProduct.discount}% OFF
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="text-left sm:text-right">
-                                                {renderStars(selectedProduct.rating)}
-                                                <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                                                    {selectedProduct.reviews.toLocaleString()} reviews
-                                                </p>
-                                            </div>
+                                            )}
                                         </div>
                                         
                                         {/* المخزون */}
-                                        <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
+                                        {/* <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
                                             <span className="font-medium text-gray-700 text-sm sm:text-base">Stock Available:</span>
-                                            <span className={`font-bold text-sm sm:text-base ${selectedProduct.stock > 10 ? 'text-green-600' : 'text-yellow-600'}`}>
-                                                {selectedProduct.stock} units
+                                            <span className={`font-bold text-sm sm:text-base ${selectedProduct.quantityInStock > 10 ? 'text-green-600' : 'text-yellow-600'}`}>
+                                                {selectedProduct.quantityInStock} units
                                             </span>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
 
@@ -919,79 +727,51 @@ export default function CartPage() {
                                         </p>
                                     </div>
 
-                                    {/* المواصفات */}
-                                    <div className="mb-6">
-                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Specifications</h3>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                                            {Object.entries(selectedProduct.specifications).map(([key, value]) => (
-                                                <div key={key} className="bg-gray-50 rounded-lg p-2 sm:p-3">
-                                                    <div className="text-xs sm:text-sm text-gray-500">{key}</div>
-                                                    <div className="font-medium text-gray-900 text-sm sm:text-base truncate">{value}</div>
-                                                </div>
-                                            ))}
+                                    {/* المقاسات المتاحة */}
+                                    {selectedProduct.availableSizes && (
+                                        <div className="mb-4 sm:mb-6">
+                                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Available Sizes</h3>
+                                            <div className="flex flex-wrap gap-1 sm:gap-2">
+                                                {selectedProduct.availableSizes.split(',').map((size) => (
+                                                    <div
+                                                        key={size.trim()}
+                                                        className="px-2 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg font-medium border border-blue-100 text-xs sm:text-sm"
+                                                    >
+                                                        {size.trim()}
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    {/* المقاسات */}
-                                    <div className="mb-4 sm:mb-6">
-                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Available Sizes</h3>
-                                        <div className="flex flex-wrap gap-1 sm:gap-2">
-                                            {selectedProduct.sizes.map((size) => (
-                                                <div
-                                                    key={size}
-                                                    className="px-2 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg font-medium border border-blue-100 text-xs sm:text-sm"
-                                                >
-                                                    {size}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
+                                    )}
 
                                     {/* المواد */}
+                                    {selectedProduct.materials && (
+                                        <div className="mb-6">
+                                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Materials</h3>
+                                            <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-lg">
+                                                <span className="font-medium text-gray-900 text-sm sm:text-base">{selectedProduct.materials}</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* معرف المنتج */}
                                     <div className="mb-6">
-                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Material</h3>
+                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Stock Quantity</h3>
                                         <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-lg">
-                                            <span className="font-medium text-gray-900 text-sm sm:text-base">{selectedProduct.material}</span>
+                                            <span className="font-medium text-gray-900 text-sm sm:text-base">{selectedProduct.quantityInStock} Piece</span>
                                         </div>
                                     </div>
 
-                                    {/* زر إضافة إلى العربة */}
-                                    <div className="mt-6">
+                                    {/* زر إغلاق */}
+                                    {/* <div className="mt-6">
                                         <button
-                                            onClick={() => {
-                                                // إضافة المنتج إلى العربة
-                                                const existingItem = cartItems.find(item => item.productId === selectedProduct.id);
-                                                if (existingItem) {
-                                                    increaseQuantity(existingItem.id);
-                                                } else {
-                                                    const newItem: CartItem = {
-                                                        id: Math.max(...cartItems.map(item => item.id), 0) + 1,
-                                                        productId: selectedProduct.id,
-                                                        name: selectedProduct.name,
-                                                        category: selectedProduct.category,
-                                                        price: selectedProduct.price,
-                                                        discount: selectedProduct.discount,
-                                                        rating: selectedProduct.rating,
-                                                        description: selectedProduct.description,
-                                                        image: selectedProduct.image,
-                                                        stock: selectedProduct.stock,
-                                                        sizes: selectedProduct.sizes,
-                                                        material: selectedProduct.material,
-                                                        sku: selectedProduct.seoTitle.substring(0, 8).toUpperCase(),
-                                                        quantity: 1,
-                                                        addedDate: new Date().toISOString().split('T')[0]
-                                                    };
-                                                    setCartItems(prev => [...prev, newItem]);
-                                                    showToast(`"${selectedProduct.name}" added to cart`, 'success');
-                                                }
-                                                setSelectedProduct(null);
-                                            }}
-                                            className="w-full py-3 sm:py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base"
+                                            onClick={() => setSelectedProduct(null)}
+                                            className="w-full py-3 sm:py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-semibold hover:from-gray-700 hover:to-gray-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base"
                                         >
-                                            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                                            Add to Cart
+                                            <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                                            Close
                                         </button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>

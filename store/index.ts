@@ -57,6 +57,8 @@ import authReducer from "./slices/authSlice";
 import userReducer from "./userStore";
 import productReducer from "./productStore";
 import blogReducer from "./blogStore"; // Add this
+import wishlistReducer from "./slices/wishlistSlice"; // Add wishlist
+import cartReducer from "./slices/cartSlice"; // Add cart
 import {
   persistStore,
   persistReducer,
@@ -94,6 +96,8 @@ export const store = configureStore({
     user: userReducer,
     products: productReducer,
     blog: persistedBlogReducer, // Add this
+    wishlist: wishlistReducer, // Add wishlist reducer
+    cart: cartReducer, // Add cart reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -108,8 +112,12 @@ export const store = configureStore({
           "user/uploadProfileImage/pending",
           "products/createProduct/pending",
           "products/updateProduct/pending",
-          "blog/createBlogPost/pending", // Add blog actions
+          "blog/createBlogPost/pending",
           "blog/updateBlogPost/pending",
+          "wishlist/fetchWishlist/pending",
+          "cart/fetchCart/pending",
+          "cart/updateQuantity/pending",
+          "cart/removeFromCart/pending",
         ],
       },
     }),
