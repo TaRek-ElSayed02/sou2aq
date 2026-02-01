@@ -6,6 +6,7 @@ import { store, persistor } from "@/store";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUser } from "@/store/userStore";
+import { Toaster } from "react-hot-toast";
 
 function SyncAuthWithUser() {
   const dispatch = useAppDispatch();
@@ -28,6 +29,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SyncAuthWithUser />
+        <Toaster position="top-right" />
         {children}
       </PersistGate>
     </Provider>

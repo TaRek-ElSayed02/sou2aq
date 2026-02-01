@@ -25,7 +25,9 @@ export const getMenuItemsByRole = (role: string | null | undefined) => {
     );
   } else if (role === 'superAdmin') {
     menuItems.push(
-      { icon: 'BookOpen', label: 'Blogs', path: '/dashboard/blog' }
+      { icon: 'BookOpen', label: 'Blogs', path: '/dashboard/blog' },
+      { icon: 'Globe2', label: 'Sites', path: '/dashboard/sites' },
+      { icon: 'Users', label: 'Users', path: '/dashboard/users' }
     );
   } else if (role === 'user') {
     menuItems.push(
@@ -73,6 +75,8 @@ export const roleAccessMap: Record<string, string[]> = {
     '/dashboard/team',
     '/dashboard/settings',
     '/dashboard/blog',
+    '/dashboard/sites',
+    '/dashboard/users',
   ],
 };
 

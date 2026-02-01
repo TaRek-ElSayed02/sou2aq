@@ -99,13 +99,13 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         <>
             {isOpen && (
                 <div 
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-[9998] lg:hidden" 
                     onClick={onClose}
                     aria-hidden="true"
                 ></div>
             )}
 
-            <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} flex flex-col h-screen overflow-y-auto`}>
+            <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-[9999] transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} flex flex-col h-screen overflow-y-auto`}>
                 <div className="p-6 border-b border-gray-200 flex items-center justify-between">
                     <Link href="/dashboard" className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-blue-600 rounded-lg"></div>

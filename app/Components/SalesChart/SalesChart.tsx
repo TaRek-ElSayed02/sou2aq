@@ -40,45 +40,43 @@ export const SalesChart = () => {
         </select>
       </div>
       
-      <div className="w-full overflow-x-auto md:overflow-x-hidden">
-        <div className="min-w-[800px] h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis 
-                dataKey="x" 
-                tick={{ fill: '#9ca3af', fontSize: 12 }}
-                axisLine={{ stroke: '#e5e7eb' }}
-                tickFormatter={(value) => `${value / 1000}k`}
-              />
-              <YAxis 
-                tick={{ fill: '#9ca3af', fontSize: 12 }}
-                axisLine={{ stroke: '#e5e7eb' }}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#3b82f6', 
-                  border: 'none', 
-                  borderRadius: '8px',
-                  color: 'white',
-                  fontSize: '12px',
-                  padding: '8px 12px'
-                }}
-                formatter={(value) => [`${value}%`, 'Sales']}
-                labelFormatter={(value) => `$${value.toLocaleString()}`}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="y" 
-                stroke="#3b82f6" 
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 6, fill: '#3b82f6' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="w-full h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey="x" 
+              tick={{ fill: '#9ca3af', fontSize: 12 }}
+              axisLine={{ stroke: '#e5e7eb' }}
+              tickFormatter={(value) => `${value / 1000}k`}
+            />
+            <YAxis 
+              tick={{ fill: '#9ca3af', fontSize: 12 }}
+              axisLine={{ stroke: '#e5e7eb' }}
+              tickFormatter={(value) => `${value}%`}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#3b82f6', 
+                border: 'none', 
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '12px',
+                padding: '8px 12px'
+              }}
+              formatter={(value) => [`${value}%`, 'Sales']}
+              labelFormatter={(value) => `$${value.toLocaleString()}`}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="y" 
+              stroke="#3b82f6" 
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 6, fill: '#3b82f6' }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

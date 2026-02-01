@@ -54,6 +54,8 @@ export default function DashboardLayout({
       ],
       'superAdmin': [
         '/dashboard/blog',
+        '/dashboard/users',
+        '/dashboard/sites',
       ],
       'user': [
         '/dashboard/wishlist',
