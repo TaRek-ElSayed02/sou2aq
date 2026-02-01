@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useUser } from '../../hooks/useUser';
 import toast from 'react-hot-toast';
+import RichTextEditor from '../../Components/RichTextEditor/Richbox';
 
 // تعريف أنواع البيانات
 interface SocialMedia {
@@ -1447,16 +1448,15 @@ const SiteCreationPage = () => {
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                                         About Your Business
                                     </label>
-                                    <textarea
-                                        value={formData.about}
-                                        onChange={(e) => setFormData(prev => ({
-                                            ...prev,
-                                            about: e.target.value
-                                        }))}
-                                        rows={8}
-                                        className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                        placeholder="Tell your story... What makes your business unique?"
-                                    />
+                                    <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+                                        <RichTextEditor
+                                            value={formData.about}
+                                            onChange={(html) => setFormData(prev => ({
+                                                ...prev,
+                                                about: html
+                                            }))}
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>
@@ -1886,48 +1886,45 @@ const SiteCreationPage = () => {
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     Privacy Policy
                                 </label>
-                                <textarea
-                                    value={formData.privacyPolicy}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        privacyPolicy: e.target.value
-                                    }))}
-                                    rows={8}
-                                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                    placeholder="Describe how you collect, use, and protect user data..."
-                                />
+                                <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+                                    <RichTextEditor
+                                        value={formData.privacyPolicy}
+                                        onChange={(html) => setFormData(prev => ({
+                                            ...prev,
+                                            privacyPolicy: html
+                                        }))}
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     Terms of Use
                                 </label>
-                                <textarea
-                                    value={formData.termsOfUse}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        termsOfUse: e.target.value
-                                    }))}
-                                    rows={8}
-                                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                    placeholder="Outline the rules and guidelines for using your site..."
-                                />
+                                <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+                                    <RichTextEditor
+                                        value={formData.termsOfUse}
+                                        onChange={(html) => setFormData(prev => ({
+                                            ...prev,
+                                            termsOfUse: html
+                                        }))}
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     Return Policy
                                 </label>
-                                <textarea
-                                    value={formData.returnPolicy}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        returnPolicy: e.target.value
-                                    }))}
-                                    rows={8}
-                                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                    placeholder="Describe your return, refund, and exchange policies..."
-                                />
+                                <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+                                    <RichTextEditor
+                                        value={formData.returnPolicy}
+                                        onChange={(html) => setFormData(prev => ({
+                                            ...prev,
+                                            returnPolicy: html
+                                        }))}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -2288,18 +2285,6 @@ const SiteCreationPage = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* {successMessage && (
-                            <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg">
-                                <div className="flex items-center gap-3">
-                                    <CheckCircle className="w-5 h-5" />
-                                    <div>
-                                        <p className="font-bold">Success!</p>
-                                        <p className="text-sm opacity-90">{successMessage}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )} */}
                     </div>
                 </div>
 
