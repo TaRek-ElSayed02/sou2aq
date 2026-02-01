@@ -12,10 +12,11 @@ import {
     Search, Settings, Bell, Shield, Lock,File
 } from 'lucide-react';
 import { useUser } from '../../hooks/useUser';
+import toast from 'react-hot-toast';
 
 // تعريف أنواع البيانات
 interface SocialMedia {
-    id: number;
+    id: number | string;
     name: string;
     icon: string;
     link: string;
@@ -23,10 +24,13 @@ interface SocialMedia {
 }
 
 interface MapLocation {
-    id: number;
+    id: number | string;
     title: string;
     mapUrl: string;
     address: string;
+    phone?: string;
+    email?: string;
+    periodOpen?: string;
 }
 
 interface WhyUsPoint {
@@ -41,6 +45,9 @@ interface FAQ {
 }
 
 interface SiteFormData {
+    // ID for update operation
+    id?: string;
+    
     // Basic Info
     subdomain: string;
     name: string;
@@ -139,7 +146,7 @@ const SiteCreationPage = () => {
         addressEmail: '',
         periodOpen: '9:00 AM - 6:00 PM',
         maps: [
-            { id: 1, title: 'Main Office', mapUrl: '', address: '' }
+            { id: 1, title: 'Main Office', mapUrl: '', address: '', phone: '', email: '', periodOpen: '' }
         ],
         privacyPolicy: '',
         termsOfUse: '',
@@ -171,6 +178,9 @@ const SiteCreationPage = () => {
     const [showIconPickerDropdown, setShowIconPickerDropdown] = useState(false);
     const [showSocialMediaDropdown, setShowSocialMediaDropdown] = useState(false);
 
+    // استخلاص userId من currentUser
+    const userId = currentUser?.id;
+
     // تعريف التابات
     const tabs = [
         { id: 'basic', label: 'Basic Info', icon: Globe },
@@ -200,6 +210,182 @@ const SiteCreationPage = () => {
             }));
         }
     }, [formData.name]);
+
+    // جلب بيانات الموقع الموجود للمستخدم الحالي
+    useEffect(() => {
+        const fetchUserSite = async () => {
+            if (!currentUser?.id) return;
+            
+            setLoading(true);
+            try {
+                const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+                if (!token) {
+                    console.warn('⚠️ No token found for fetching site data');
+                    return;
+                }
+
+                // جلب المواقع الخاصة بالمستخدم
+                const response = await fetch('http://localhost:5000/api/site', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to fetch sites');
+                    return;
+                }
+
+                const data = await response.json();
+                const userSites = data.data || [];
+
+                // إذا كان عند المستخدم موقع واحد على الأقل، حمل أول موقع
+                if (userSites.length > 0) {
+                    const siteData = userSites[0];
+                    console.log('📦 Loading site data:', siteData);
+
+                    // تحويل البيانات المخزنة إلى البنية المطلوبة
+                    const whyUsArray = siteData.whyUs 
+                        ? siteData.whyUs.split(',').filter((p: string) => p.trim()).map((text: string, idx: number) => ({
+                            id: idx + 1,
+                            text: text.trim()
+                        }))
+                        : [];
+
+                    const faqsArray = siteData.QandA
+                        ? siteData.QandA.split(',').filter((f: string) => f.trim()).map((faq: string, idx: number) => {
+                            const [question, answer] = faq.split('|').map(s => s.trim());
+                            return {
+                                id: idx + 1,
+                                question: question || '',
+                                answer: answer || ''
+                            };
+                        })
+                        : [];
+
+                    const socialMediaArray = siteData.socialMedia
+                        ? siteData.socialMedia.split('||').filter((s: string) => s.trim()).map((sm: string, idx: number) => {
+                            const [name, icon, link, isCustom] = sm.split(':');
+                            return {
+                                id: idx + 1,
+                                name: name?.trim() || '',
+                                icon: icon?.trim() || '',
+                                link: link?.trim() || '',
+                                isCustom: isCustom?.trim() === 'true'
+                            };
+                        })
+                        : [];
+
+                    // حمل بيانات الموقع
+                    setFormData(prev => ({
+                        ...prev,
+                        id: siteData.id,
+                        subdomain: siteData.subdomain || '',
+                        name: siteData.name || '',
+                        description: siteData.description || '',
+                        mobile: siteData.phone || '',
+                        about: siteData.about || '',
+                        imageUrl: siteData.image || '',
+                        imageAlt: siteData.imageAlt || '',
+                        email: siteData.email || '',
+                        address: siteData.address || '',
+                        phone: siteData.phone || '',
+                        addressEmail: siteData.email || '',
+                        periodOpen: siteData.periodOpen || '9:00 AM - 6:00 PM',
+                        privacyPolicy: siteData.privacy_policy || '',
+                        termsOfUse: siteData.termsOfUse || '',
+                        returnPolicy: siteData.returning || '',
+                        whyUs: whyUsArray.length > 0 ? whyUsArray : prev.whyUs,
+                        faqs: faqsArray.length > 0 ? faqsArray : prev.faqs,
+                        socialMedia: socialMediaArray.length > 0 ? socialMediaArray : prev.socialMedia
+                    }));
+
+                    // حمل الصورة إذا كانت موجودة
+                    if (siteData.image) {
+                        setPreviewImage(`http://localhost:5000${siteData.image}`);
+                    }
+
+                    // ============ جلب الخرائط الموجودة ============
+                    try {
+                        console.log('🗺️ Fetching existing maps for site:', siteData.id);
+                        const mapsResponse = await fetch(`http://localhost:5000/api/maps/site/${siteData.id}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+
+                        if (mapsResponse.ok) {
+                            const mapsData = await mapsResponse.json();
+                            const existingMaps = mapsData.data || [];
+                            console.log('📍 Loaded maps:', existingMaps);
+
+                            // تحويل الخرائط إلى صيغة الفورم
+                            const mapsArray = existingMaps.map((map: any, idx: number) => ({
+                                id: map.id || idx + 1,
+                                title: map.address || map.name || '',
+                                mapUrl: map.url || '',
+                                address: map.address || '',
+                                phone: map.phone || '',
+                                email: map.email || '',
+                                periodOpen: map.periodOpen || ''
+                            }));
+
+                            if (mapsArray.length > 0) {
+                                setFormData(prev => ({
+                                    ...prev,
+                                    maps: mapsArray
+                                }));
+                            }
+                        }
+                    } catch (mapError) {
+                        console.warn('⚠️ Could not fetch existing maps:', mapError);
+                        // لا نرفع خطأ - الخرائط اختيارية
+                    }
+
+                    // ============ جلب السوشيال ميديا الموجود ============
+                    try {
+                        console.log('📱 Fetching existing social media for site:', siteData.id);
+                        const socialResponse = await fetch(`http://localhost:5000/api/social/site/${siteData.id}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+
+                        if (socialResponse.ok) {
+                            const socialData = await socialResponse.json();
+                            const existingSocial = socialData.data || [];
+                            console.log('📱 Loaded social media:', existingSocial);
+
+                            // تحويل السوشيال ميديا إلى صيغة الفورم
+                            const socialArray = existingSocial.map((social: any, idx: number) => ({
+                                id: social.id || idx + 1,
+                                name: social.name || '',
+                                icon: social.icon || '',
+                                link: social.link || '',
+                                isCustom: social.isCustom || false
+                            }));
+
+                            if (socialArray.length > 0) {
+                                setFormData(prev => ({
+                                    ...prev,
+                                    socialMedia: socialArray
+                                }));
+                            }
+                        }
+                    } catch (socialError) {
+                        console.warn('⚠️ Could not fetch existing social media:', socialError);
+                        // لا نرفع خطأ - السوشيال ميديا اختيارية
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching site data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserSite();
+    }, [currentUser?.id]);
 
     // معالجة رفع الصورة
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,7 +463,7 @@ const SiteCreationPage = () => {
 
     // === Social Media Functions ===
     const addSocialMedia = () => {
-        const newId = Math.max(...formData.socialMedia.map(item => item.id), 0) + 1;
+        const newId = Math.max(...formData.socialMedia.map(item => typeof item.id === 'number' ? item.id : 0), 0) + 1;
         
         // إضافة السوشيال ميديا الفاضية الأولى من القائمة المتاحة
         const availableSocial = availableSocialMediaList.find(
@@ -301,7 +487,7 @@ const SiteCreationPage = () => {
         }
     };
 
-    const updateSocialMedia = (id: number, field: 'name' | 'icon' | 'link', value: string) => {
+    const updateSocialMedia = (id: number | string, field: 'name' | 'icon' | 'link', value: string) => {
         setFormData(prev => ({
             ...prev,
             socialMedia: prev.socialMedia.map(sm =>
@@ -310,7 +496,24 @@ const SiteCreationPage = () => {
         }));
     };
 
-    const removeSocialMedia = (id: number) => {
+    const removeSocialMedia = async (id: number | string) => {
+        const socialToRemove = formData.socialMedia.find(sm => sm.id === id);
+        
+        // إذا كانت السوشيال لها ID قاعدة بيانات (UUID string)، احذفها من الـ backend
+        if (socialToRemove && typeof socialToRemove.id === 'string' && socialToRemove.id.length > 10) {
+            try {
+                const deleted = await handleDeleteSocialMedia(socialToRemove.id);
+                if (!deleted) {
+                    console.error('Failed to delete social media from backend');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error deleting social media from backend:', error);
+                return;
+            }
+        }
+
+        // حذف من الفورم
         setFormData(prev => ({
             ...prev,
             socialMedia: prev.socialMedia.filter(sm => sm.id !== id)
@@ -323,7 +526,7 @@ const SiteCreationPage = () => {
             return;
         }
 
-        const newId = Math.max(...formData.socialMedia.map(item => item.id), 0) + 1;
+        const newId = Math.max(...formData.socialMedia.map(item => typeof item.id === 'number' ? item.id : 0), 0) + 1;
         
         setFormData(prev => ({
             ...prev,
@@ -344,7 +547,7 @@ const SiteCreationPage = () => {
 
     // === Map Functions ===
     const addMapLocation = () => {
-        const newId = Math.max(...formData.maps.map(item => item.id), 0) + 1;
+        const newId = Math.max(...formData.maps.map(item => typeof item.id === 'number' ? item.id : 0), 0) + 1;
         setFormData(prev => ({
             ...prev,
             maps: [
@@ -353,13 +556,16 @@ const SiteCreationPage = () => {
                     id: newId, 
                     title: `Location ${newId}`, 
                     mapUrl: '', 
-                    address: '' 
+                    address: '',
+                    phone: '',
+                    email: '',
+                    periodOpen: ''
                 }
             ]
         }));
     };
 
-    const updateMapLocation = (id: number, field: 'title' | 'mapUrl' | 'address', value: string) => {
+    const updateMapLocation = (id: number | string, field: 'title' | 'mapUrl' | 'address' | 'phone' | 'email' | 'periodOpen', value: string) => {
         setFormData(prev => ({
             ...prev,
             maps: prev.maps.map(map =>
@@ -368,11 +574,29 @@ const SiteCreationPage = () => {
         }));
     };
 
-    const removeMapLocation = (id: number) => {
+    const removeMapLocation = async (id: number | string) => {
         if (formData.maps.length <= 1) {
             showToast('You must have at least one map location', 'error');
             return;
         }
+
+        const mapToRemove = formData.maps.find(m => m.id === id);
+        
+        // إذا كانت الخريطة لها ID قاعدة بيانات (UUID string)، احذفها من الـ backend
+        if (mapToRemove && typeof mapToRemove.id === 'string' && mapToRemove.id.length > 10) {
+            try {
+                const deleted = await handleDeleteMap(mapToRemove.id);
+                if (!deleted) {
+                    console.error('Failed to delete map from backend');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error deleting map from backend:', error);
+                return;
+            }
+        }
+
+        // حذف من الفورم
         setFormData(prev => ({
             ...prev,
             maps: prev.maps.filter(map => map.id !== id)
@@ -410,6 +634,11 @@ const SiteCreationPage = () => {
             errors.socialMedia = 'Add at least one social media link';
         }
 
+        // Log errors for debugging
+        if (Object.keys(errors).length > 0) {
+            console.log('❌ Validation errors:', errors);
+        }
+
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -426,57 +655,296 @@ const SiteCreationPage = () => {
         setIsSubmitting(true);
         
         try {
-            // Get subdomain from form data
+            // تحديد ما إذا كان الإنشاء أم التعديل
+            const isUpdating = !!formData.id;
             const subdomain = formData.subdomain.toLowerCase().trim();
             
-            // Prepare form data for API
-            const formDataToSend = new FormData();
-            
-            // Add all form fields
-            Object.entries(formData).forEach(([key, value]) => {
-                if (key === 'image' && value instanceof File) {
-                    formDataToSend.append('image', value);
-                } else if (key === 'whyUs') {
-                    const whyUsPoints = (value as WhyUsPoint[]).map(point => point.text).join('||');
-                    formDataToSend.append('whyUs', whyUsPoints);
-                } else if (key === 'faqs') {
-                    const faqsString = (value as FAQ[]).map(faq => `${faq.question}::${faq.answer}`).join('||');
-                    formDataToSend.append('faqs', faqsString);
-                } else if (key === 'socialMedia') {
-                    const socialMediaString = (value as SocialMedia[])
-                        .map(sm => `${sm.name}:${sm.icon}:${sm.link}:${sm.isCustom}`)
-                        .join('||');
-                    formDataToSend.append('socialMedia', socialMediaString);
-                } else if (key === 'maps') {
-                    const mapsString = (value as MapLocation[])
-                        .map(map => `${map.title}::${map.mapUrl}::${map.address}`)
-                        .join('||');
-                    formDataToSend.append('maps', mapsString);
-                } else if (typeof value === 'string') {
-                    formDataToSend.append(key, value);
-                }
+            console.log('📝 Form submission started:', {
+                mode: isUpdating ? 'UPDATE' : 'CREATE',
+                siteId: formData.id,
+                subdomain,
+                name: formData.name,
+                email: formData.email,
+                phone: formData.mobile,
             });
-
-            // Add user ID
-            if (currentUser?.id) {
-                formDataToSend.append('userId', currentUser.id.toString());
+            
+            // Get auth token from localStorage
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+            if (!token) {
+                showToast('Authentication token not found. Please login again.', 'error');
+                console.error('❌ No token found in localStorage');
+                console.log('Available keys:', Object.keys(localStorage));
+                return;
             }
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // التحقق من أن التوكن لا يبدأ بـ quotes
+            let cleanToken = token;
+            if (token.startsWith('"') && token.endsWith('"')) {
+                cleanToken = token.slice(1, -1);
+                console.log('🔧 Removed quotes from token');
+            }
 
-            setSuccessMessage('Your site has been created successfully!');
-            showToast('Site created successfully!', 'success');
+            console.log('🔐 Auth token found, length:', cleanToken.length, 'starts with:', cleanToken.substring(0, 30) + '...');
+
+            // ============ المرحلة الأولى: حفظ الموقع الأساسي ============
+            console.log('📍 Phase 1: Saving basic site info...');
             
-            // Redirect to subdomain after successful submission
-            setTimeout(() => {
-                const siteUrl = `http://localhost:3000/${subdomain}`;
-                window.location.href = siteUrl;
-            }, 1500);
+            const formDataToSend = new FormData();
+            
+            // إضافة البيانات الأساسية فقط
+            formDataToSend.append('name', formData.name);
+            formDataToSend.append('subdomain', subdomain);
+            formDataToSend.append('email', formData.email);
+            formDataToSend.append('phone', formData.mobile);
+            formDataToSend.append('description', formData.description);
+            formDataToSend.append('about', formData.about);
+            formDataToSend.append('imageAlt', formData.imageAlt);
+            // تجاهل address - غير موجود في جدول site (موجود فقط في جدول maps)
+            // formDataToSend.append('address', formData.address);
+            // تجاهل periodOpen - غير موجود في قاعدة البيانات
+            formDataToSend.append('privacy_policy', formData.privacyPolicy);
+            formDataToSend.append('termsOfUse', formData.termsOfUse);
+            formDataToSend.append('returning', formData.returnPolicy);
+            
+            // تخزين whyUs بفاصل فاصلة: "point1,point2,point3"
+            const whyUsPoints = formData.whyUs
+                .filter(point => point.text.trim())
+                .map(point => point.text.trim())
+                .join(',');
+            formDataToSend.append('whyUs', whyUsPoints);
+            
+            // تخزين FAQs بصيغة: "question1|answer1,question2|answer2"
+            const faqsString = formData.faqs
+                .filter(faq => faq.question.trim() && faq.answer.trim())
+                .map(faq => `${faq.question.trim()}|${faq.answer.trim()}`)
+                .join(',');
+            formDataToSend.append('QandA', faqsString);
+            
+            // تجاهل Social Media و Maps - يتم حفظهم في جداول منفصلة
+            // const socialMediaString = formData.socialMedia
+            //     .filter(sm => sm.link.trim())
+            //     .map(sm => `${sm.name}:${sm.icon}:${sm.link}:${sm.isCustom}`)
+            //     .join('||');
+            // formDataToSend.append('socialMedia', socialMediaString);
+            
+            // const mapsString = formData.maps
+            //     .filter(map => map.mapUrl.trim())
+            //     .map(map => `${map.title}::${map.mapUrl}::${map.address}`)
+            //     .join('||');
+            // formDataToSend.append('maps', mapsString);
+            
+            // إضافة الصورة إذا كانت ملف جديد (وليست رابط موجود)
+            if (formData.image && formData.image?.name) {
+                formDataToSend.append('image', formData.image);
+            }
+            
+            // إضافة user ID للمواقع الجديدة
+            if (!isUpdating && userId) {
+                // جرب كل أسماء الحقول الممكنة
+                formDataToSend.append('userId', userId);
+                formDataToSend.append('user_id', userId);
+                formDataToSend.append('user', userId);
+                formDataToSend.append('creatorId', userId);
+                console.log('📝 Adding userId to FormData:', userId);
+            } else if (!isUpdating && !userId) {
+                showToast('User ID not found. Please login again.', 'error');
+                console.error('❌ userId is null/undefined:', userId);
+                console.log('currentUser:', currentUser);
+                return;
+            }
 
-        } catch (error) {
-            console.error('Error creating site:', error);
-            showToast('Failed to create site. Please try again.', 'error');
+            // طباعة جميع بيانات FormData قبل الإرسال
+            console.log('📋 FormData contents:');
+            for (let [key, value] of formDataToSend.entries()) {
+                if (key === 'image') {
+                    console.log(`  ${key}: File`);
+                } else {
+                    console.log(`  ${key}: ${value}`);
+                }
+            }
+
+            // الخطوة 1: إرسال بيانات الموقع الأساسية
+            let apiUrl = 'http://localhost:5000/api/site';
+            let method = 'POST';
+            
+            if (isUpdating) {
+                apiUrl = `http://localhost:5000/api/site/${formData.id}`;
+                method = 'PATCH';
+            }
+
+            console.log('🔐 Sending request with:', {
+                method,
+                apiUrl,
+                hasToken: !!cleanToken,
+                tokenLength: cleanToken?.length,
+                tokenPrefix: cleanToken?.substring(0, 30) + '...'
+            });
+
+            const siteResponse = await fetch(apiUrl, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${cleanToken}`
+                },
+                body: formDataToSend
+            });
+
+            console.log('📡 Site Response status:', siteResponse.status);
+
+            if (!siteResponse.ok) {
+                const errorData = await siteResponse.json();
+                console.error('❌ Site API Error:', errorData);
+                throw new Error(errorData.message || `HTTP error! status: ${siteResponse.status}`);
+            }
+
+            const siteResult = await siteResponse.json();
+            console.log('✅ Site saved successfully:', siteResult);
+            
+            // الحصول على siteId من الـ response
+            let siteId = formData.id;
+            if (!siteId && siteResult.data?.id) {
+                siteId = siteResult.data.id;
+                console.log('🎯 New site ID:', siteId);
+            }
+            
+            if (!siteId) {
+                throw new Error('Failed to get site ID from response');
+            }
+
+            // ============ المرحلة الثانية: معالجة الخرائط ============
+            console.log('📍 Phase 2: Processing maps...');
+            
+            if (formData.maps && formData.maps.length > 0) {
+                // الحصول على الخرائط الموجودة من الـ API
+                const existingMapsResponse = await fetch(`http://localhost:5000/api/maps/site/${siteId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${cleanToken}`
+                    }
+                });
+
+                let existingMapIds = [];
+                let existingMapsArray = [];
+                
+                if (existingMapsResponse.ok) {
+                    const existingMapsData = await existingMapsResponse.json();
+                    existingMapsArray = existingMapsData.data || [];
+                    existingMapIds = existingMapsArray.map((m: any) => m.id);
+                    console.log('📊 Existing map IDs:', existingMapIds);
+                }
+
+                // معالجة كل خريطة
+                for (const map of formData.maps) {
+                    if (!map.mapUrl || !map.mapUrl.trim()) {
+                        console.log('⏭️ Skipping empty map');
+                        continue;
+                    }
+
+                    try {
+                        // إذا كانت الخريطة لها ID موجود، حدثها
+                        if (map.id && typeof map.id === 'string' && existingMapIds.includes(map.id)) {
+                            console.log('🔄 Updating existing map:', map.id);
+                            await handleUpdateMap(map.id, map);
+                        } else {
+                            // إنشاء خريطة جديدة
+                            console.log('🆕 Creating new map');
+                            await handleCreateMap(map);
+                        }
+                    } catch (mapError) {
+                        console.error('⚠️ Error processing map:', mapError);
+                        // نستمر مع الخرائط الأخرى حتى لو فشلت واحدة
+                    }
+                }
+
+                // حذف الخرائط التي تم حذفها من الفورم
+                if (existingMapsArray.length > 0) {
+                    const currentMapIds: (string | number)[] = formData.maps
+                        .filter(m => m.mapUrl && m.mapUrl.trim())
+                        .map(m => m.id);
+
+                    for (const existingMap of existingMapsArray) {
+                        if (!currentMapIds.includes(existingMap.id)) {
+                            console.log('🗑️ Deleting removed map:', existingMap.id);
+                            try {
+                                await handleDeleteMap(existingMap.id);
+                            } catch (deleteError) {
+                                console.error('⚠️ Error deleting map:', deleteError);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ============ المرحلة الثالثة: معالجة السوشيال ميديا ============
+            console.log('📱 Phase 3: Processing social media...');
+            
+            if (formData.socialMedia && formData.socialMedia.length > 0) {
+                // الحصول على السوشيال ميديا الموجود من الـ API
+                const existingSocialResponse = await fetch(`http://localhost:5000/api/social/site/${siteId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${cleanToken}`
+                    }
+                });
+
+                let existingSocialIds = [];
+                let existingSocialArray = [];
+                
+                if (existingSocialResponse.ok) {
+                    const existingSocialData = await existingSocialResponse.json();
+                    existingSocialArray = existingSocialData.data || [];
+                    existingSocialIds = existingSocialArray.map((s: any) => s.id);
+                    console.log('📱 Existing social media IDs:', existingSocialIds);
+                }
+
+                // معالجة كل سوشيال ميديا
+                for (const social of formData.socialMedia) {
+                    if (!social.link || !social.link.trim()) {
+                        console.log('⏭️ Skipping empty social media');
+                        continue;
+                    }
+
+                    try {
+                        // إذا كانت السوشيال لها ID موجود، حدثها
+                        if (social.id && typeof social.id === 'string' && existingSocialIds.includes(social.id)) {
+                            console.log('🔄 Updating existing social media:', social.id);
+                            await handleUpdateSocialMedia(social.id, social);
+                        } else {
+                            // إنشاء سوشيال ميديا جديدة
+                            console.log('🆕 Creating new social media');
+                            await handleCreateSocialMedia(social, siteId);
+                        }
+                    } catch (socialError) {
+                        console.error('⚠️ Error processing social media:', socialError);
+                        // نستمر مع السوشيال ميديا الأخرى حتى لو فشلت واحدة
+                    }
+                }
+
+                // حذف السوشيال ميديا التي تم حذفها من الفورم
+                if (existingSocialArray.length > 0) {
+                    const currentSocialIds: (string | number)[] = formData.socialMedia
+                        .filter(s => s.link && s.link.trim())
+                        .map(s => s.id);
+
+                    for (const existingSocial of existingSocialArray) {
+                        if (!currentSocialIds.includes(existingSocial.id)) {
+                            console.log('🗑️ Deleting removed social media:', existingSocial.id);
+                            try {
+                                await handleDeleteSocialMedia(existingSocial.id);
+                            } catch (deleteError) {
+                                console.error('⚠️ Error deleting social media:', deleteError);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ============ النجاح النهائي ============
+            const successMsg = isUpdating ? 'Site updated successfully!' : 'Site created successfully!';
+            setSuccessMessage(successMsg);
+            showToast(successMsg, 'success');
+
+        } catch (error: any) {
+            console.error('❌ Error submitting site:', error);
+            const errorMessage = error?.message || 'Failed to submit site. Please try again.';
+            showToast(errorMessage, 'error');
         } finally {
             setIsSubmitting(false);
         }
@@ -484,9 +952,316 @@ const SiteCreationPage = () => {
 
     // عرض Toast
     const showToast = (message: string, type: 'success' | 'error' | 'info') => {
-        // Implement toast notification here
-        console.log(`${type}: ${message}`);
+        if (type === 'success') {
+            toast.success(message, {
+                duration: 5000,
+                position: 'top-center',
+            });
+        } else if (type === 'error') {
+            toast.error(message, {
+                duration: 5000,
+                position: 'top-center',
+            });
+        } else {
+            toast(message, {
+                duration: 5000,
+                position: 'top-center',
+            });
+        }
     };
+
+    // ============ دوال معالجة الخرائط ============
+
+    // إنشاء خريطة جديدة
+    const handleCreateMap = async (mapData: MapLocation) => {
+        try {
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+            if (!token) {
+                showToast('Authentication token not found', 'error');
+                return;
+            }
+
+            let cleanToken = token;
+            if (token.startsWith('"') && token.endsWith('"')) {
+                cleanToken = token.slice(1, -1);
+            }
+
+            if (!formData.id) {
+                showToast('Please save the site first before adding maps', 'error');
+                return;
+            }
+
+            console.log('🗺️ Creating new map:', mapData);
+
+            const response = await fetch('http://localhost:5000/api/maps', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${cleanToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    siteId: formData.id,
+                    url: mapData.mapUrl,
+                    address: mapData.address,
+                    phone: mapData.phone || '',
+                    email: mapData.email || '',
+                    periodOpen: mapData.periodOpen || ''
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to create map');
+            }
+
+            const result = await response.json();
+            console.log('✅ Map created:', result);
+            showToast('Map added successfully', 'success');
+            return result.data;
+
+        } catch (error: any) {
+            console.error('❌ Error creating map:', error);
+            const errorMessage = error?.message || 'Failed to add map';
+            showToast(errorMessage, 'error');
+            return null;
+        }
+    };
+
+    // تحديث خريطة موجودة
+    const handleUpdateMap = async (mapId: string | number, mapData: MapLocation) => {
+        try {
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+            if (!token) {
+                showToast('Authentication token not found', 'error');
+                return;
+            }
+
+            let cleanToken = token;
+            if (token.startsWith('"') && token.endsWith('"')) {
+                cleanToken = token.slice(1, -1);
+            }
+
+            console.log('🔄 Updating map:', mapId, mapData);
+
+            const response = await fetch(`http://localhost:5000/api/maps/${mapId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${cleanToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: mapData.mapUrl,
+                    address: mapData.address,
+                    phone: mapData.phone || '',
+                    email: mapData.email || '',
+                    periodOpen: mapData.periodOpen || ''
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update map');
+            }
+
+            const result = await response.json();
+            console.log('✅ Map updated:', result);
+            showToast('Map updated successfully', 'success');
+            return result.data;
+
+        } catch (error: any) {
+            console.error('❌ Error updating map:', error);
+            const errorMessage = error?.message || 'Failed to update map';
+            showToast(errorMessage, 'error');
+            return null;
+        }
+    };
+
+    // حذف خريطة
+    const handleDeleteMap = async (mapId: string | number) => {
+        try {
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+            if (!token) {
+                showToast('Authentication token not found', 'error');
+                return;
+            }
+
+            let cleanToken = token;
+            if (token.startsWith('"') && token.endsWith('"')) {
+                cleanToken = token.slice(1, -1);
+            }
+
+            console.log('🗑️ Deleting map:', mapId);
+
+            const response = await fetch(`http://localhost:5000/api/maps/${mapId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${cleanToken}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to delete map');
+            }
+
+            console.log('✅ Map deleted successfully');
+            showToast('Map deleted successfully', 'success');
+            return true;
+
+        } catch (error: any) {
+            console.error('❌ Error deleting map:', error);
+            const errorMessage = error?.message || 'Failed to delete map';
+            showToast(errorMessage, 'error');
+            return false;
+        }
+    };
+
+    // ============ نهاية دوال الخرائط ============
+
+    // ============ دوال معالجة السوشيال ميديا ============
+
+    // إنشاء سوشيال ميديا جديد
+    const handleCreateSocialMedia = async (socialData: SocialMedia, siteId?: string) => {
+        try {
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+            if (!token) {
+                showToast('Authentication token not found', 'error');
+                return;
+            }
+
+            let cleanToken = token;
+            if (token.startsWith('"') && token.endsWith('"')) {
+                cleanToken = token.slice(1, -1);
+            }
+
+            const targetSiteId = siteId || formData.id;
+            if (!targetSiteId) {
+                showToast('Please save the site first before adding social media', 'error');
+                return;
+            }
+
+            console.log('📱 Creating new social media:', socialData);
+
+            const response = await fetch('http://localhost:5000/api/social', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${cleanToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    siteId: targetSiteId,
+                    name: socialData.name,
+                    icon: socialData.icon,
+                    link: socialData.link
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to create social media');
+            }
+
+            const result = await response.json();
+            console.log('✅ Social media created:', result);
+            showToast('Social media added successfully', 'success');
+            return result.data;
+
+        } catch (error: any) {
+            console.error('❌ Error creating social media:', error);
+            const errorMessage = error?.message || 'Failed to add social media';
+            showToast(errorMessage, 'error');
+            return null;
+        }
+    };
+
+    // تحديث سوشيال ميديا موجود
+    const handleUpdateSocialMedia = async (socialId: string | number, socialData: SocialMedia) => {
+        try {
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+            if (!token) {
+                showToast('Authentication token not found', 'error');
+                return;
+            }
+
+            let cleanToken = token;
+            if (token.startsWith('"') && token.endsWith('"')) {
+                cleanToken = token.slice(1, -1);
+            }
+
+            console.log('🔄 Updating social media:', socialId, socialData);
+
+            const response = await fetch(`http://localhost:5000/api/social/${socialId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${cleanToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: socialData.name,
+                    icon: socialData.icon,
+                    link: socialData.link
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update social media');
+            }
+
+            const result = await response.json();
+            console.log('✅ Social media updated:', result);
+            showToast('Social media updated successfully', 'success');
+            return result.data;
+
+        } catch (error: any) {
+            console.error('❌ Error updating social media:', error);
+            const errorMessage = error?.message || 'Failed to update social media';
+            showToast(errorMessage, 'error');
+            return null;
+        }
+    };
+
+    // حذف سوشيال ميديا
+    const handleDeleteSocialMedia = async (socialId: string | number) => {
+        try {
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('authToken');
+            if (!token) {
+                showToast('Authentication token not found', 'error');
+                return;
+            }
+
+            let cleanToken = token;
+            if (token.startsWith('"') && token.endsWith('"')) {
+                cleanToken = token.slice(1, -1);
+            }
+
+            console.log('🗑️ Deleting social media:', socialId);
+
+            const response = await fetch(`http://localhost:5000/api/social/${socialId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${cleanToken}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to delete social media');
+            }
+
+            console.log('✅ Social media deleted successfully');
+            showToast('Social media deleted successfully', 'success');
+            return true;
+
+        } catch (error: any) {
+            console.error('❌ Error deleting social media:', error);
+            const errorMessage = error?.message || 'Failed to delete social media';
+            showToast(errorMessage, 'error');
+            return false;
+        }
+    };
+
+    // ============ نهاية دوال السوشيال ميديا ============
 
     // الحصول على الأيقونة المناسبة
     const getSocialIcon = (iconName: string, size: string = 'w-5 h-5') => {
@@ -836,24 +1611,6 @@ const SiteCreationPage = () => {
                                 />
                             </div>
 
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    <span className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4" />
-                                        Main Address
-                                    </span>
-                                </label>
-                                <textarea
-                                    value={formData.address}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        address: e.target.value
-                                    }))}
-                                    rows={3}
-                                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                    placeholder="123 Business St, City, State, ZIP Code"
-                                />
-                            </div>
                         </div>
 
                         {/* Multiple Maps Section */}
@@ -922,6 +1679,45 @@ const SiteCreationPage = () => {
                                                     onChange={(e) => updateMapLocation(map.id, 'address', e.target.value)}
                                                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                                     placeholder="Street, City, State, ZIP Code"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Phone Number
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    value={map.phone || ''}
+                                                    onChange={(e) => updateMapLocation(map.id, 'phone', e.target.value)}
+                                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                    placeholder="+1 (555) 000-0000"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Email Address
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    value={map.email || ''}
+                                                    onChange={(e) => updateMapLocation(map.id, 'email', e.target.value)}
+                                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                    placeholder="branch@example.com"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Working Hours (Period Open)
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={map.periodOpen || ''}
+                                                    onChange={(e) => updateMapLocation(map.id, 'periodOpen', e.target.value)}
+                                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                    placeholder="9:00 AM - 5:00 PM"
                                                 />
                                             </div>
 
@@ -1282,7 +2078,7 @@ const SiteCreationPage = () => {
                                                                 key={social.id}
                                                                 type="button"
                                                                 onClick={() => {
-                                                                    const newId = Math.max(...formData.socialMedia.map(item => item.id), 0) + 1;
+                                                                    const newId = Math.max(...formData.socialMedia.map(item => typeof item.id === 'number' ? item.id : 0), 0) + 1;
                                                                     setFormData(prev => ({
                                                                         ...prev,
                                                                         socialMedia: [
@@ -1450,6 +2246,17 @@ const SiteCreationPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-6">
+            {/* Loading Indicator */}
+            {loading && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-2xl p-8 flex flex-col items-center gap-4">
+                        <div className="animate-spin">
+                            <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full"></div>
+                        </div>
+                        <p className="text-gray-700 font-medium">Loading your site data...</p>
+                    </div>
+                </div>
+            )}
             {/* Main Container */}
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
@@ -1457,10 +2264,13 @@ const SiteCreationPage = () => {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                                Create Your Website
+                                {formData.id ? 'Edit Your Website' : 'Create Your Website'}
                             </h1>
                             <p className="text-gray-600">
-                                Build your professional online presence in a few simple steps
+                                {formData.id 
+                                    ? 'Update your website information and content' 
+                                    : 'Build your professional online presence in a few simple steps'
+                                }
                             </p>
                             <div className="mt-3 flex items-center gap-3 text-sm">
                                 <div className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full font-medium">
@@ -1479,7 +2289,7 @@ const SiteCreationPage = () => {
                             </div>
                         </div>
 
-                        {successMessage && (
+                        {/* {successMessage && (
                             <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg">
                                 <div className="flex items-center gap-3">
                                     <CheckCircle className="w-5 h-5" />
@@ -1489,7 +2299,7 @@ const SiteCreationPage = () => {
                                     </div>
                                 </div>
                             </div>
-                        )}
+                        )} */}
                     </div>
                 </div>
 

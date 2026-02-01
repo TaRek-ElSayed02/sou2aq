@@ -39,18 +39,20 @@ export default function SitesPage() {
   const router = useRouter();
 
   // استخراج الـ role بطرق متعددة (مثل SideBar)
-  const userRole = currentUser?.role || (currentUser as any)?.accountInfo?.role || (currentUser as any)?.type;
+  const userRole = (currentUser as any)?.role || (currentUser as any)?.accountInfo?.role || (currentUser as any)?.type;
   
-  // تحقق من أن المستخدم superAdmin
+  // تحقق من أن المستخدم admin أو superAdmin
+  const isAdmin = userRole === 'admin' || userRole === 'superAdmin';
   const isSuperAdmin = userRole === 'superAdmin';
 
   console.log('🎯 SitesPage rendered');
   console.log('   - currentUser exists:', !!currentUser);
   console.log('   - userRole:', userRole);
+  console.log('   - isAdmin:', isAdmin);
   console.log('   - isSuperAdmin:', isSuperAdmin);
   console.log('   - accessToken exists:', !!accessToken);
 
-  // التحقق من أن المستخدم سوبر أدمن وجلب المواقع
+  // التحقق من أن المستخدم admin أو superAdmin وجلب المواقع
   useEffect(() => {
     // إذا لم تحمل البيانات بعد، انتظر
     if (!currentUser || !accessToken) {
@@ -59,11 +61,11 @@ export default function SitesPage() {
       return;
     }
 
-    // إذا لم يكن superAdmin، redirect
-    if (!isSuperAdmin) {
-      console.log('❌ Not superAdmin. Role:', userRole);
+    // إذا لم يكن admin أو superAdmin، redirect
+    if (!isAdmin) {
+      console.log('❌ Not admin. Role:', userRole);
       setLoading(false);
-      toast.error('Access denied: Super Admin only');
+      toast.error('Access denied: Admin role required');
       router.push('/dashboard');
       return;
     }
@@ -243,13 +245,13 @@ export default function SitesPage() {
     );
   }
 
-  // إذا لم يكن المستخدم سوبر أدمن
-  if (!isSuperAdmin) {
+  // إذا لم يكن المستخدم admin أو superAdmin
+  if (!isAdmin) {
     return (
       <div className="p-6">
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">Access denied</p>
-          <p className="text-gray-400 text-sm mt-2">Super Admin only</p>
+          <p className="text-gray-400 text-sm mt-2">Admin role required</p>
         </div>
       </div>
     );
