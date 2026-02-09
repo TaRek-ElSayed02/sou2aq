@@ -5,6 +5,7 @@ import {
   MessageSquare, Smartphone, AtSign, Clock,
   MapPin, CheckCircle, AlertCircle, X, Loader2
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 declare global {
   interface Window {
@@ -13,6 +14,7 @@ declare global {
 }
 
 export default function ContactPage() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -83,34 +85,34 @@ export default function ContactPage() {
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      setSubmitMessage('Please enter your name');
+      setSubmitMessage(t("dashboard.contact.pleaseEnterName"));
       return false;
     }
 
     if (!formData.phone.trim()) {
-      setSubmitMessage('Please enter your phone number');
+      setSubmitMessage(t("dashboard.contact.pleaseEnterPhone"));
       return false;
     }
 
     const phoneRegex = /^[0-9+\-\s()]{10,}$/;
     if (!phoneRegex.test(formData.phone)) {
-      setSubmitMessage('Please enter a valid phone number');
+      setSubmitMessage(t("dashboard.contact.validPhone"));
       return false;
     }
 
     if (!formData.email.trim()) {
-      setSubmitMessage('Please enter your email address');
+      setSubmitMessage(t("dashboard.contact.pleaseEnterEmail"));
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setSubmitMessage('Please enter a valid email address');
+      setSubmitMessage(t("dashboard.contact.validEmail"));
       return false;
     }
 
     if (!formData.message.trim()) {
-      setSubmitMessage('Please enter your message');
+      setSubmitMessage(t("dashboard.contact.pleaseEnterMessage"));
       return false;
     }
 
@@ -290,14 +292,14 @@ ${formData.message}
 
       if (formData.contactMethod === 'whatsapp') {
         result = await sendWhatsAppMessage();
-        setSubmitMessage('✅ WhatsApp opened with your message. Please click send to complete.');
+        setSubmitMessage(t("dashboard.contact.whatsappOpened"));
       } else {
         if (!emailJSReady) {
-          throw new Error('EmailJS is still loading. Please wait.');
+          throw new Error(t("dashboard.contact.emailStillLoading"));
         }
 
         result = await sendEmailViaEmailJS();
-        setSubmitMessage('✅ Your email has been sent successfully! We will contact you soon.');
+        setSubmitMessage(t("dashboard.contact.emailSent"));
       }
 
       setSubmitStatus('success');
@@ -315,7 +317,7 @@ ${formData.message}
     } catch (error: any) {
       console.error('❌ Error:', error);
       setSubmitStatus('error');
-      setSubmitMessage(error.message || 'An error occurred. Please try again.');
+      setSubmitMessage(error.message || t("dashboard.contact.errorMessage"));
     } finally {
       setIsSubmitting(false);
     }
@@ -343,10 +345,10 @@ ${formData.message}
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            Contact Us
+            {t("dashboard.contact.title")}
           </h1>
           <p className="text-gray-600">
-            Send us a message directly. No email app needed!
+            {t("dashboard.contact.subtitle")}
           </p>
         </div>
 
@@ -355,12 +357,12 @@ ${formData.message}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-xl p-6">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Send Message</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("dashboard.contact.sendMessage")}</h2>
 
                 {/* طريقة الاتصال */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Choose sending method
+                    {t("dashboard.contact.chooseMethod")}
                   </label>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
@@ -372,8 +374,8 @@ ${formData.message}
                     >
                       <MessageCircle className="w-6 h-6" />
                       <div className="text-left">
-                        <h3 className="font-semibold text-gray-900">WhatsApp</h3>
-                        <p className="text-sm text-gray-600">Opens with your message</p>
+                        <h3 className="font-semibold text-gray-900">{t("dashboard.contact.whatsapp")}</h3>
+                        <p className="text-sm text-gray-600">{t("dashboard.contact.opensWithMessage")}</p>
                       </div>
                     </button>
 
@@ -386,8 +388,8 @@ ${formData.message}
                     >
                       <Mail className="w-6 h-6" />
                       <div className="text-left">
-                        <h3 className="font-semibold text-gray-900">Direct Email</h3>
-                        <p className="text-sm text-gray-600">No email app needed</p>
+                        <h3 className="font-semibold text-gray-900">{t("dashboard.contact.directEmail")}</h3>
+                        <p className="text-sm text-gray-600">{t("dashboard.contact.noEmailAppNeeded")}</p>
                       </div>
                     </button>
                   </div>
@@ -401,10 +403,10 @@ ${formData.message}
                     className="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-medium hover:from-yellow-600 hover:to-orange-600 transition-all flex items-center justify-center gap-2"
                   >
                     <MessageCircle className="w-5 h-5" />
-                    Test WhatsApp Link (Debug)
+                    {t("dashboard.contact.testWhatsappLink")}
                   </button>
                   <p className="text-xs text-gray-500 mt-2 text-center">
-                    Click to test WhatsApp link directly
+                    {t("dashboard.contact.clickToTest")}
                   </p>
                 </div>
 
@@ -420,12 +422,12 @@ ${formData.message}
                     )}
                     <div>
                       <p className="font-medium text-gray-900">
-                        {emailJSReady ? '✅ EmailJS Ready' : '⏳ Loading EmailJS...'}
+                        {emailJSReady ? '✅ ' + t("dashboard.contact.emailJSReady") : '⏳ ' + t("dashboard.contact.loading")}
                       </p>
                       <p className="text-sm text-gray-600">
                         {emailJSReady
-                          ? 'Direct email sending is enabled'
-                          : 'Initializing email service...'}
+                          ? t("dashboard.contact.directEmailSending")
+                          : t("dashboard.contact.initializingEmail")}
                       </p>
                     </div>
                   </div>
@@ -438,7 +440,7 @@ ${formData.message}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       <User className="inline w-4 h-4 mr-2" />
-                      Full Name *
+                      {t("dashboard.contact.fullNameRequired")}
                     </label>
                     <input
                       type="text"
@@ -446,7 +448,7 @@ ${formData.message}
                       value={formData.name}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                      placeholder="John Doe"
+                      placeholder={t("dashboard.contact.johnDoe")}
                       required
                     />
                   </div>
@@ -454,7 +456,7 @@ ${formData.message}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       <Smartphone className="inline w-4 h-4 mr-2" />
-                      Phone Number *
+                      {t("dashboard.contact.phoneNumberRequired")}
                     </label>
                     <input
                       type="tel"
@@ -462,7 +464,7 @@ ${formData.message}
                       value={formData.phone}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                      placeholder="01558166468"
+                      placeholder={t("dashboard.contact.enterPhoneNumber")}
                       required
                     />
                   </div>
@@ -471,7 +473,7 @@ ${formData.message}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <AtSign className="inline w-4 h-4 mr-2" />
-                    Email Address *
+                    {t("dashboard.contact.emailAddressRequired")}
                   </label>
                   <input
                     type="email"
@@ -479,7 +481,7 @@ ${formData.message}
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    placeholder="your@email.com"
+                      placeholder={t("dashboard.contact.yourEmail")}
                     required
                   />
                 </div>
@@ -487,7 +489,7 @@ ${formData.message}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <MessageSquare className="inline w-4 h-4 mr-2" />
-                    Your Message *
+                    {t("dashboard.contact.yourMessageRequired")}
                   </label>
                   <textarea
                     name="message"
@@ -495,7 +497,7 @@ ${formData.message}
                     onChange={handleInputChange}
                     rows={6}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                    placeholder="Type your message here..."
+                      placeholder={t("dashboard.contact.typeMessageHere")}
                     required
                   />
                 </div>
@@ -513,7 +515,7 @@ ${formData.message}
                       )}
                       <div>
                         <p className={`font-medium ${submitStatus === 'success' ? 'text-green-800' : 'text-red-800'}`}>
-                          {submitStatus === 'success' ? 'Success!' : 'Error!'}
+                          {submitStatus === 'success' ? t("dashboard.contact.successLabel") : t("dashboard.contact.errorLabel")}
                         </p>
                         <p className={`text-sm ${submitStatus === 'success' ? 'text-green-700' : 'text-red-700'}`}>
                           {submitMessage}
@@ -535,15 +537,15 @@ ${formData.message}
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>Sending...</span>
+                      <span>{t("dashboard.contact.sending")}</span>
                       </>
                     ) : (
                       <>
                         <Send className="w-5 h-5" />
                         <span>
                           {formData.contactMethod === 'whatsapp'
-                            ? 'Send via WhatsApp'
-                            : 'Send Direct Email'}
+                            ? t("dashboard.contact.sendViaWhatsapp")
+                            : t("dashboard.contact.sendDirectEmail")}
                         </span>
                       </>
                     )}
@@ -555,7 +557,7 @@ ${formData.message}
 
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white rounded-2xl shadow-xl p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Contact Info</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">{t("dashboard.contact.contactInfo")}</h3>
 
               <div className="space-y-4">
                 <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl">
@@ -564,21 +566,21 @@ ${formData.message}
                       <MessageCircle className="w-6 h-6 text-green-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">WhatsApp</h4>
-                      <p className="text-sm text-gray-600">Direct messaging</p>
+                      <h4 className="font-semibold text-gray-900">{t("dashboard.contact.whatsapp")}</h4>
+                      <p className="text-sm text-gray-600">{t("dashboard.contact.directMessaging")}</p>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <p className="text-gray-700 font-mono">{contactInfo.whatsappNumber}</p>
                     <p className="text-xs text-gray-500">
-                      International: {cleanPhoneNumber(contactInfo.whatsappNumber)}
+                        {t("dashboard.contact.international")}{' '}{cleanPhoneNumber(contactInfo.whatsappNumber)}
                     </p>
                     <button
                       onClick={sendDirectWhatsApp}
                       className="w-full mt-2 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      Open WhatsApp
+                      {t("dashboard.contact.openWhatsapp")}
                     </button>
                   </div>
                 </div>
@@ -589,8 +591,8 @@ ${formData.message}
                       <Mail className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Email</h4>
-                      <p className="text-sm text-gray-600">Direct sending</p>
+                      <h4 className="font-semibold text-gray-900">{t("dashboard.contact.directEmail")}</h4>
+                      <p className="text-sm text-gray-600">{t("dashboard.contact.directSending")}</p>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -600,7 +602,7 @@ ${formData.message}
                       className="w-full mt-2 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center gap-2"
                     >
                       <Mail className="w-4 h-4" />
-                      Open Email
+                      {t("dashboard.contact.openEmail")}
                     </button>
                   </div>
                 </div>
@@ -608,19 +610,19 @@ ${formData.message}
             </div>
 
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6">
-              <h4 className="font-semibold text-gray-900 mb-4">Tips for WhatsApp</h4>
+              <h4 className="font-semibold text-gray-900 mb-4">{t("dashboard.contact.tipsForWhatsapp")}</h4>
               <div className="space-y-3 text-sm text-gray-600">
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p>Make sure WhatsApp is installed on your device</p>
+                  <p>{t("dashboard.contact.whatsappInstalled")}</p>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p>Allow popups from this website</p>
+                  <p>{t("dashboard.contact.allowPopups")}</p>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p>Click "Send" in WhatsApp to complete</p>
+                  <p>{t("dashboard.contact.clickSend")}</p>
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import {
     User, Eye, MessageSquare, ArrowRight, Heart, Bookmark
 } from 'lucide-react';
 import { useBlog } from '../../hooks/useBlog';
+import { useLanguage } from '../../context/LanguageContext';
 
 // أنواع البيانات
 interface EditModalData {
@@ -42,6 +43,8 @@ const BlogPage = () => {
         formatDate,
         generateUrlFromTitle
     } = useBlog();
+    
+    const { t } = useLanguage();
 
     // الحالات المحلية
     const [searchTerm, setSearchTerm] = useState('');
@@ -350,9 +353,9 @@ const BlogPage = () => {
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <BookOpen className="w-8 h-8 text-blue-600" />
-                            <h1 className="text-3xl font-bold text-gray-900">Blog Management</h1>
+                            <h1 className="text-3xl font-bold text-gray-900">{t("dashboard.blog.title")}</h1>
                         </div>
-                        <p className="text-gray-600">Manage your blog posts, content, and publications</p>
+                        <p className="text-gray-600">{t("dashboard.blog.manage")}</p>
                     </div>
 
                     <button
@@ -360,7 +363,7 @@ const BlogPage = () => {
                         className="flex items-center gap-3 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
                     >
                         <Plus className="w-5 h-5" />
-                        Add New Post
+                        {t("dashboard.blog.addNewPost")}
                     </button>
                 </div>
             </div>
@@ -373,7 +376,7 @@ const BlogPage = () => {
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
-                                placeholder="Search posts by title, content, or tags..."
+                                placeholder={t("dashboard.blog.searchByTitle")}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -387,7 +390,7 @@ const BlogPage = () => {
                             className="flex items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                             <Filter className="w-5 h-5" />
-                            Filters
+                            {t("dashboard.blog.filters")}
                             {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
 
@@ -396,16 +399,16 @@ const BlogPage = () => {
                             onChange={(e) => setSortBy(e.target.value as 'date' | 'views' | 'likes')}
                             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                            <option value="date">Sort by Date</option>
-                            <option value="views">Sort by Views</option>
-                            <option value="likes">Sort by Likes</option>
+                            <option value="date">{t("dashboard.blog.sortByDate")}</option>
+                            <option value="views">{t("dashboard.blog.sortByViews")}</option>
+                            <option value="likes">{t("dashboard.blog.sortByLikes")}</option>
                         </select>
 
                         <button
                             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                             className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                            {sortOrder === 'asc' ? '↑ Ascending' : '↓ Descending'}
+                            {sortOrder === 'asc' ? t("dashboard.blog.ascending") : t("dashboard.blog.descending")}
                         </button>
                     </div>
                 </div>
@@ -414,7 +417,7 @@ const BlogPage = () => {
                     <div className="mt-6 pt-6 border-t border-gray-200">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-3">Category</h3>
+                                <h3 className="text-sm font-medium text-gray-700 mb-3">{t("dashboard.blog.category")}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {allCategories.map((category) => (
                                         <button
@@ -432,7 +435,7 @@ const BlogPage = () => {
                             </div>
 
                             <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-3">Tags</h3>
+                                <h3 className="text-sm font-medium text-gray-700 mb-3">{t("dashboard.blog.tags")}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {allTags.slice(0, 10).map((tag) => (
                                         <button
@@ -450,7 +453,7 @@ const BlogPage = () => {
                             </div>
 
                             <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Filters</h3>
+                                <h3 className="text-sm font-medium text-gray-700 mb-3">{t("dashboard.blog.quickFilters")}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     <button
                                         onClick={() => {
@@ -459,7 +462,7 @@ const BlogPage = () => {
                                         }}
                                         className="px-3 py-1.5 text-sm bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 rounded-full hover:from-blue-100 hover:to-blue-200 transition-colors"
                                     >
-                                        Reset Filters
+                                        {t("dashboard.blog.resetFilters")}
                                     </button>
                                     <button
                                         onClick={async () => {
@@ -472,7 +475,7 @@ const BlogPage = () => {
                                         }}
                                         className="px-3 py-1.5 text-sm bg-gradient-to-r from-green-50 to-green-100 text-green-700 rounded-full hover:from-green-100 hover:to-green-200 transition-colors"
                                     >
-                                        Refresh Data
+                                        {t("dashboard.blog.refreshData")}
                                     </button>
                                 </div>
                             </div>
@@ -483,15 +486,15 @@ const BlogPage = () => {
 
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-gray-600">
-                    Showing <span className="font-semibold">{filteredPosts.length}</span> posts
+                    {t("dashboard.blog.showing")} <span className="font-semibold">{filteredPosts.length}</span> {t("dashboard.blog.posts")}
                     {posts.length > 0 && (
                         <span className="ml-2 text-sm text-gray-500">
-                            (Last updated: {formatDate(new Date().toISOString())})
+                            ({t("dashboard.blog.lastUpdated")}: {formatDate(new Date().toISOString())})
                         </span>
                     )}
                 </p>
                 <div className="text-sm text-gray-500">
-                    Sorted by {sortBy} ({sortOrder === 'desc' ? 'newest first' : 'oldest first'})
+                    {t("dashboard.blog.sortedBy")} {sortBy} ({sortOrder === 'desc' ? t("dashboard.blog.newestFirst") : t("dashboard.blog.oldestFirst")})
                 </div>
             </div>
 

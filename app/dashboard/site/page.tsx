@@ -12,6 +12,7 @@ import {
     Search, Settings, Bell, Shield, Lock,File
 } from 'lucide-react';
 import { useUser } from '../../hooks/useUser';
+import { useTranslation } from '../../hooks/useTranslation';
 import toast from 'react-hot-toast';
 import RichTextEditor from '../../Components/RichTextEditor/Richbox';
 
@@ -129,6 +130,7 @@ const availableIconsForCustom = [
 
 const SiteCreationPage = () => {
     const { currentUser } = useUser();
+    const { t, isArabic, dir } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
     
     // الحالة الأولية للفورم
@@ -184,12 +186,12 @@ const SiteCreationPage = () => {
 
     // تعريف التابات
     const tabs = [
-        { id: 'basic', label: 'Basic Info', icon: Globe },
-        { id: 'about', label: 'About & Media', icon: ImageIcon },
-        { id: 'contact', label: 'Contact Info', icon: Phone },
-        { id: 'content', label: 'Content', icon: File },
-        { id: 'policies', label: 'Policies', icon: CheckCircle },
-        { id: 'social', label: 'Social Media', icon: Share2 }
+        { id: 'basic', label: t('dashboard.site.basicInfo'), icon: Globe },
+        { id: 'about', label: t('dashboard.site.aboutMedia'), icon: ImageIcon },
+        { id: 'contact', label: t('dashboard.site.contactInfo'), icon: Phone },
+        { id: 'content', label: t('dashboard.site.content'), icon: File },
+        { id: 'policies', label: t('dashboard.site.policies'), icon: CheckCircle },
+        { id: 'social', label: t('dashboard.site.socialMedia'), icon: Share2 }
     ];
 
     // توليد slug من الاسم
@@ -1323,7 +1325,7 @@ const SiteCreationPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    Site Name *
+                                    {t('dashboard.site.name')} *
                                 </label>
                                 <input
                                     type="text"
@@ -1333,7 +1335,7 @@ const SiteCreationPage = () => {
                                         name: e.target.value
                                     }))}
                                     className={`w-full px-4 py-3.5 border-2 ${validationErrors.name ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                                    placeholder="Enter your site name"
+                                    placeholder={t('dashboard.site.enterSiteName')}
                                 />
                                 {validationErrors.name && (
                                     <p className="mt-2 text-sm text-red-600">{validationErrors.name}</p>
@@ -1342,7 +1344,7 @@ const SiteCreationPage = () => {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    Subdomain *
+                                    {t('dashboard.site.subdomain')} *
                                 </label>
                                 <div className="relative">
                                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
@@ -1369,13 +1371,13 @@ const SiteCreationPage = () => {
                                     <p className="mt-2 text-sm text-red-600">{validationErrors.subdomain}</p>
                                 )}
                                 <p className="mt-2 text-sm text-gray-500">
-                                    This will be your site's web address
+                                    {t('dashboard.site.thisWillBeAddress')}
                                 </p>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    Email *
+                                    {t('dashboard.site.email')} *
                                 </label>
                                 <input
                                     type="email"
@@ -1394,7 +1396,7 @@ const SiteCreationPage = () => {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    Mobile Number *
+                                    {t('dashboard.site.mobile')} *
                                 </label>
                                 <input
                                     type="tel"
@@ -1414,7 +1416,7 @@ const SiteCreationPage = () => {
 
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                Short Description *
+                                {t('dashboard.site.shortDescription')} *
                             </label>
                             <textarea
                                 value={formData.description}
@@ -1424,15 +1426,15 @@ const SiteCreationPage = () => {
                                 }))}
                                 rows={3}
                                 className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                placeholder="Brief description of your site (appears in search results)"
+                                placeholder={t('dashboard.site.briefDescription')}
                                 maxLength={160}
                             />
                             <div className="flex justify-between mt-2">
                                 <p className="text-sm text-gray-500">
-                                    Keep it short and descriptive
+                                    {t('dashboard.site.keepItShort')}
                                 </p>
                                 <p className="text-sm text-gray-500">
-                                    {formData.description.length}/160 characters
+                                    {formData.description.length}/160 {t('dashboard.site.characters')}
                                 </p>
                             </div>
                         </div>
@@ -1446,7 +1448,7 @@ const SiteCreationPage = () => {
                             <div className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                        About Your Business
+                                        {t('dashboard.site.aboutYourBusiness')}
                                     </label>
                                     <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
                                         <RichTextEditor
@@ -1461,7 +1463,7 @@ const SiteCreationPage = () => {
 
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                        Image Alt Text
+                                        {t('dashboard.site.imageAltText')}
                                     </label>
                                     <input
                                         type="text"
@@ -1471,10 +1473,10 @@ const SiteCreationPage = () => {
                                             imageAlt: e.target.value
                                         }))}
                                         className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                        placeholder="Description of your logo/image for accessibility"
+                                        placeholder={t('dashboard.site.descriptionLogoAccessibility')}
                                     />
                                     <p className="mt-2 text-sm text-gray-500">
-                                        Important for SEO and accessibility
+                                        {t('dashboard.site.importantSEOAccessibility')}
                                     </p>
                                 </div>
                             </div>
@@ -1482,7 +1484,7 @@ const SiteCreationPage = () => {
                             <div className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                        Site Logo/Image
+                                        {t('dashboard.site.siteLogo')}
                                     </label>
                                     <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer"
                                          onClick={() => fileInputRef.current?.click()}>
@@ -1502,19 +1504,19 @@ const SiteCreationPage = () => {
                                                         className="w-full h-full object-cover"
                                                     />
                                                 </div>
-                                                <p className="text-gray-700 font-medium">Logo uploaded!</p>
-                                                <p className="text-sm text-gray-500 mt-1">Click to upload a different image</p>
+                                                <p className="text-gray-700 font-medium">{t('dashboard.site.logoUploaded')}</p>
+                                                <p className="text-sm text-gray-500 mt-1">{t('dashboard.site.clickUploadDifferent')}</p>
                                             </div>
                                         ) : (
                                             <div className="flex flex-col items-center justify-center">
                                                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                                     <Upload className="w-10 h-10 text-gray-400" />
                                                 </div>
-                                                <p className="text-gray-700 font-medium">Click to upload logo</p>
-                                                <p className="text-sm text-gray-500 mt-1">PNG, JPG, GIF up to 5MB</p>
+                                                <p className="text-gray-700 font-medium">{t('dashboard.site.clickUploadLogo')}</p>
+                                                <p className="text-sm text-gray-500 mt-1">{t('dashboard.site.pngJpgGif')}</p>
                                                 <div className="mt-4 inline-flex items-center gap-2 text-sm text-blue-600 font-medium">
                                                     <ImageIcon className="w-4 h-4" />
-                                                    Browse files
+                                                    {t('dashboard.site.browseFiles')}
                                                 </div>
                                             </div>
                                         )}
@@ -1524,24 +1526,24 @@ const SiteCreationPage = () => {
                                 <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 border-2 border-blue-100">
                                     <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
                                         <ImageIcon className="w-5 h-5 text-blue-600" />
-                                        Image Guidelines
+                                        {t('dashboard.site.imageGuidelines')}
                                     </h3>
                                     <ul className="space-y-2 text-sm text-gray-700">
                                         <li className="flex items-start gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
-                                            <span>Use high-quality images (min 300x300 pixels)</span>
+                                            <span>{t('dashboard.site.useHighQuality')}</span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
-                                            <span>Square or circular images work best for logos</span>
+                                            <span>{t('dashboard.site.squareCircularImages')}</span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
-                                            <span>Keep file size under 5MB</span>
+                                            <span>{t('dashboard.site.keepFileSizeUnder')}</span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
-                                            <span>Transparent PNG recommended for logos</span>
+                                            <span>{t('dashboard.site.transparentPngRecommended')}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -1558,7 +1560,7 @@ const SiteCreationPage = () => {
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     <span className="flex items-center gap-2">
                                         <Phone className="w-4 h-4" />
-                                        Phone Number
+                                        {t('dashboard.site.phone')}
                                     </span>
                                 </label>
                                 <input
@@ -1577,7 +1579,7 @@ const SiteCreationPage = () => {
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     <span className="flex items-center gap-2">
                                         <Mail className="w-4 h-4" />
-                                        Contact Email
+                                        {t('dashboard.site.contactEmail')}
                                     </span>
                                 </label>
                                 <input
@@ -1596,7 +1598,7 @@ const SiteCreationPage = () => {
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     <span className="flex items-center gap-2">
                                         <Clock className="w-4 h-4" />
-                                        Opening Hours
+                                        {t('dashboard.site.openingHours')}
                                     </span>
                                 </label>
                                 <input
@@ -1617,8 +1619,8 @@ const SiteCreationPage = () => {
                         <div>
                             <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900">Store Locations</h3>
-                                    <p className="text-gray-600">Add multiple locations with Google Maps</p>
+                                    <h3 className="text-xl font-bold text-gray-900">{t('dashboard.site.storeLocations')}</h3>
+                                    <p className="text-gray-600">{t('dashboard.site.addMultipleLocations')}</p>
                                 </div>
                                 <button
                                     type="button"
@@ -1626,7 +1628,7 @@ const SiteCreationPage = () => {
                                     className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
                                 >
                                     <Plus className="w-4 h-4" />
-                                    Add Location
+                                    {t('dashboard.site.addLocation')}
                                 </button>
                             </div>
 
@@ -1640,7 +1642,7 @@ const SiteCreationPage = () => {
                                                 </div>
                                                 <div>
                                                     <h4 className="font-bold text-gray-900">{map.title}</h4>
-                                                    <p className="text-sm text-gray-500">Location {index + 1}</p>
+                                                    <p className="text-sm text-gray-500">{t('dashboard.site.address')} {index + 1}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2">
@@ -1658,33 +1660,33 @@ const SiteCreationPage = () => {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Location Title
+                                                    {t('dashboard.site.locationTitle')}
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={map.title}
                                                     onChange={(e) => updateMapLocation(map.id, 'title', e.target.value)}
                                                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                                    placeholder="e.g., Main Office, Branch Store, Warehouse"
+                                                    placeholder={t('dashboard.site.egMainOffice')}
                                                 />
                                             </div>
 
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Address
+                                                    {t('dashboard.site.address')}
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={map.address}
                                                     onChange={(e) => updateMapLocation(map.id, 'address', e.target.value)}
                                                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                                    placeholder="Street, City, State, ZIP Code"
+                                                    placeholder={t('dashboard.site.streetCityState')}
                                                 />
                                             </div>
 
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Phone Number
+                                                    {t('dashboard.site.phoneNumber')}
                                                 </label>
                                                 <input
                                                     type="tel"
@@ -1697,7 +1699,7 @@ const SiteCreationPage = () => {
 
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Email Address
+                                                    {t('dashboard.site.email')}
                                                 </label>
                                                 <input
                                                     type="email"
@@ -1710,7 +1712,7 @@ const SiteCreationPage = () => {
 
                                             <div className="md:col-span-2">
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Working Hours (Period Open)
+                                                    {t('dashboard.site.workingHours')}
                                                 </label>
                                                 <input
                                                     type="text"
@@ -1723,7 +1725,7 @@ const SiteCreationPage = () => {
 
                                             <div className="md:col-span-2">
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Google Maps Embed URL
+                                                    {t('dashboard.site.googleMapsEmbedUrl')}
                                                 </label>
                                                 <input
                                                     type="url"
@@ -1733,7 +1735,7 @@ const SiteCreationPage = () => {
                                                     placeholder="https://maps.google.com/embed?pb=..."
                                                 />
                                                 <p className="mt-2 text-sm text-gray-500">
-                                                    Get the embed URL from Google Maps → Share → Embed a map
+                                                    {t('dashboard.site.getEmbedUrl')}
                                                 </p>
                                             </div>
                                         </div>
@@ -1768,8 +1770,8 @@ const SiteCreationPage = () => {
                         <div>
                             <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900">Why Choose Us</h3>
-                                    <p className="text-gray-600">List key points that make your business stand out</p>
+                                    <h3 className="text-xl font-bold text-gray-900">{t('dashboard.site.whyChooseUs')}</h3>
+                                    <p className="text-gray-600">{t('dashboard.site.listKeyPoints')}</p>
                                 </div>
                                 <button
                                     type="button"
@@ -1777,7 +1779,7 @@ const SiteCreationPage = () => {
                                     className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
                                 >
                                     <Plus className="w-4 h-4" />
-                                    Add Point
+                                    {t('common.add')}
                                 </button>
                             </div>
 
@@ -1793,7 +1795,7 @@ const SiteCreationPage = () => {
                                                 value={point.text}
                                                 onChange={(e) => updateWhyUsPoint(point.id, e.target.value)}
                                                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                placeholder="Enter a compelling reason to choose your business..."
+                                                placeholder={t('dashboard.site.enterCompelling')}
                                             />
                                         </div>
                                         {formData.whyUs.length > 1 && (
@@ -1814,8 +1816,8 @@ const SiteCreationPage = () => {
                         <div>
                             <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900">Frequently Asked Questions</h3>
-                                    <p className="text-gray-600">Add common questions and answers</p>
+                                    <h3 className="text-xl font-bold text-gray-900">{t('dashboard.site.frequentlyAskedQuestions')}</h3>
+                                    <p className="text-gray-600">{t('dashboard.site.addCommonQuestions')}</p>
                                 </div>
                                 <button
                                     type="button"
@@ -1823,7 +1825,7 @@ const SiteCreationPage = () => {
                                     className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
                                 >
                                     <Plus className="w-4 h-4" />
-                                    Add FAQ
+                                    {t('common.add')} {t('dashboard.site.faqs')}
                                 </button>
                             </div>
 
@@ -1833,27 +1835,28 @@ const SiteCreationPage = () => {
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Question
+                                                    {t('dashboard.site.question')}
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={faq.question}
                                                     onChange={(e) => updateFAQ(faq.id, 'question', e.target.value)}
                                                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                                    placeholder="What is your return policy?"
+                                                    placeholder={t('dashboard.site.whatReturnPolicy')}
                                                 />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                    Answer
+                                                    {t('dashboard.site.answer')}
                                                 </label>
                                                 <textarea
                                                     value={faq.answer}
                                                     onChange={(e) => updateFAQ(faq.id, 'answer', e.target.value)}
                                                     rows={3}
                                                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                                    placeholder="We offer a 30-day return policy on all products..."
+                                                    placeholder={t('dashboard.site.weOffer30Day')}
                                                 />
+                                              
                                             </div>
                                             <div className="flex justify-end">
                                                 <button
@@ -1862,7 +1865,7 @@ const SiteCreationPage = () => {
                                                     className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
-                                                    Remove FAQ
+                                                    {t('common.delete')} {t('dashboard.site.question')}
                                                 </button>
                                             </div>
                                         </div>
@@ -1877,14 +1880,14 @@ const SiteCreationPage = () => {
                 return (
                     <div className="space-y-8">
                         <div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">Legal & Policy Information</h3>
-                            <p className="text-gray-600 mb-6">These sections will be displayed on your site's policy pages</p>
+                            <h3 className="text-lg font-bold text-gray-900 mb-4">{t('dashboard.site.legalPolicy')}</h3>
+                            <p className="text-gray-600 mb-6">{t('dashboard.site.sectionsDisplayed')}</p>
                         </div>
 
                         <div className="space-y-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    Privacy Policy
+                                    {t('dashboard.site.privacyPolicy')}
                                 </label>
                                 <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
                                     <RichTextEditor
@@ -1899,7 +1902,7 @@ const SiteCreationPage = () => {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    Terms of Use
+                                    {t('dashboard.site.termsOfUse')}
                                 </label>
                                 <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
                                     <RichTextEditor
@@ -1914,7 +1917,7 @@ const SiteCreationPage = () => {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                    Return Policy
+                                    {t('dashboard.site.returnPolicy')}
                                 </label>
                                 <div className="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
                                     <RichTextEditor
@@ -1931,24 +1934,24 @@ const SiteCreationPage = () => {
                         <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200">
                             <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
                                 <CheckCircle className="w-5 h-5 text-green-600" />
-                                Legal Recommendations
+                                {t('dashboard.site.legalRecommendations')}
                             </h3>
                             <ul className="space-y-2 text-sm text-gray-700">
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
-                                    <span>Be clear and specific about user rights and responsibilities</span>
+                                    <span>{t('dashboard.site.beClearSpecific')}</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
-                                    <span>Include contact information for policy inquiries</span>
+                                    <span>{t('dashboard.site.includeContactInfo')}</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
-                                    <span>Consider consulting with a legal professional for complex policies</span>
+                                    <span>{t('dashboard.site.considerConsulting')}</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
-                                    <span>Update policies regularly to reflect changes in your business</span>
+                                    <span>{t('dashboard.site.updatePoliciesRegularly')}</span>
                                 </li>
                             </ul>
                         </div>
@@ -1959,8 +1962,8 @@ const SiteCreationPage = () => {
                 return (
                     <div className="space-y-8">
                         <div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Social Media Profiles</h3>
-                            <p className="text-gray-600">Connect your social media accounts to your site</p>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('dashboard.site.socialMediaProfiles')}</h3>
+                            <p className="text-gray-600">{t('dashboard.site.connectSocialMedia')}</p>
                         </div>
 
                         {validationErrors.socialMedia && (
@@ -2001,7 +2004,7 @@ const SiteCreationPage = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Platform
+                                                {t('dashboard.site.platformName')}
                                             </label>
                                             <select
                                                 value={social.name}
@@ -2018,7 +2021,7 @@ const SiteCreationPage = () => {
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Icon
+                                                {t('dashboard.site.selectIcon')}
                                             </label>
                                             <input
                                                 type="text"
@@ -2031,7 +2034,7 @@ const SiteCreationPage = () => {
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Profile URL *
+                                                {t('dashboard.site.profileUrl')} *
                                             </label>
                                             <input
                                                 type="url"
@@ -2052,7 +2055,7 @@ const SiteCreationPage = () => {
                             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
                                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                                     <Plus className="w-5 h-5 text-blue-600" />
-                                    Add Social Media
+                                    {t('dashboard.site.addSocialMedia')}
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="relative">
@@ -2061,7 +2064,7 @@ const SiteCreationPage = () => {
                                             onClick={() => setShowSocialMediaDropdown(!showSocialMediaDropdown)}
                                             className="w-full flex items-center justify-between px-4 py-3 bg-white border-2 border-gray-300 rounded-lg hover:border-blue-500 transition-all"
                                         >
-                                            <span className="text-gray-700 font-medium">Select a Platform</span>
+                                            <span className="text-gray-700 font-medium">{t('dashboard.site.selectAPlatform')}</span>
                                             <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${showSocialMediaDropdown ? 'rotate-180' : ''}`} />
                                         </button>
 
@@ -2261,30 +2264,41 @@ const SiteCreationPage = () => {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                                {formData.id ? 'Edit Your Website' : 'Create Your Website'}
+                                {formData.id ? t('dashboard.site.editYourWebsite') : t('dashboard.site.createYourWebsite')}
                             </h1>
                             <p className="text-gray-600">
                                 {formData.id 
-                                    ? 'Update your website information and content' 
-                                    : 'Build your professional online presence in a few simple steps'
+                                    ? t('dashboard.site.updateWebsiteInfo') 
+                                    : t('dashboard.site.buildPresence')
                                 }
                             </p>
-                            <div className="mt-3 flex items-center gap-3 text-sm">
+                            <div className="mt-3 flex items-center gap-3 text-sm flex-wrap">
                                 <div className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full font-medium">
-                                    User: {currentUser?.fullName || 'Guest'}
+                                    {t('dashboard.site.user')}: {currentUser?.fullName || 'Guest'}
                                 </div>
                                 <div className="px-3 py-1.5 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full font-medium">
                                     {formData.subdomain ? (
                                         <span className="flex items-center gap-1">
                                             <Globe className="w-3 h-3" />
-                                            https://{formData.subdomain}.example.com
+                                            https://{formData.subdomain}.localhost:3000
                                         </span>
                                     ) : (
-                                        'Choose a subdomain'
+                                        t('dashboard.site.chooseSubdomain')
                                     )}
                                 </div>
                             </div>
                         </div>
+                        {formData.subdomain && (
+                            <a 
+                                href={`http://${formData.subdomain}.localhost:3000`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="md:self-start flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl"
+                            >
+                                <Globe className="w-4 h-4" />
+                                {t('dashboard.site.visitSite')}
+                            </a>
+                        )}
                     </div>
                 </div>
 
@@ -2363,7 +2377,7 @@ const SiteCreationPage = () => {
                                         }`}
                                 >
                                     <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    <span className="hidden sm:inline">Previous</span>
+                                    <span className="hidden sm:inline">{t('dashboard.site.previous')}</span>
                                 </button>
 
                                 <div className="flex items-center gap-4">
@@ -2381,7 +2395,7 @@ const SiteCreationPage = () => {
                                             }}
                                             className="flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-2.5 sm:py-3.5 text-sm sm:text-base bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
                                         >
-                                            <span className="hidden sm:inline">Next</span>
+                                            <span className="hidden sm:inline">{t('dashboard.site.next')}</span>
                                             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </button>
                                     ) : (
@@ -2393,12 +2407,12 @@ const SiteCreationPage = () => {
                                             {isSubmitting ? (
                                                 <>
                                                     <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                    <span className="hidden sm:inline">Creating Site...</span>
+                                                    <span className="hidden sm:inline">{t('dashboard.site.creatingMySite')}</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     <Save className="w-4 h-4 sm:w-5 sm:h-5" />
-                                                    Create My Site
+                                                    {t('dashboard.site.createMySite')}
                                                 </>
                                             )}
                                         </button>
@@ -2412,33 +2426,33 @@ const SiteCreationPage = () => {
                 {/* Quick Preview */}
                 <div className="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xl font-bold">Quick Preview</h3>
+                        <h3 className="text-xl font-bold">{t('dashboard.site.quickPreview')}</h3>
                         <div className="flex items-center gap-2 text-sm">
                             <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                            <span>Live Preview</span>
+                            <span>{t('dashboard.site.livePreview')}</span>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div className="bg-gray-800 rounded-xl p-4">
-                            <div className="text-sm text-gray-400 mb-1">Site Name</div>
+                            <div className="text-sm text-gray-400 mb-1">{t('dashboard.site.siteName')}</div>
                             <div className="font-bold">{formData.name || 'Your Site Name'}</div>
                         </div>
                         <div className="bg-gray-800 rounded-xl p-4">
-                            <div className="text-sm text-gray-400 mb-1">URL</div>
+                            <div className="text-sm text-gray-400 mb-1">{t('dashboard.site.url')}</div>
                             <div className="font-bold text-blue-300">
                                 https://{formData.subdomain || 'your-site'}.example.com
                             </div>
                         </div>
                         <div className="bg-gray-800 rounded-xl p-4">
-                            <div className="text-sm text-gray-400 mb-1">Contact</div>
+                            <div className="text-sm text-gray-400 mb-1">{t('dashboard.site.contact')}</div>
                             <div className="font-bold">{formData.email || 'email@example.com'}</div>
                         </div>
                         <div className="bg-gray-800 rounded-xl p-4">
-                            <div className="text-sm text-gray-400 mb-1">Features</div>
+                            <div className="text-sm text-gray-400 mb-1">{t('dashboard.site.features')}</div>
                             <div className="flex flex-wrap gap-2">
-                                <span className="px-2 py-1 bg-blue-600 rounded text-xs">{formData.maps.length} Maps</span>
-                                <span className="px-2 py-1 bg-green-600 rounded text-xs">{formData.socialMedia.length} Social</span>
-                                <span className="px-2 py-1 bg-purple-600 rounded text-xs">{formData.faqs.length} FAQs</span>
+                                <span className="px-2 py-1 bg-blue-600 rounded text-xs">{formData.maps.length} {t('dashboard.site.maps')}</span>
+                                <span className="px-2 py-1 bg-green-600 rounded text-xs">{formData.socialMedia.length} {t('dashboard.site.social')}</span>
+                                <span className="px-2 py-1 bg-purple-600 rounded text-xs">{formData.faqs.length} {t('dashboard.site.faqs')}</span>
                             </div>
                         </div>
                     </div>
@@ -2447,10 +2461,10 @@ const SiteCreationPage = () => {
                 {/* Footer Info */}
                 <div className="mt-8 text-center">
                     <p className="text-gray-600 text-sm">
-                        Your site will be available immediately after creation. You can always edit these settings later.
+                        {t('dashboard.site.yourSiteWillBeAvailable')}
                     </p>
                     <p className="text-gray-500 text-sm mt-2">
-                        Need help? Contact support at support@example.com
+                        {t('dashboard.site.needHelp')}
                     </p>
                 </div>
             </div>

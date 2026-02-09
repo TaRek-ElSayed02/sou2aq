@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
   const Logo = "/logo.png";
 
   return (
@@ -19,24 +23,24 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col gap-2 text-gray-700 lg:w-1/3  items-center" >
-          <h4 className="font-semibold mb-2">Quick Links</h4>
-          <Link href="/" className="hover:text-blue-600 transition">Home</Link>
-          <Link href="/" className="hover:text-blue-600 transition">About</Link>
-          <Link href="/" className="hover:text-blue-600 transition">Our App</Link>
-          <Link href="/" className="hover:text-blue-600 transition">Contacts</Link>
+          <h4 className="font-semibold mb-2">{t('common.quickLinks')}</h4>
+          <Link href="/" className="hover:text-blue-600 transition">{t('common.home')}</Link>
+          <Link href="/" className="hover:text-blue-600 transition">{t('common.about')}</Link>
+          <Link href="/" className="hover:text-blue-600 transition">{t('common.ourApp')}</Link>
+          <Link href="/" className="hover:text-blue-600 transition">{t('common.contacts')}</Link>
         </div>
 
         <div className="flex flex-col gap-2 lg:w-1/3  items-center">
-          <h4 className="font-semibold mb-2">Account</h4>
-          <Link href="/auth/login" className="hover:text-blue-600 transition">Log in</Link>
+          <h4 className="font-semibold mb-2">{t('common.account')}</h4>
+          <Link href="/auth/login" className="hover:text-blue-600 transition">{t('common.logIn')}</Link>
           <Link href="/auth/register" className=" text-center py-2 px-4 rounded-lg transition w-max">
-            Sign up
+            {t('common.signUp')}
           </Link>
         </div>
       </div>
 
       <div className="border-t border-gray-300 mt-8 pt-4 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} Your Company. All rights reserved.
+        © {new Date().getFullYear()} Your Company. {t('common.copyright')}
       </div>
     </footer>
   )

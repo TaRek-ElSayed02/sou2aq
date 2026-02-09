@@ -1,13 +1,13 @@
 'use client';
 import React, { useState, useMemo } from 'react';
 import { Calendar, User, Clock, ChevronLeft, MessageSquare, Share2, BookOpen, Tag, ArrowRight } from 'lucide-react';
-
-
+import { useLanguage } from '../context/LanguageContext';
 import Link from 'next/link';
 import Header from '../Components/Header/Header';
 import Footer from '../Components/Footer.tsx/Footer';
 
 export default function Blog() {
+  const { t, dir, isArabic } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('All Articles');
   const [sortOrder, setSortOrder] = useState('Newest');
   const [currentPage, setCurrentPage] = useState(1);
@@ -182,13 +182,13 @@ export default function Blog() {
   ];
 
   const categories = [
-    'All Articles',
-    'Professional Tips',
-    'Design',
-    'Writing',
-    'Strategies',
-    'Skill Development',
-    'Technology'
+    t('common.allArticles'),
+    t('common.professionalTips'),
+    t('common.designCategory'),
+    t('common.writing'),
+    t('common.strategies'),
+    t('common.skillDevelopment'),
+    t('common.technology')
   ];
 
   const popularTags = [
@@ -207,14 +207,14 @@ export default function Blog() {
   const filteredPosts = useMemo(() => {
     let filtered = [...blogPosts];
 
-    if (selectedCategory !== 'All Articles') {
+    if (selectedCategory !== t('common.allArticles')) {
       filtered = filtered.filter(post => post.category === selectedCategory);
     }
 
     filtered = filtered.filter(post => !post.featured);
 
     filtered.sort((a, b) => {
-      if (sortOrder === 'Newest') {
+      if (sortOrder === t('common.newest')) {
         return b.timestamp - a.timestamp;
       } else {
         return a.timestamp - b.timestamp;
@@ -277,17 +277,17 @@ export default function Blog() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-left">
+    <div className={`min-h-screen flex flex-col bg-white ${isArabic ? 'text-right' : 'text-left'}`} dir={dir}>
       <Header />
 
       <main className="flex-grow">
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-[#0F172A] mb-6 leading-tight">
-              Blog
+              {t('common.blogs')}
             </h1>
             <p className="text-xl text-[#1E293B] mb-8 max-w-3xl mx-auto leading-relaxed">
-              Discover the latest tips, tools, and guidance to create a professional resume that helps you land the job you deserve
+              {t('common.blogDesc')}
             </p>
           </div>
         </section>
@@ -299,7 +299,7 @@ export default function Blog() {
                 <div className="p-8 md:p-12 flex flex-col justify-center">
                   <div className="mb-4">
                     <span className="inline-block bg-blue-100 text-black text-sm font-medium px-4 py-1 rounded-full">
-                      Featured Article
+                      {t('common.featuredArticle')}
                     </span>
                   </div>
                   <h2 className="text-2xl md:text-4xl font-bold text-black mb-4 leading-tight">
@@ -322,7 +322,7 @@ export default function Blog() {
                     onClick={() => handleReadMore(featuredPost.id)}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition w-fit flex items-center gap-2"
                   >
-                    Read Article
+                    {t('common.readArticle')}
                     <ChevronLeft className="w-5 h-5 rotate-180" />
                   </button>
                 </div>
@@ -340,13 +340,13 @@ export default function Blog() {
             <div className="lg:w-2/3">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">
-                  {selectedCategory === 'All Articles' ? 'Latest Articles' : selectedCategory}
+                  {selectedCategory === t('common.allArticles') ? t('common.latestArticles') : selectedCategory}
                   <span className="text-gray-400 text-sm font-normal ml-2">
-                    ({filteredPosts.length} articles)
+                    ({filteredPosts.length} {t('common.articles')})
                   </span>
                 </h2>
                 <div className="flex items-center gap-4">
-                  <span className="text-gray-400 text-sm">Sort by:</span>
+                  <span className="text-gray-400 text-sm">{t('common.sortBy')}</span>
                   <select
                     value={sortOrder}
                     onChange={(e) => handleSortChange(e.target.value)}
@@ -399,7 +399,7 @@ export default function Blog() {
                               onClick={() => handleReadMore(post.id)}
                               className="text-black hover:text-blue-600 transition flex items-center gap-1"
                             >
-                              <span className="text-sm">Read More</span>
+                              <span className="text-sm">{t('common.readMore')}</span>
                               <ChevronLeft className="w-4 h-4 rotate-180" />
                             </button>
                           </div>
@@ -409,7 +409,7 @@ export default function Blog() {
                   ))
                 ) : (
                   <div className="col-span-2 text-center py-12">
-                    <p className="text-gray-400 text-lg">No articles in this category</p>
+                    <p className="text-gray-400 text-lg">{t('common.noArticles')}</p>
                   </div>
                 )}
               </div>
@@ -486,9 +486,9 @@ export default function Blog() {
 
               {filteredPosts.length > 0 && (
                 <div className="text-center mt-4 text-gray-600 text-sm">
-                  Showing articles {(currentPage - 1) * postsPerPage + 1} to{' '}
-                  {Math.min(currentPage * postsPerPage, filteredPosts.length)} of{' '}
-                  {filteredPosts.length} articles
+                  {t('common.showingArticles')} {(currentPage - 1) * postsPerPage + 1} {t('common.to')}{' '}
+                  {Math.min(currentPage * postsPerPage, filteredPosts.length)} {t('common.of')}{' '}
+                  {filteredPosts.length} {t('common.articles')}
                 </div>
               )}
             </div>
@@ -498,7 +498,7 @@ export default function Blog() {
                 <div className="bg-gray-100 rounded-xl p-6 border border-gray-300">
                   <h3 className="text-xl font-bold text-black mb-4 flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-black" />
-                    Article Categories
+                    {t('common.articleCategories')}
                   </h3>
                   <div className="space-y-2">
                     {categories.map((category, index) => (
@@ -531,10 +531,10 @@ export default function Blog() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
-              Articles You Might Like
+              {t('common.articlesYouMightLike')}
             </h2>
             <p className="text-black max-w-2xl mx-auto">
-              Discover more valuable content that helps you develop your professional journey
+              {t('common.discoverMoreContent')}
             </p>
           </div>
 
@@ -561,7 +561,7 @@ export default function Blog() {
                       onClick={() => handleReadMore(post.id)}
                       className="text-black hover:text-blue-600 transition flex items-center gap-1 text-sm"
                     >
-                      <span>Read Article</span>
+                      <span>{t('common.readArticle')}</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -573,10 +573,10 @@ export default function Blog() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-12 md:p-16 text-center border border-blue-300/50">
             <h2 className="text-3xl md:text-5xl font-bold text-black mb-6">
-              Ready to Create Your Resume?
+              {t('common.readyToCreateResume')}
             </h2>
             <p className="text-xl text-black mb-8 max-w-2xl mx-auto">
-              Start now for free and create a professional resume that opens doors to opportunities
+              {t('common.startNowFree')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -584,14 +584,14 @@ export default function Blog() {
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition"
                 style={{ color: "white" }}
               >
-                Start Free
+                {t('common.startFree')}
               </Link>
               <Link
                 href="/templates"
                 className="bg-transparent hover:bg-white/10 text-black border border-black/30 px-8 py-4 rounded-lg text-lg font-semibold transition"
                 style={{ color: "black" }}
               >
-                Browse Templates
+                {t('common.browseTemplates')}
               </Link>
             </div>
           </div>

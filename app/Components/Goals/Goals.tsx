@@ -1,10 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
 import { motion } from "framer-motion";
 import { Variants } from "framer-motion";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 
 export default function Goals() {
+  const { t } = useLanguage();
   const icon1 = "/Activity.png";
 
   const cardVariants: Variants = {
@@ -31,7 +35,7 @@ export default function Goals() {
         viewport={{ once: true }}
         className="text-[#0F172A] text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-10"
       >
-        Our Vision & Our Goal
+        {t('common.visionAndGoal')}
       </motion.h2>
 
       {/* Cards */}
@@ -57,18 +61,18 @@ export default function Goals() {
             />
 
             <h3 className="text-xl font-semibold text-[#0F172A]">
-              Graphic Design
+              {t('common.graphicDesign')}
             </h3>
 
             <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dui mi, bibendum eu erat id, ultricies semper metus.
+              {t('common.graphicDesignDesc')}
             </p>
 
             <Link
               href="/auth/login"
               className="mt-4 bg-blue-600 text-white py-2.5 px-8 rounded-lg hover:bg-blue-700 transition"
             >
-              Learn More
+              {t('common.learnMore')}
             </Link>
           </motion.div>
         ))}

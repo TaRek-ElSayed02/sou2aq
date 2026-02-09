@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Mail, Phone, MapPin, LinkedinIcon, TwitterIcon, MessageCircle, Github } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface TeamMember {
   id: number;
@@ -21,6 +22,7 @@ interface TeamMember {
 }
 
 export default function TeamPage() {
+  const { t } = useLanguage();
   const teamMembers: TeamMember[] = [
     {
       id: 1,
@@ -96,8 +98,8 @@ export default function TeamPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Our Team</h1>
-        <p className="text-gray-600">Meet our talented team members</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("dashboard.team.title")}</h1>
+        <p className="text-gray-600">{t("dashboard.team.subtitle")}</p>
       </div>
 
       {/* Team Members Grid */}

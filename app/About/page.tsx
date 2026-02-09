@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import {
   FileText,
   Users,
@@ -14,26 +15,24 @@ import Header from '../Components/Header/Header';
 import Footer from '../Components/Footer.tsx/Footer';
 
 export default function About() {
+  const { t, dir, isArabic } = useLanguage();
   const handleClick = () => {
     window.location.href = '/auth/register';
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-left">
+    <div className={`min-h-screen flex flex-col bg-white ${isArabic ? 'text-right' : 'text-left'}`} dir={dir}>
       <Header />
 
-      <main className="flex-grow" dir="ltr">
+      <main className="flex-grow">
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-[#0F172A] mb-6">
-              Who Are We?
+              {t('common.whoAreWe')}
             </h1>
             <p className="text-xl text-[#1E293B] mb-8 max-w-3xl mx-auto leading-relaxed">
-              We are a platform dedicated to helping job seekers create
-              professional resumes in a simple and effective way. Our mission
-              is to empower you to land your dream job through a standout resume
-              that highlights your skills and experience.
+              {t('common.whoAreWeDesc')}
             </p>
           </div>
         </section>
@@ -42,25 +41,17 @@ export default function About() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className=" rounded-2xl p-8 md:p-12 border border-gray-800">
             <h2 className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-6">
-              Our Story
+              {t('common.ourStory')}
             </h2>
             <div className="space-y-4 text-[#1E293B] text-lg leading-relaxed">
               <p>
-                The idea behind CV Builder started from a personal experience
-                faced by our founders while searching for jobs. We noticed that
-                many talented individuals were missing great opportunities due
-                to poorly designed or unprofessional resumes.
+                {t('common.storyPart1')}
               </p>
               <p>
-                We decided to build a solution that makes resume creation easy
-                and accessible to everyone. No design skills or technical
-                experience required. Just enter your information and within
-                minutes you’ll have a professional resume ready to download and
-                send.
+                {t('common.storyPart2')}
               </p>
               <p>
-                Today, we are proud to have helped thousands of users secure
-                their ideal jobs through resumes created on our platform.
+                {t('common.storyPart3')}
               </p>
             </div>
           </div>
@@ -70,11 +61,10 @@ export default function About() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-[#0F172A] mb-4">
-              How We Help You
+              {t('common.howWeHelp')}
             </h2>
             <p className="text-xl text-[#1E293B] max-w-2xl mx-auto">
-              We provide a complete experience for building and managing your
-              resume
+              {t('common.helpYouDesc')}
             </p>
           </div>
 
@@ -87,20 +77,18 @@ export default function About() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-black mb-2">
-                    Simple & Smart Form
+                    {t('common.simpleSmartForm')}
                   </h3>
                   <p className="text-gray-700">
-                    Fill out an easy form with your personal details, experience,
-                    skills, and certifications. The form guides you step by step
-                    with no complexity.
+                    {t('common.formDesc')}
                   </p>
                 </div>
               </div>
 
               <div className="pl-16 space-y-3">
-                <Feature text="Smart auto-filled fields" />
-                <Feature text="Writing suggestions" />
-                <Feature text="Automatic saving" />
+                <Feature text={t('common.smartAutoFilled')} />
+                <Feature text={t('common.writingSuggestions')} />
+                <Feature text={t('common.automaticSaving')} />
               </div>
             </div>
 
@@ -112,20 +100,18 @@ export default function About() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-black mb-2">
-                    Instant Results
+                    {t('common.instantResults')}
                   </h3>
                   <p className="text-gray-700">
-                    As soon as you finish entering your information, your resume
-                    appears instantly with a professional design ready for
-                    download.
+                    {t('common.instantDesc')}
                   </p>
                 </div>
               </div>
 
               <div className="pl-16 space-y-3">
-                <Feature text="Live preview while typing" />
-                <Feature text="High-quality PDF export" />
-                <Feature text="Ready for printing & sharing" />
+                <Feature text={t('common.livePreview')} />
+                <Feature text={t('common.highQualityPdf')} />
+                <Feature text={t('common.readyForPrinting')} />
               </div>
             </div>
           </div>
@@ -138,10 +124,10 @@ export default function About() {
               </div>
               <div>
                 <h3 className="text-3xl font-bold text-black">
-                  Personal Dashboard
+                  {t('common.personalDashboard')}
                 </h3>
                 <p className="text-gray-700">
-                  Manage your account and resumes with ease
+                  {t('common.manageDashboard')}
                 </p>
               </div>
             </div>
@@ -149,33 +135,33 @@ export default function About() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <DashboardCard
                 icon={<Settings />}
-                title="Easy Editing"
-                text="Update your information anytime and see changes instantly."
+                title={t('common.easyEditing')}
+                text={t('common.easyEditingDesc')}
               />
               <DashboardCard
                 icon={<FileText />}
-                title="Multiple Resumes"
-                text="Create different resumes for different job applications."
+                title={t('common.multipleResumes')}
+                text={t('common.multipleResumesDesc')}
               />
               <DashboardCard
                 icon={<Palette />}
-                title="Multiple Templates"
-                text="Switch designs anytime and choose what fits you best."
+                title={t('common.multipleTemplates')}
+                text={t('common.multipleTemplatesDesc')}
               />
               <DashboardCard
                 icon={<Shield />}
-                title="Data Security"
-                text="Your data is protected with the highest security standards."
+                title={t('common.dataSecurity')}
+                text={t('common.dataSecurityDesc')}
               />
               <DashboardCard
                 icon={<CheckCircle />}
-                title="Auto Save"
-                text="Every change is saved automatically to your account."
+                title={t('common.autoSave')}
+                text={t('common.autoSaveDesc')}
               />
               <DashboardCard
                 icon={<Users />}
-                title="Continuous Support"
-                text="Our support team is always ready to help you."
+                title={t('common.continuousSupport')}
+                text={t('common.continuousSupportDesc')}
               />
             </div>
           </div>
@@ -184,17 +170,16 @@ export default function About() {
         {/* CTA */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-[#0F172A] mb-6">
-            Ready to Get Started?
+            {t('common.readyToStart')}
           </h2>
           <p className="text-xl text-[#1E293B] mb-8 max-w-2xl mx-auto">
-            Join thousands of users who landed their dream jobs with professional
-            resumes.
+            {t('common.readyToStartDesc')}
           </p>
           <button
             onClick={handleClick}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition"
           >
-            Get Started Now
+            {t('common.getStartedNow')}
           </button>
         </section>
       </main>

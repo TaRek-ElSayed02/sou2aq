@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Send, Mail, MessageCircle, Phone, CheckCircle } from 'lucide-react';
 import Header from '../Components/Header/Header';
 import Footer from '../Components/Footer.tsx/Footer';
+import { useLanguage } from '../context/LanguageContext';
 
 declare global {
   interface Window {
@@ -11,6 +12,7 @@ declare global {
 }
 
 export default function Contact() {
+  const { t, dir, isArabic } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -86,38 +88,38 @@ export default function Contact() {
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      setSubmitMessage('Please enter your name');
+      setSubmitMessage(t('common.pleaseEnterName'));
       setSubmitStatus('error');
       return false;
     }
 
     if (!formData.email.trim()) {
-      setSubmitMessage('Please enter your email address');
+      setSubmitMessage(t('common.pleaseEnterEmail'));
       setSubmitStatus('error');
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setSubmitMessage('Please enter a valid email address');
+      setSubmitMessage(t('common.pleaseEnterEmail'));
       setSubmitStatus('error');
       return false;
     }
 
     if (!formData.phone.trim()) {
-      setSubmitMessage('Please enter your phone number');
+      setSubmitMessage(t('common.pleaseEnterPhone'));
       setSubmitStatus('error');
       return false;
     }
 
     if (!formData.subject.trim()) {
-      setSubmitMessage('Please enter a subject');
+      setSubmitMessage(t('common.pleaseEnterSubject'));
       setSubmitStatus('error');
       return false;
     }
 
     if (!formData.message.trim()) {
-      setSubmitMessage('Please enter your message');
+      setSubmitMessage(t('common.pleaseEnterMessage'));
       setSubmitStatus('error');
       return false;
     }
@@ -229,7 +231,7 @@ export default function Contact() {
         const success = sendWhatsAppMessage();
         if (success) {
           setSubmitStatus('success');
-          setSubmitMessage('WhatsApp opened with your message! Please click send to complete.');
+          setSubmitMessage(t('common.whatsappOpened'));
           setFormData({
             name: '',
             email: '',
@@ -243,14 +245,14 @@ export default function Contact() {
           }, 5000);
         } else {
           setSubmitStatus('error');
-          setSubmitMessage('Failed to open WhatsApp. Please allow popups.');
+          setSubmitMessage(t('common.failedToOpenWhatsapp'));
         }
       } else {
         console.log('✉️ Sending via Email');
         if (!emailJSReady) {
           console.log('⚠️ EmailJS not ready yet');
           setSubmitStatus('error');
-          setSubmitMessage('EmailJS is still loading. Please wait a moment and try again.');
+          setSubmitMessage(t('common.emailJSStillLoading'));
           setIsSubmitting(false);
           return;
         }
@@ -258,7 +260,7 @@ export default function Contact() {
         const result = await sendEmailViaEmailJS();
         console.log('✅ Email sent result:', result);
         setSubmitStatus('success');
-        setSubmitMessage('Your message has been sent successfully! We will contact you soon.');
+        setSubmitMessage(t('common.messageSentSuccess'));
         setFormData({
           name: '',
           email: '',
@@ -281,18 +283,18 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-left">
+    <div className={`min-h-screen flex flex-col bg-white ${isArabic ? 'text-right' : 'text-left'}`} dir={dir}>
       <Header />
 
-      <main className="flex-grow" dir="ltr">
+      <main className="flex-grow">
         {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-[#0F172A] mb-6">
-              Get In Touch
+              {t('common.getInTouch')}
             </h1>
             <p className="text-xl text-[#1E293B] mb-8 max-w-3xl mx-auto leading-relaxed">
-              Have a question or feedback? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              {t('common.getInTouchDesc')}
             </p>
           </div>
         </section>
@@ -308,28 +310,28 @@ export default function Contact() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-black mb-2">
-                        Full Name
+                        {t('common.fullName')}
                       </label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="Your name"
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        placeholder={t('common.yourName')}
+                        className={`w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 ${isArabic ? 'text-right' : 'text-left'}`}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-black mb-2">
-                        Email Address
+                        {t('common.emailAddress')}
                       </label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="your@email.com"
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        placeholder={t('common.yourEmail')}
+                        className={`w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 ${isArabic ? 'text-right' : 'text-left'}`}
                       />
                     </div>
                   </div>
@@ -338,28 +340,28 @@ export default function Contact() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-black mb-2">
-                        Phone Number
+                        {t('common.phoneNumber')}
                       </label>
                       <input
                         type="tel"
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        placeholder={t('common.phoneNumberPlaceholder')}
+                        className={`w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 ${isArabic ? 'text-right' : 'text-left'}`}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-black mb-2">
-                        Subject
+                        {t('common.subject')}
                       </label>
                       <input
                         type="text"
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        placeholder="Message subject"
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        placeholder={t('common.messageSubject')}
+                        className={`w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 ${isArabic ? 'text-right' : 'text-left'}`}
                       />
                     </div>
                   </div>
@@ -367,22 +369,22 @@ export default function Contact() {
                   {/* Message */}
                   <div>
                     <label className="block text-sm font-medium text-black mb-2">
-                      Message
+                      {t('common.message')}
                     </label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
-                      placeholder="Write your message here..."
+                      placeholder={t('common.writeYourMessage')}
                       rows={6}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                      className={`w-full px-4 py-3 rounded-lg border border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none ${isArabic ? 'text-right' : 'text-left'}`}
                     />
                   </div>
 
                   {/* Contact Method Selection */}
                   <div className="border-t border-gray-300 pt-6">
                     <label className="block text-sm font-medium text-black mb-4">
-                      How would you like us to contact you?
+                      {t('common.contactMethod')}
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <button
@@ -395,9 +397,9 @@ export default function Contact() {
                         }`}
                       >
                         <Mail className="w-5 h-5 text-blue-600" />
-                        <div className="text-left">
-                          <p className="font-semibold text-black">Email</p>
-                          <p className="text-sm text-gray-600">We'll email you back</p>
+                        <div className={isArabic ? 'text-right' : 'text-left'}>
+                          <p className="font-semibold text-black">{t('common.emailOption')}</p>
+                          <p className="text-sm text-gray-600">{t('common.emailOptionDesc')}</p>
                         </div>
                       </button>
                       <button
@@ -410,9 +412,9 @@ export default function Contact() {
                         }`}
                       >
                         <MessageCircle className="w-5 h-5 text-blue-600" />
-                        <div className="text-left">
-                          <p className="font-semibold text-black">WhatsApp</p>
-                          <p className="text-sm text-gray-600">Chat on WhatsApp</p>
+                        <div className={isArabic ? 'text-right' : 'text-left'}>
+                          <p className="font-semibold text-black">{t('common.whatsappOption')}</p>
+                          <p className="text-sm text-gray-600">{t('common.whatsappOptionDesc')}</p>
                         </div>
                       </button>
                     </div>
@@ -442,12 +444,12 @@ export default function Contact() {
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                        Sending...
+                        {t('common.sending')}
                       </>
                     ) : (
                       <>
                         <Send className="w-5 h-5" />
-                        Send Message
+                        {t('common.sendMessage')}
                       </>
                     )}
                   </button>
@@ -464,22 +466,22 @@ export default function Contact() {
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Mail className="w-6 h-6 text-blue-600" />
                     </div>
-                    <h3 className="text-lg font-bold text-black">Email</h3>
+                    <h3 className="text-lg font-bold text-black">{t('common.contactInfoEmail')}</h3>
                   </div>
                   <p className="text-gray-700 mb-3">{contactInfo.emailAddress}</p>
-                  <p className="text-sm text-gray-600">We'll respond within 24 hours</p>
+                  <p className="text-sm text-gray-600">{t('common.respondWithin')}</p>
                 </div>
 
-                {/* Phone Card */}
+                {/* WhatsApp Card */}
                 <div className="bg-gray-100 rounded-xl p-6 border border-gray-300">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-blue-600" />
+                      <MessageCircle className="w-6 h-6 text-blue-600" />
                     </div>
-                    <h3 className="text-lg font-bold text-black">WhatsApp</h3>
+                    <h3 className="text-lg font-bold text-black">{t('common.contactInfoPhone')}</h3>
                   </div>
                   <p className="text-gray-700 mb-3">+20 155 816 6468</p>
-                  <p className="text-sm text-gray-600">Chat with us on WhatsApp</p>
+                  <p className="text-sm text-gray-600">{t('common.chatWithUs')}</p>
                 </div>
 
                 {/* Info Card */}
@@ -488,10 +490,10 @@ export default function Contact() {
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <MessageCircle className="w-6 h-6 text-blue-600" />
                     </div>
-                    <h3 className="text-lg font-bold text-black">Quick Reply</h3>
+                    <h3 className="text-lg font-bold text-black">{t('common.quickReply')}</h3>
                   </div>
                   <p className="text-gray-700 text-sm">
-                    Choose your preferred contact method above, and we'll get back to you as soon as possible during business hours.
+                    {t('common.quickReplyDesc')}
                   </p>
                 </div>
               </div>

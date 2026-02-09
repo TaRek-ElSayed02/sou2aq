@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUser } from "@/store/userStore";
 import { Toaster } from "react-hot-toast";
+import { LanguageProvider } from "./context/LanguageContext";
 
 function SyncAuthWithUser() {
   const dispatch = useAppDispatch();
@@ -28,9 +29,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <SyncAuthWithUser />
-        <Toaster position="top-right" />
-        {children}
+        <LanguageProvider>
+          <SyncAuthWithUser />
+          <Toaster position="top-right" />
+          {children}
+        </LanguageProvider>
       </PersistGate>
     </Provider>
   );

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
 import { getMenuItemsByRole } from '@/app/utils/roleConfig';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 
 interface SidebarProps {
@@ -37,6 +38,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const pathname = usePathname();
     const router = useRouter();
     const [mounted, setMounted] = React.useState(false);
+    const { t } = useLanguage();
 
     // جلب الـ auth state
     const auth = useAppSelector(state => (state as any).auth);
@@ -68,6 +70,25 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         icon: iconMap[item.icon] || DollarSign,
     }));
 
+    // دالة لترجمة تسمية الصنف حسب اللغة
+    const getTranslatedLabel = (label: string): string => {
+      const labelMap: Record<string, string> = {
+        'Dashboard': t('dashboard.sidebar.dashboard'),
+        'My Site': t('dashboard.sidebar.mySite'),
+        'Products': t('dashboard.sidebar.products'),
+        'Product Stock': t('dashboard.sidebar.productStock'),
+        'Contact': t('dashboard.sidebar.contact'),
+        'Blogs': t('dashboard.sidebar.blogs'),
+        'Sites': t('dashboard.sidebar.sites'),
+        'Users': t('dashboard.sidebar.users'),
+        'Wishlist': t('dashboard.sidebar.wishlist'),
+        'Cart': t('dashboard.sidebar.cart'),
+        'Pricing': t('dashboard.sidebar.pricing'),
+        'Team': t('dashboard.sidebar.team')
+      };
+      return labelMap[label] || label;
+    };
+
     // دالة للتحقق إذا كان الرابط نشطاً
     const isActive = (path: string) => {
         // إذا كان الرابط الحالي يساوي المسار تماماً
@@ -85,8 +106,8 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
     const handleLogout = () => {
         // هنا منطق تسجيل الخروج
-    dispatch(logout());
-    router.replace("/auth/login");
+        dispatch(logout());
+        router.replace("/auth/login");
     };
 
     const handleItemClick = () => {
@@ -135,12 +156,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                                 }`}
                             >
                                 <item.icon className="w-5 h-5" />
-                                <span className="text-sm font-medium">{item.label}</span>
+                                <span className="text-sm font-medium">{getTranslatedLabel(item.label)}</span>
                             </div>
                         </Link>
                     ))}
 
-                    <div className="text-xs text-gray-400 font-semibold mt-6 mb-2 px-4">PAGES</div>
+                    <div className="text-xs text-gray-400 font-semibold mt-6 mb-2 px-4">{t('dashboard.sidebar.pages')}</div>
 
                     {pageItems.map((item, index) => (
                         <Link 
@@ -156,7 +177,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                                 }`}
                             >
                                 <item.icon className="w-5 h-5" />
-                                <span className="text-sm font-medium">{item.label}</span>
+                                <span className="text-sm font-medium">{getTranslatedLabel(item.label)}</span>
                             </div>
                         </Link>
                     ))}
@@ -175,7 +196,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                             }`}
                         >
                             <Settings className="w-5 h-5" />
-                            <span className="text-sm font-medium">Settings</span>
+                            <span className="text-sm font-medium">{t('dashboard.sidebar.settings')}</span>
                         </div>
                     </Link>
                     <button 
@@ -183,7 +204,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                         onClick={handleLogout}
                     >
                         <LogOut className="w-5 h-5" />
-                        <span className="text-sm font-medium">Logout</span>
+                        <span className="text-sm font-medium">{t('dashboard.sidebar.logout')}</span>
                     </button>
                 </div>
             </aside>

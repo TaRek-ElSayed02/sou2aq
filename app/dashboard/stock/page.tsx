@@ -493,11 +493,13 @@ import React, { useState, useEffect } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { useUser } from "../../hooks/useUser";
 import { useProducts } from "../../hooks/useProducts";
+import { useLanguage } from "../../context/LanguageContext";
 
 const ITEMS_PER_PAGE = 9;
 
 export default function StockPage() {
   const { currentUser } = useUser();
+  const { t } = useLanguage();
   const {
     userProducts,
     loading,
@@ -567,7 +569,7 @@ export default function StockPage() {
   // معالجة الحذف الناجح
   useEffect(() => {
     const handleDeleteSuccess = () => {
-      showToast("Product deleted successfully!", "success");
+      showToast(t("dashboard.stock.deleteSuccess"), "success");
       clearAllSuccess();
     };
 
@@ -607,10 +609,10 @@ export default function StockPage() {
     if (deleteModal.productId) {
       try {
         await deleteProduct(deleteModal.productId.toString());
-        showToast("Product deleted successfully!", "success");
+        showToast(t("dashboard.stock.deleteSuccess"), "success");
         closeDeleteModal();
       } catch (error) {
-        showToast("Failed to delete product", "error");
+        showToast(t("dashboard.stock.deleteFail"), "error");
       }
     }
   };
@@ -754,7 +756,7 @@ export default function StockPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-8 flex flex-col items-center">
             <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-700 font-medium">Loading products...</p>
+            <p className="text-gray-700 font-medium">{t("dashboard.stock.loading")}</p>
           </div>
         </div>
       )}
@@ -857,7 +859,7 @@ export default function StockPage() {
       )}
 
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6">
-        Product Stock
+        {t("dashboard.stock.title")}
       </h1>
 
       {/* User Info
@@ -898,10 +900,10 @@ export default function StockPage() {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            No products found
+            {t("dashboard.stock.noProducts")}
           </h3>
           <p className="text-gray-600">
-            This user doesn&apos;t have any products yet.
+            {t("dashboard.stock.noProductsDesc")}
           </p>
         </div>
       )}
@@ -914,22 +916,22 @@ export default function StockPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 md:px-6 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Image
+                    {t("dashboard.stock.image")}
                   </th>
                   <th className="px-4 py-3 md:px-6 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Product Name
+                    {t("dashboard.stock.productName")}
                   </th>
                   <th className="px-4 py-3 md:px-6 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Category
+                    {t("dashboard.stock.category")}
                   </th>
                   <th className="px-4 py-3 md:px-6 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Price
+                    {t("dashboard.stock.price")}
                   </th>
                   <th className="px-4 py-3 md:px-6 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Stock
+                    {t("dashboard.stock.stock")}
                   </th>
                   <th className="px-4 py-3 md:px-6 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Action
+                    {t("dashboard.stock.action")}
                   </th>
                 </tr>
               </thead>
@@ -976,7 +978,7 @@ export default function StockPage() {
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {product.piece} pcs
+                        {product.piece} {t("dashboard.stock.pcs")}
                       </span>
                     </td>
                     <td className="px-4 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm md:text-base font-medium">
@@ -1052,7 +1054,7 @@ export default function StockPage() {
                               : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {product.piece} pcs
+                          {product.piece} {t("dashboard.stock.pcs")}
                         </div>
                       </div>
                     </div>
@@ -1068,7 +1070,7 @@ export default function StockPage() {
                     aria-label={`Delete ${product.name}`}
                   >
                     <FiTrash2 className="w-4 h-4" />
-                    <span>Delete Product</span>
+                    <span>{t("dashboard.stock.deleteBtn")}</span>
                   </button>
                 </div>
               </div>
@@ -1086,12 +1088,12 @@ export default function StockPage() {
                 <FiTrash2 className="w-5 h-5 sm:w-8 sm:h-8 text-red-600" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">
-                Delete Product
+                {t("dashboard.stock.deleteProduct")}
               </h3>
               <p className="text-sm sm:text-base text-gray-600">
-                Are you sure you want to delete{" "}
+                {t("dashboard.stock.deleteProductDesc")}{" "}
                 <span className="font-semibold">{deleteModal.productName}</span>
-                ? This action cannot be undone.
+                ? {t("dashboard.stock.deleteProductConfirm")}
               </p>
             </div>
 
@@ -1100,13 +1102,13 @@ export default function StockPage() {
                 onClick={closeDeleteModal}
                 className="flex-1 py-2 sm:py-3 border border-gray-300 text-gray-700 rounded-lg sm:rounded-xl font-semibold hover:bg-gray-50 transition-all text-sm sm:text-base"
               >
-                Cancel
+                {t("dashboard.stock.cancel")}
               </button>
               <button
                 onClick={handleDeleteProduct}
                 className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg sm:rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow hover:shadow-lg text-sm sm:text-base"
               >
-                Delete
+                {t("dashboard.stock.delete")}
               </button>
             </div>
           </div>
@@ -1117,11 +1119,11 @@ export default function StockPage() {
       {products.length > 0 && (
         <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
           <div className="text-xs sm:text-sm text-gray-700">
-            Showing <span className="font-semibold">{startIndex + 1}</span> to{" "}
+            {t("dashboard.stock.showing")} <span className="font-semibold">{startIndex + 1}</span> {t("dashboard.stock.to")}{" "}
             <span className="font-semibold">
               {Math.min(endIndex, products.length)}
             </span>{" "}
-            of <span className="font-semibold">{products.length}</span> results
+            {t("dashboard.stock.of")} <span className="font-semibold">{products.length}</span> {t("dashboard.stock.results")}
           </div>
 
           <div className="flex items-center flex-wrap justify-center gap-1 sm:gap-2">

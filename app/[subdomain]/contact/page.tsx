@@ -127,7 +127,10 @@ export default function ContactPage() {
 
             <button
               type="submit"
-              className="w-full bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg font-bold transition flex items-center justify-center gap-2"
+              className="w-full text-white px-6 py-3 rounded-lg font-bold transition flex items-center justify-center gap-2"
+              style={{ backgroundColor: '#101828' }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
             >
               <Send size={20} />
               Send Message

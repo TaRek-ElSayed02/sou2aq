@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { CardContent } from "@/components/ui/card";
 import {
@@ -8,6 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 const data = [
   { label: "pro1", img: "/Products/c1.jpg" },
@@ -30,6 +33,8 @@ const itemVariants: Variants = {
 };
 
 export function Slider() {
+  const { t } = useLanguage();
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 40 }}
@@ -46,7 +51,7 @@ export function Slider() {
         viewport={{ once: true }}
         className="text-[#0F172A] text-3xl sm:text-4xl mb-8 font-bold"
       >
-        Our Projects
+        {t('common.ourProjects')}
       </motion.h2>
 
       {/* Carousel */}

@@ -10,6 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchCart, removeFromCart, updateQuantityLocally, updateCartQuantity, removeItemLocally } from '@/store/slices/cartSlice';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 // أنواع البيانات
 interface CartItem {
@@ -40,6 +41,7 @@ export default function CartPage() {
     const router = useRouter();
     const { items: cartItems, loading, error } = useAppSelector(state => state.cart);
     const { user } = useAppSelector(state => state.auth);
+    const { t } = useLanguage();
 
     // جلب السلة عند تحميل الصفحة
     useEffect(() => {
@@ -207,8 +209,8 @@ export default function CartPage() {
             <div className="mb-6 md:mb-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Shopping Cart</h1>
-                        <p className="text-sm sm:text-base text-gray-600">Review your items and proceed to checkout</p>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">{t('dashboard.cart.title')}</h1>
+                        <p className="text-sm sm:text-base text-gray-600">{t('dashboard.cart.description')}</p>
                     </div>
                     
                     {/* إحصائيات العربة */}
@@ -217,7 +219,7 @@ export default function CartPage() {
                             <div className="flex items-center gap-2">
                                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                                 <span className="font-bold text-gray-900">{cartItems.length}</span>
-                                <span className="text-gray-600 text-sm sm:text-base">Items in Cart</span>
+                                <span className="text-gray-600 text-sm sm:text-base">{t('dashboard.cart.itemsInCart')}</span>
                             </div>
                         </div>
                         <div className="flex gap-2 w-full sm:w-auto">
@@ -227,8 +229,8 @@ export default function CartPage() {
                                     className="px-3 sm:px-4 py-2 bg-gradient-to-r from-red-50 to-red-100 text-red-700 rounded-xl font-medium hover:from-red-100 hover:to-red-200 transition-all flex items-center justify-center gap-2 flex-1 sm:flex-none text-sm sm:text-base"
                                 >
                                     <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                                    <span className="hidden xs:inline">Clear Cart</span>
-                                    <span className="xs:hidden">Clear</span>
+                                    <span className="hidden xs:inline">{t('dashboard.cart.clearCart')}</span>
+                                    <span className="xs:hidden">{t('dashboard.cart.clear')}</span>
                                 </button>
                             )}
                             {cartItems.length === 0 && !loading && (
@@ -237,8 +239,8 @@ export default function CartPage() {
                                     className="px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 rounded-xl font-medium hover:from-blue-100 hover:to-blue-200 transition-all flex items-center justify-center gap-2 flex-1 sm:flex-none text-sm sm:text-base"
                                 >
                                     <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                                    <span className="hidden xs:inline">Browse Products</span>
-                                    <span className="xs:hidden">Browse</span>
+                                    <span className="hidden xs:inline">{t('dashboard.cart.browseProducts')}</span>
+                                    <span className="xs:hidden">{t('dashboard.cart.browse')}</span>
                                 </button>
                             )}
                         </div>
@@ -255,16 +257,16 @@ export default function CartPage() {
                         <div className="hidden md:block border-b border-gray-200">
                             <div className="grid grid-cols-12 gap-4 p-4 md:p-6">
                                 <div className="col-span-5">
-                                    <h3 className="font-semibold text-gray-900">Product</h3>
+                                    <h3 className="font-semibold text-gray-900">{t('dashboard.cart.product')}</h3>
                                 </div>
                                 <div className="col-span-2 text-center">
-                                    <h3 className="font-semibold text-gray-900">Price</h3>
+                                    <h3 className="font-semibold text-gray-900">{t('dashboard.cart.price')}</h3>
                                 </div>
                                 <div className="col-span-3 text-center">
-                                    <h3 className="font-semibold text-gray-900">Quantity</h3>
+                                    <h3 className="font-semibold text-gray-900">{t('dashboard.cart.quantity')}</h3>
                                 </div>
                                 <div className="col-span-2 text-right">
-                                    <h3 className="font-semibold text-gray-900">Total</h3>
+                                    <h3 className="font-semibold text-gray-900">{t('dashboard.cart.total')}</h3>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +318,7 @@ export default function CartPage() {
                                                     {/* السعر والكمية */}
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div>
-                                                            <div className="text-gray-500 text-xs mb-1">Price</div>
+                                                            <div className="text-gray-500 text-xs mb-1">{t('dashboard.cart.price')}</div>
                                                             {item.discount ? (
                                                                 <div>
                                                                     <div className="text-base font-bold text-gray-900">
@@ -337,7 +339,7 @@ export default function CartPage() {
                                                         </div>
                                                         
                                                         <div>
-                                                            <div className="text-gray-500 text-xs mb-1">Quantity</div>
+                                                            <div className="text-gray-500 text-xs mb-1">{t('dashboard.cart.quantity')}</div>
                                                             <div className="flex items-center gap-2">
                                                                 <button
                                                                     onClick={() => decreaseQuantity(item.cart_id, item.quantity)}
@@ -350,7 +352,7 @@ export default function CartPage() {
                                                                 <div className="w-12 text-center">
                                                                     <div className="font-bold text-gray-900">{item.quantity}</div>
                                                                     <div className="text-xs text-gray-500">
-                                                                        Max: {item.quantityInStock}
+                                                                        {t('dashboard.cart.max')}: {item.quantityInStock}
                                                                     </div>
                                                                 </div>
                                                                 
@@ -370,13 +372,13 @@ export default function CartPage() {
                                                     <div className="border-t border-gray-100 pt-3">
                                                         <div className="flex justify-between items-center">
                                                             <div>
-                                                                <div className="text-gray-500 text-xs mb-1">Total</div>
+                                                                <div className="text-gray-500 text-xs mb-1">{t('dashboard.cart.total')}</div>
                                                                 <div className="text-lg font-bold text-gray-900">
                                                                     ${itemTotal.toFixed(2)}
                                                                 </div>
                                                                 {savings > 0 && (
                                                                     <div className="text-xs font-medium text-green-600">
-                                                                        Saved: ${savings.toFixed(2)}
+                                                                        {t('dashboard.cart.saved')}: ${savings.toFixed(2)}
                                                                     </div>
                                                                 )}
                                                             </div>
@@ -385,14 +387,14 @@ export default function CartPage() {
                                                                 className="inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700 transition-colors"
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
-                                                                Remove
+                                                                {t('dashboard.cart.remove')}
                                                             </button>
                                                         </div>
                                                     </div>
 
                                                     {/* المقاسات المتاحة */}
                                                     <div className="border-t border-gray-100 pt-3">
-                                                        <p className="text-xs text-gray-500 mb-1">Available Sizes:</p>
+                                                        <p className="text-xs text-gray-500 mb-1">{t('dashboard.cart.availableSizes')}:</p>
                                                         <div className="flex flex-wrap gap-1">
                                                             {item.availableSizes.split(',').map((size) => (
                                                                 <span
@@ -442,7 +444,7 @@ export default function CartPage() {
                                                                 
                                                                 {/* المقاسات المتاحة - مخفي على الشاشات الصغيرة */}
                                                                 <div className="hidden sm:block mt-3">
-                                                                    <p className="text-xs text-gray-500 mb-1">Available Sizes:</p>
+                                                                    <p className="text-xs text-gray-500 mb-1">{t('dashboard.cart.availableSizes')}:</p>
                                                                     <div className="flex flex-wrap gap-1">
                                                                         {item.availableSizes.split(',').map((size) => (
                                                                             <span
@@ -540,17 +542,17 @@ export default function CartPage() {
                                         <ShoppingCart className="w-8 h-8 text-gray-400" />
                                     </div>
                                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                        {loading ? 'Loading cart...' : 'Your cart is empty'}
+                                        {loading ? t('dashboard.cart.loadingCart') : t('dashboard.cart.yourCartIsEmpty')}
                                     </h3>
                                     <p className="text-gray-600 mb-6">
-                                        {loading ? 'Please wait...' : 'Add some products to your cart to see them here'}
+                                        {loading ? t('dashboard.cart.loadingCart') : t('dashboard.cart.addSomeProducts')}
                                     </p>
                                     {!loading && (
                                         <button
                                             onClick={() => router.push('/mysite/products')}
                                             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl"
                                         >
-                                            Browse Products
+                                            {t('dashboard.cart.browseProducts')}
                                         </button>
                                     )}
                                 </div>
@@ -565,37 +567,37 @@ export default function CartPage() {
                 <div className="lg:col-span-1">
                     <div className="sticky top-4 sm:top-6">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Order Summary</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">{t('dashboard.cart.orderSummary')}</h3>
                             
                             {/* تفاصيل الطلب */}
                             <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                                 <div className="flex justify-between">
-                                    <span className="text-sm sm:text-base text-gray-600">Subtotal</span>
+                                    <span className="text-sm sm:text-base text-gray-600">{t('dashboard.cart.subtotal')}</span>
                                     <span className="font-semibold text-gray-900 text-sm sm:text-base">${subtotal.toFixed(2)}</span>
                                 </div>
                                 
                                 {discount > 0 && (
                                     <div className="flex justify-between">
-                                        <span className="text-sm sm:text-base text-gray-600">Discount</span>
+                                        <span className="text-sm sm:text-base text-gray-600">{t('dashboard.cart.discount')}</span>
                                         <span className="font-semibold text-green-600 text-sm sm:text-base">-${discount.toFixed(2)}</span>
                                     </div>
                                 )}
                                 
                                 <div className="flex justify-between">
-                                    <span className="text-sm sm:text-base text-gray-600">Shipping</span>
+                                    <span className="text-sm sm:text-base text-gray-600">{t('dashboard.cart.shipping')}</span>
                                     <span className={`font-semibold text-sm sm:text-base ${shipping === 0 ? 'text-green-600' : 'text-gray-900'}`}>
-                                        {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+                                        {shipping === 0 ? t('dashboard.cart.free') : `$${shipping.toFixed(2)}`}
                                     </span>
                                 </div>
                                 
                                 <div className="flex justify-between">
-                                    <span className="text-sm sm:text-base text-gray-600">Tax (8%)</span>
+                                    <span className="text-sm sm:text-base text-gray-600">{t('dashboard.cart.tax')}</span>
                                     <span className="font-semibold text-gray-900 text-sm sm:text-base">${tax.toFixed(2)}</span>
                                 </div>
                                 
                                 <div className="border-t border-gray-200 pt-3 sm:pt-4">
                                     <div className="flex justify-between">
-                                        <span className="text-base sm:text-lg font-bold text-gray-900">Total</span>
+                                        <span className="text-base sm:text-lg font-bold text-gray-900">{t('dashboard.cart.total')}</span>
                                         <span className="text-xl sm:text-2xl font-bold text-gray-900">${total.toFixed(2)}</span>
                                     </div>
                                 </div>
@@ -606,8 +608,8 @@ export default function CartPage() {
                                 <div className="flex items-start gap-3">
                                     <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                                     <div>
-                                        <h4 className="font-semibold text-gray-900 text-sm sm:text-base mb-1">Estimated Delivery</h4>
-                                        <p className="text-xs sm:text-sm text-gray-600">5-7 business days after payment</p>
+                                        <h4 className="font-semibold text-gray-900 text-sm sm:text-base mb-1">{t('dashboard.cart.estimatedDelivery')}</h4>
+                                        <p className="text-xs sm:text-sm text-gray-600">{t('dashboard.cart.businessDays')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -619,22 +621,22 @@ export default function CartPage() {
                                 className="w-full py-3 sm:py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base"
                             >
                                 <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
-                                <span>Proceed to Checkout</span>
+                                <span>{t('dashboard.cart.proceedToCheckout')}</span>
                             </button>
 
                             {/* ضمانات إضافية */}
                             <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
                                 <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
                                     <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
-                                    <span>Secure SSL encryption</span>
+                                    <span>{t('dashboard.cart.secureSSL')}</span>
                                 </div>
                                 <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
                                     <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
-                                    <span>30-day return policy</span>
+                                    <span>{t('dashboard.cart.returnPolicy')}</span>
                                 </div>
                                 <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
                                     <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
-                                    <span>Money-back guarantee</span>
+                                    <span>{t('dashboard.cart.moneyBack')}</span>
                                 </div>
                             </div>
                         </div>
@@ -642,15 +644,15 @@ export default function CartPage() {
                         {/* رمز الخصم */}
                         {cartItems.length > 0 && (
                             <div className="mt-3 sm:mt-4 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                                <h4 className="font-semibold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Apply Discount Code</h4>
+                                <h4 className="font-semibold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">{t('dashboard.cart.applyDiscount')}</h4>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
-                                        placeholder="Enter promo code"
+                                        placeholder={t('dashboard.cart.enterPromo')}
                                         className="flex-1 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                                     />
                                     <button className="px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all text-sm sm:text-base">
-                                        Apply
+                                        {t('dashboard.cart.apply')}
                                     </button>
                                 </div>
                             </div>
@@ -721,7 +723,7 @@ export default function CartPage() {
                                 <div>
                                     {/* الوصف */}
                                     <div className="mb-6">
-                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Description</h3>
+                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">{t('dashboard.cart.description')}</h3>
                                         <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                                             {selectedProduct.description}
                                         </p>
@@ -730,7 +732,7 @@ export default function CartPage() {
                                     {/* المقاسات المتاحة */}
                                     {selectedProduct.availableSizes && (
                                         <div className="mb-4 sm:mb-6">
-                                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Available Sizes</h3>
+                                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">{t('dashboard.cart.availableSizes')}</h3>
                                             <div className="flex flex-wrap gap-1 sm:gap-2">
                                                 {selectedProduct.availableSizes.split(',').map((size) => (
                                                     <div
@@ -747,7 +749,7 @@ export default function CartPage() {
                                     {/* المواد */}
                                     {selectedProduct.materials && (
                                         <div className="mb-6">
-                                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Materials</h3>
+                                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">{t('dashboard.cart.materials')}</h3>
                                             <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-lg">
                                                 <span className="font-medium text-gray-900 text-sm sm:text-base">{selectedProduct.materials}</span>
                                             </div>
@@ -756,9 +758,9 @@ export default function CartPage() {
 
                                     {/* معرف المنتج */}
                                     <div className="mb-6">
-                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">Stock Quantity</h3>
+                                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">{t('dashboard.cart.stockQuantity')}</h3>
                                         <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-lg">
-                                            <span className="font-medium text-gray-900 text-sm sm:text-base">{selectedProduct.quantityInStock} Piece</span>
+                                            <span className="font-medium text-gray-900 text-sm sm:text-base">{selectedProduct.quantityInStock} {t('dashboard.cart.piece')}</span>
                                         </div>
                                     </div>
 

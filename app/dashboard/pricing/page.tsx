@@ -1,46 +1,49 @@
+'use client';
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function PricingPage() {
+  const { t } = useLanguage();
   const plans = [
     {
-      name: 'Basic',
-      price: '$14.99',
+      name: t("dashboard.pricing.basic"),
+      price: t("dashboard.pricing.price14"),
       features: [
-        { name: 'Free Setup', included: true },
-        { name: 'Bandwidth Limit 10 GB', included: true },
-        { name: '20 User Connection', included: true },
-        { name: 'Analytics Report', included: false },
-        { name: 'Public API Access', included: false },
-        { name: 'Plugins Integration', included: false },
-        { name: 'Custom Content Management', included: false }
+        { name: t("dashboard.pricing.freeSetup"), included: true },
+        { name: t("dashboard.pricing.bandwidth"), included: true },
+        { name: t("dashboard.pricing.userConnection"), included: true },
+        { name: t("dashboard.pricing.analyticsReport"), included: false },
+        { name: t("dashboard.pricing.publicAPI"), included: false },
+        { name: t("dashboard.pricing.pluginsIntegration"), included: false },
+        { name: t("dashboard.pricing.customContent"), included: false }
       ],
       buttonStyle: 'solid'
     },
     {
-      name: 'Standard',
-      price: '$49.99',
+      name: t("dashboard.pricing.standard"),
+      price: t("dashboard.pricing.price49"),
       features: [
-        { name: 'Free Setup', included: true },
-        { name: 'Bandwidth Limit 10 GB', included: true },
-        { name: '20 User Connection', included: true },
-        { name: 'Analytics Report', included: true },
-        { name: 'Public API Access', included: true },
-        { name: 'Plugins Integration', included: false },
-        { name: 'Custom Content Management', included: false }
+        { name: t("dashboard.pricing.freeSetup"), included: true },
+        { name: t("dashboard.pricing.bandwidth"), included: true },
+        { name: t("dashboard.pricing.userConnection"), included: true },
+        { name: t("dashboard.pricing.analyticsReport"), included: true },
+        { name: t("dashboard.pricing.publicAPI"), included: true },
+        { name: t("dashboard.pricing.pluginsIntegration"), included: false },
+        { name: t("dashboard.pricing.customContent"), included: false }
       ],
       buttonStyle: 'outline'
     },
     {
-      name: 'Premium',
-      price: '$89.99',
+      name: t("dashboard.pricing.premium"),
+      price: t("dashboard.pricing.price89"),
       features: [
-        { name: 'Free Setup', included: true },
-        { name: 'Bandwidth Limit 10 GB', included: true },
-        { name: '20 User Connection', included: true },
-        { name: 'Analytics Report', included: true },
-        { name: 'Public API Access', included: true },
-        { name: 'Plugins Integration', included: true },
-        { name: 'Custom Content Management', included: true }
+        { name: t("dashboard.pricing.freeSetup"), included: true },
+        { name: t("dashboard.pricing.bandwidth"), included: true },
+        { name: t("dashboard.pricing.userConnection"), included: true },
+        { name: t("dashboard.pricing.analyticsReport"), included: true },
+        { name: t("dashboard.pricing.publicAPI"), included: true },
+        { name: t("dashboard.pricing.pluginsIntegration"), included: true },
+        { name: t("dashboard.pricing.customContent"), included: true }
       ],
       buttonStyle: 'outline'
     }
@@ -49,7 +52,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6">Pricing</h1>
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6">{t("dashboard.pricing.title")}</h1>
 
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -57,7 +60,7 @@ export default function PricingPage() {
             <div key={index} className="bg-white rounded-2xl shadow-sm p-8 flex flex-col">
               <div className="text-center mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h2>
-                <p className="text-sm text-gray-500 mb-4">Monthly Charge</p>
+                <p className="text-sm text-gray-500 mb-4">{t("dashboard.pricing.monthlyCharge")}</p>
                 <p className="text-5xl font-bold text-blue-600">{plan.price}</p>
               </div>
               
@@ -82,10 +85,10 @@ export default function PricingPage() {
                       : 'bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50'
                   }`}
                 >
-                  Get Started
+                  {t("dashboard.pricing.getStarted")}
                 </button>
                 <a href="#" className="text-sm text-gray-900 underline hover:text-blue-600">
-                  Start Your 30 Day Free Trial
+                  {t("dashboard.pricing.startFreeTrial")}
                 </a>
               </div>
             </div>

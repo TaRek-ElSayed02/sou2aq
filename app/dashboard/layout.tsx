@@ -4,6 +4,7 @@ import { Sidebar } from '../Components/SideBar/SideBar';
 import { Navbar } from '../Components/Navbar/Navbar';
 import { useAppSelector } from '@/store/hooks'
 import { useRouter, usePathname } from 'next/navigation';
+import { setupMainSiteTokenResponder } from '@/app/utils/tokenSync';
 
 export default function DashboardLayout({
   children,
@@ -17,6 +18,13 @@ export default function DashboardLayout({
   const router = useRouter()
   const pathname = usePathname()
   const { accessToken, user } = useAppSelector((state) => state.auth)
+  
+  // Setup token responder for subdomains
+  useEffect(() => {
+    const cleanup = setupMainSiteTokenResponder();
+    console.log('🎯 Main site token responder activated');
+    return cleanup;
+  }, []);
   
   // التحقق الفوري من الصلاحيات
   useEffect(() => {

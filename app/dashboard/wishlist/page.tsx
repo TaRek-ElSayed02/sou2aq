@@ -8,6 +8,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchWishlist, removeProductLocally } from '@/store/slices/wishlistSlice';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 // أنواع البيانات (نفس الأنواع من صفحة المنتجات)
 interface Product {
@@ -35,6 +36,7 @@ export default function FavouritePage() {
     const router = useRouter();
     const { products: wishlistProducts, loading, error } = useAppSelector(state => state.wishlist);
     const { user } = useAppSelector(state => state.auth);
+    const { t } = useLanguage();
     
     // تحويل بيانات الويشليست من API إلى صيغة Product
     const initialProducts: Product[] = wishlistProducts.map(product => ({
@@ -235,8 +237,8 @@ export default function FavouritePage() {
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Wishlist</h1>
-                        <p className="text-gray-600">Your favorite products and wishlist items</p>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard.wishlist.title')}</h1>
+                        <p className="text-gray-600">{t('dashboard.wishlist.description')}</p>
                     </div>
 
                     {/* إحصائيات المفضلة وأزرار التحكم */}
@@ -246,7 +248,7 @@ export default function FavouritePage() {
                                 <div className='flex justify-center items-center gap-2'>
                                     <Heart className="w-6 h-6 text-rose-600 fill-rose-600" />
                                     <div className="text-[18px] font-bold text-gray-900">{favoriteCount}</div>
-                                    <div className="text-sm text-gray-600">Favorite Items</div>
+                                    <div className="text-sm text-gray-600">{t('dashboard.wishlist.itemsInWishlist')}</div>
                                 </div>
                             </div>
                         </div>
@@ -257,7 +259,7 @@ export default function FavouritePage() {
                                 className="px-6 py-3 bg-gradient-to-r from-red-50 to-red-100 text-red-700 rounded-xl font-semibold hover:from-red-100 hover:to-red-200 transition-all duration-300 flex items-center gap-3 shadow-sm hover:shadow-md border border-red-200"
                             >
                                 <Trash2 className="w-5 h-5" />
-                                Clear All
+                                {t('dashboard.wishlist.removeFromWishlist')}
                             </button>
                         )}
                     </div>
@@ -273,7 +275,7 @@ export default function FavouritePage() {
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
-                                placeholder="Search in your favorites..."
+                                placeholder={t('dashboard.wishlist.searchPlaceholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -288,7 +290,7 @@ export default function FavouritePage() {
                             className="flex items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                             <Filter className="w-5 h-5" />
-                            Filters
+                            {t('dashboard.wishlist.filters')}
                             {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
 
@@ -297,16 +299,16 @@ export default function FavouritePage() {
                             onChange={(e) => setSortBy(e.target.value as 'name' | 'price' | 'rating')}
                             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                            <option value="name">Sort by Name</option>
-                            <option value="price">Sort by Price</option>
-                            <option value="rating">Sort by Rating</option>
+                            <option value="name">{t('dashboard.wishlist.sortBy')} {t('dashboard.wishlist.name')}</option>
+                            <option value="price">{t('dashboard.wishlist.sortBy')} {t('dashboard.wishlist.price')}</option>
+                            <option value="rating">{t('dashboard.wishlist.sortBy')} {t('dashboard.wishlist.rating')}</option>
                         </select>
 
                         <button
                             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                             className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                            {sortOrder === 'asc' ? '↑ Ascending' : '↓ Descending'}
+                            {sortOrder === 'asc' ? `↑ ${t('dashboard.wishlist.ascending')}` : `↓ ${t('dashboard.wishlist.descending')}`}
                         </button>
                     </div>
                 </div>
@@ -317,7 +319,7 @@ export default function FavouritePage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* فلترة التصنيف */}
                             <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-3">Category</h3>
+                                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('dashboard.wishlist.category')}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {allCategories.map((category) => (
                                         <button
@@ -337,7 +339,7 @@ export default function FavouritePage() {
                             {/* فلترة السعر */}
                             <div>
                                 <h3 className="text-sm font-medium text-gray-700 mb-3">
-                                    Price Range: ${priceRange[0]} - ${priceRange[1]}
+                                    {t('dashboard.wishlist.priceRange')}: ${priceRange[0]} - ${priceRange[1]}
                                 </h3>
                                 <div className="space-y-3">
                                     <input
@@ -368,7 +370,7 @@ export default function FavouritePage() {
 
                             {/* فلترة سريعة */}
                             <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Actions</h3>
+                                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('dashboard.wishlist.quickActions')}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     <button
                                         onClick={() => {
@@ -378,7 +380,7 @@ export default function FavouritePage() {
                                         }}
                                         className="px-3 py-1.5 text-sm bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 rounded-full hover:from-blue-100 hover:to-blue-200 transition-colors"
                                     >
-                                        Reset Filters
+                                        {t('dashboard.wishlist.resetFilters')}
                                     </button>
                                     <button
                                         onClick={() => {
@@ -388,7 +390,7 @@ export default function FavouritePage() {
                                         }}
                                         className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
                                     >
-                                        On Sale Only
+                                        {t('dashboard.wishlist.onSaleOnly')}
                                     </button>
                                     <button
                                         onClick={() => {
@@ -398,7 +400,7 @@ export default function FavouritePage() {
                                         }}
                                         className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
                                     >
-                                        In Stock Only
+                                        {t('dashboard.wishlist.inStockOnly')}
                                     </button>
                                 </div>
                             </div>
@@ -410,11 +412,11 @@ export default function FavouritePage() {
             {/* عرض عدد النتائج */}
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-gray-600">
-                    Showing <span className="font-semibold">{filteredProducts.length}</span> favorite {filteredProducts.length === 1 ? 'product' : 'products'}
+                    {t('dashboard.wishlist.filters')} <span className="font-semibold">{filteredProducts.length}</span> favorite {filteredProducts.length === 1 ? 'product' : 'products'}
                 </p>
                 {filteredProducts.length > 0 && (
                     <div className="text-sm text-gray-500">
-                        Sorted by {sortBy} ({sortOrder})
+                        {t('dashboard.wishlist.sortBy')} {sortBy} ({sortOrder})
                     </div>
                 )}
             </div>
@@ -519,7 +521,7 @@ export default function FavouritePage() {
                                         className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                                     >
                                         <ShoppingCart className="w-4 h-4" />
-                                        Add to Cart
+                                        {t('dashboard.wishlist.addToCart')}
                                     </button>
                                 </div>
                             </div>
@@ -535,13 +537,13 @@ export default function FavouritePage() {
                         <Heart className="w-8 h-8 text-rose-400" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {loading ? 'Loading your favorites...' : favoriteCount === 0 ? 'No favorite products yet' : 'No matching products found'}
+                        {loading ? t('dashboard.wishlist.loadingCart') : favoriteCount === 0 ? t('dashboard.wishlist.noItems') : t('dashboard.wishlist.noProductsFound')}
                     </h3>
                     <p className="text-gray-600 mb-6">
-                        {loading ? 'Please wait while we fetch your wishlist...' : 
+                        {loading ? t('dashboard.wishlist.loadingCart') : 
                             favoriteCount === 0
-                            ? 'Your favorite products will appear here when you add them'
-                            : 'Try adjusting your search or filter criteria'}
+                            ? t('dashboard.wishlist.browseToAdd')
+                            : t('dashboard.wishlist.tryDifferentFilters')}
                     </p>
                     {!loading && (
                         <div className="flex gap-4 justify-center">
@@ -553,7 +555,7 @@ export default function FavouritePage() {
                                 className="cursor-pointer px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
                             >
                                 <ShoppingCart className="w-5 h-5" />
-                                Go Shopping
+                                {t('dashboard.cart.browseProducts')}
                             </button>
                         </div>
                     )}
@@ -644,17 +646,17 @@ export default function FavouritePage() {
                                     </div>
 
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-900 mb-3">Description</h3>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-3">{t('dashboard.cart.description')}</h3>
                                         <p className="text-gray-700 leading-relaxed">{selectedProduct.description}</p>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="bg-gray-50 rounded-xl p-4">
-                                            <div className="text-sm text-gray-500 mb-1">Material</div>
+                                            <div className="text-sm text-gray-500 mb-1">{t('dashboard.wishlist.material')}</div>
                                             <div className="font-semibold text-gray-900">{selectedProduct.materials}</div>
                                         </div>
                                         <div className="bg-gray-50 rounded-xl p-4">
-                                            <div className="text-sm text-gray-500 mb-1">Stock</div>
+                                            <div className="text-sm text-gray-500 mb-1">{t('dashboard.wishlist.stock')}</div>
                                             <div className={`font-semibold inline-flex px-3 py-1 rounded-full text-sm ${selectedProduct.quantityInStock > 20 ? 'bg-green-100 text-green-800' :
                                                 selectedProduct.quantityInStock > 5 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
                                                 }`}>
@@ -664,7 +666,7 @@ export default function FavouritePage() {
                                     </div>
 
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-900 mb-3">Available Sizes</h3>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-3">{t('dashboard.cart.availableSizes')}</h3>
                                         <div className="flex flex-wrap gap-2">
                                             {selectedProduct.availableSizes?.split(',').map((size) => (
                                                 <span
@@ -682,15 +684,15 @@ export default function FavouritePage() {
                                             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
-                                            SEO Information
+                                            {t('dashboard.wishlist.seoInformation')}
                                         </h3>
                                         <div className="space-y-3">
                                             <div>
-                                                <div className="text-sm text-gray-500 mb-1">SEO Title</div>
+                                                <div className="text-sm text-gray-500 mb-1">{t('dashboard.wishlist.seoTitle')}</div>
                                                 <div className="text-gray-900 font-medium">{selectedProduct.seoTitle}</div>
                                             </div>
                                             <div>
-                                                <div className="text-sm text-gray-500 mb-1">SEO Description</div>
+                                                <div className="text-sm text-gray-500 mb-1">{t('dashboard.wishlist.seoDescription')}</div>
                                                 <div className="text-gray-700 text-sm">{selectedProduct.seoDescription}</div>
                                             </div>
                                         </div>
@@ -701,7 +703,7 @@ export default function FavouritePage() {
                                         className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                                     >
                                         <ShoppingCart className="w-5 h-5" />
-                                        Add to Cart
+                                        {t('dashboard.wishlist.addToCart')}
                                     </button>
                                 </div>
                             </div>
@@ -736,9 +738,9 @@ export default function FavouritePage() {
                             </div>
                             <div className="flex-1">
                                 <p className="font-semibold text-gray-900">
-                                    {toast.type === 'success' ? 'Success!' :
-                                        toast.type === 'error' ? 'Error!' :
-                                            'Info'}
+                                    {toast.type === 'success' ? t('dashboard.wishlist.success') :
+                                        toast.type === 'error' ? t('dashboard.wishlist.error') :
+                                            t('dashboard.wishlist.info')}
                                 </p>
                                 <p className="text-sm text-gray-700 mt-0.5">{toast.message}</p>
                             </div>

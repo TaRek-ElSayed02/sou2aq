@@ -34,8 +34,24 @@ export default function Login() {
 
  useEffect(() => {
     if (accessToken && user) {
+      console.log('🔐 Login successful! Saving tokens...');
+      console.log('accessToken:', accessToken.substring(0, 20) + '...');
       // حفظ التوكن في الكوكيز
       saveTokensToCookies(accessToken, refreshToken || undefined);
+      console.log('✅ Tokens saved!');
+      
+      // إرسال الـ token لكل الـ subdomains عبر postMessage
+      console.log('📡 Broadcasting token to all subdomains...');
+      const token = { accessToken, refreshToken };
+      
+      // إرسال لـ window.opener (إذا كان في parent window)
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(token, '*');
+      }
+      
+      // إرسال لـ local storage يقدر يقرأها أي iframe من نفس الـ origin
+      // ثم نفتح iframes لـ subdomains وتقرأ الـ token من الـ message
+      
       // تحديث userStore عند نجاح تسجيل الدخول
       dispatch(setUser(user));
       router.push("/dashboard") // توجيه للداشبورد بدلاً من الصفحة الرئيسية

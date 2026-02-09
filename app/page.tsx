@@ -9,13 +9,15 @@ import { Slider } from "./Components/Carousel/Carousel";
 import Goals from "./Components/Goals/Goals";
 import ClientsReviews from "./Components/ClientsReview/ClientsReviews";
 import SendEmail from "./Components/SendEmail/SendEmail";
+import { useLanguage } from "./context/LanguageContext";
 
 export default function Home() {
+  const { t, dir, isArabic } = useLanguage();
   const Hero = "/Hero.png";
   const BackArrow = "/backarrow.png";
 
   return (
-    <div className="bg-[#F8FAFC] overflow-hidden">
+    <div className={`bg-[#F8FAFC] overflow-hidden ${isArabic ? 'text-right' : 'text-left'}`} dir={dir}>
       <Header />
 
       <section className="
@@ -45,11 +47,11 @@ export default function Home() {
             font-bold
             text-[#0F172A]
           ">
-            We boost growth for your startup business
+            {t('common.boostGrowth')}
           </h2>
 
           <p className="text-gray-600 max-w-xl mx-auto lg:mx-0">
-            Our goal is top at the heart of creativity services industry as a digital creator.
+            {t('common.growthDescription')}
           </p>
 
           <Link
@@ -57,13 +59,17 @@ export default function Home() {
             className="
               bg-blue-600
               text-white
-              py-3 px-8
+              py-4 px-12
               rounded-lg
               w-fit
               mx-auto lg:mx-0
+              text-lg
+              font-semibold
+              hover:bg-blue-700
+              transition
             "
           >
-            Get Started
+            {t('common.getStarted')}
           </Link>
         </motion.div>
 
@@ -87,8 +93,8 @@ export default function Home() {
               rounded-lg px-4 py-2
             "
           >
-            <h2 className="font-bold text-sm">100% Business Growth</h2>
-            <h3 className="text-xs text-gray-500">(1520 Reviews)</h3>
+            <h2 className="font-bold text-sm">{t('common.businessGrowth')}</h2>
+            <h3 className="text-xs text-gray-500">({t('common.reviews')})</h3>
           </motion.div>
 
           {/* Card 2 */}
@@ -104,8 +110,8 @@ export default function Home() {
               rounded-lg px-4 py-2
             "
           >
-            <h2 className="font-bold text-sm">100% Business Growth</h2>
-            <h3 className="text-xs text-gray-500">(1520 Reviews)</h3>
+            <h2 className="font-bold text-sm">{t('common.businessGrowth')}</h2>
+            <h3 className="text-xs text-gray-500">({t('common.reviews')})</h3>
           </motion.div>
 
           {/* Hero Image */}

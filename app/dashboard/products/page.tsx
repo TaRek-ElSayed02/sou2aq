@@ -1601,6 +1601,7 @@ import {
 } from 'lucide-react';
 import { useUser } from '../../hooks/useUser';
 import { useProducts } from '../../hooks/useProducts';
+import { useLanguage } from '../../context/LanguageContext';
 
 // تعريف أنواع البيانات
 interface EditModalData {
@@ -1621,6 +1622,7 @@ interface EditModalData {
 }
 
 const ProductsPage = () => {
+    const { t } = useLanguage();
     const { currentUser, isAdmin } = useUser();
     const {
         userProducts,
@@ -1970,7 +1972,7 @@ const ProductsPage = () => {
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl p-8 flex flex-col items-center">
                         <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-                        <p className="text-gray-700 font-medium">Loading products...</p>
+                        <p className="text-gray-700 font-medium">{t('dashboard.products.loading')}</p>
                     </div>
                 </div>
             )}
@@ -1979,12 +1981,12 @@ const ProductsPage = () => {
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Products Management</h1>
-                        <p className="text-gray-600">Manage your products, inventory, and pricing</p>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard.products.management')}</h1>
+                        <p className="text-gray-600">{t('dashboard.products.manageInventory')}</p>
                         <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
-                            <span>User: {currentUser?.fullName}</span>
+                            <span>{t('dashboard.products.user')}: {currentUser?.fullName}</span>
                             <span className="text-gray-300">•</span>
-                            <span>Total Products: {userProducts.length}</span>
+                            <span>{t('dashboard.products.totalProducts')}: {userProducts.length}</span>
                         </div>
                     </div>
 
@@ -1994,7 +1996,7 @@ const ProductsPage = () => {
                             className="flex items-center gap-3 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
                         >
                             <Plus className="w-5 h-5" />
-                            Add New Product
+                            {t('dashboard.products.addNewProduct')}
                         </button>
                     )}
                 </div>
@@ -2008,7 +2010,7 @@ const ProductsPage = () => {
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
-                                placeholder="Search products by name or description..."
+                                placeholder={t('dashboard.products.searchPlaceholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -2022,7 +2024,7 @@ const ProductsPage = () => {
                             className="flex items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                             <Filter className="w-5 h-5" />
-                            Filters
+                            {t('dashboard.products.filters')}
                             {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
 
@@ -2031,16 +2033,16 @@ const ProductsPage = () => {
                             onChange={(e) => setSortBy(e.target.value as 'name' | 'price' | 'rating')}
                             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                            <option value="name">Sort by Name</option>
-                            <option value="price">Sort by Price</option>
-                            <option value="rating">Sort by Rating</option>
+                            <option value="name">{t('dashboard.products.sortByName')}</option>
+                            <option value="price">{t('dashboard.products.sortByPrice')}</option>
+                            <option value="rating">{t('dashboard.products.sortByRating')}</option>
                         </select>
 
                         <button
                             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                             className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                            {sortOrder === 'asc' ? '↑ Ascending' : '↓ Descending'}
+                            {sortOrder === 'asc' ? '↑ ' + t('dashboard.products.ascending') : '↓ ' + t('dashboard.products.descending')}
                         </button>
                     </div>
                 </div>
@@ -2049,7 +2051,7 @@ const ProductsPage = () => {
                     <div className="mt-6 pt-6 border-t border-gray-200">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-3">Category</h3>
+                                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('dashboard.products.category')}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {allCategories.map((category) => (
                                         <button
@@ -2068,7 +2070,7 @@ const ProductsPage = () => {
 
                             <div>
                                 <h3 className="text-sm font-medium text-gray-700 mb-3">
-                                    Price Range: ${priceRange[0]} - ${priceRange[1]}
+                                    {t('dashboard.products.priceRange')}: ${priceRange[0]} - ${priceRange[1]}
                                 </h3>
                                 <div className="space-y-3">
                                     <input
@@ -2098,13 +2100,13 @@ const ProductsPage = () => {
                             </div>
 
                             <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Filters</h3>
+                                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('dashboard.products.quickFilters')}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     <button
                                         onClick={() => setSelectedCategory('All')}
                                         className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
                                     >
-                                        All Products
+                                        {t('dashboard.products.allProducts')}
                                     </button>
                                     <button
                                         onClick={() => {
@@ -2114,7 +2116,7 @@ const ProductsPage = () => {
                                         }}
                                         className="px-3 py-1.5 text-sm bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 rounded-full hover:from-blue-100 hover:to-blue-200 transition-colors"
                                     >
-                                        Reset Filters
+                                        {t('dashboard.products.resetFilters')}
                                     </button>
                                 </div>
                             </div>
@@ -2125,10 +2127,10 @@ const ProductsPage = () => {
 
             <div className="mb-4 flex items-center justify-between">
                 <p className="text-gray-600">
-                    Showing <span className="font-semibold">{filteredProducts.length}</span> products
+                    {t('dashboard.products.showing')} <span className="font-semibold">{filteredProducts.length}</span> {t('dashboard.products.products')}
                 </p>
                 <div className="text-sm text-gray-500">
-                    Sorted by {sortBy} ({sortOrder})
+                    {t('dashboard.products.sortedBy')} {sortBy} ({sortOrder})
                 </div>
             </div>
 
@@ -2233,13 +2235,13 @@ const ProductsPage = () => {
                                             className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                                         >
                                             <Edit className="w-4 h-4" />
-                                            Edit
+                                            {t('dashboard.products.edit')}
                                         </button>
                                         {isAdmin && (
                                             <button
                                                 onClick={() => openDeleteModal(product.id, product.name)}
                                                 className="px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg"
-                                                title="Delete"
+                                                title={t('dashboard.products.delete')}
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -2257,8 +2259,8 @@ const ProductsPage = () => {
                     <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                         <Search className="w-8 h-8 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-                    <p className="text-gray-600 mb-6">Try adjusting your search or filter criteria</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('dashboard.products.noProducts')}</h3>
+                    <p className="text-gray-600 mb-6">{t('dashboard.products.tryAdjusting')}</p>
                     <div className="flex gap-4 justify-center">
                         <button
                             onClick={() => {
@@ -2268,7 +2270,7 @@ const ProductsPage = () => {
                             }}
                             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl"
                         >
-                            Clear all filters
+                            {t('dashboard.products.clearAllFilters')}
                         </button>
                         {isAdmin && (
                             <button
@@ -2276,7 +2278,7 @@ const ProductsPage = () => {
                                 className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
                             >
                                 <Plus className="w-5 h-5" />
-                                Add New Product
+                                {t('dashboard.products.addNewProduct')}
                             </button>
                         )}
                     </div>

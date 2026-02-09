@@ -1,8 +1,12 @@
+"use client";
+
 import Link from 'next/link'
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function SendEmail() {
+  const { t } = useLanguage();
   const EmailImage = "/Email.png"
 
   return (
@@ -13,7 +17,7 @@ export default function SendEmail() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        Subscribe Our Newsletter
+        {t('common.subscribeNewsletter')}
       </motion.h2>
 
       <div className="flex flex-col lg:flex-row justify-between items-center gap-5">
@@ -32,12 +36,12 @@ export default function SendEmail() {
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <h3 className="text-gray-700 text-sm sm:text-base">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+            {t('common.subscribeDesc')}
           </h3>
 
           <input
             type="email"
-            placeholder="Your Email here"
+            placeholder={t('common.yourEmailHere')}
             className="border border-gray-300 rounded-4xl p-5 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xl "
           />
 
@@ -45,7 +49,7 @@ export default function SendEmail() {
             href="/auth/login"
             className="bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-md transition-all duration-300"
           >
-            Subscribe Our Newsletter
+            {t('common.subscribeBtn')}
           </Link>
         </motion.div>
       </div>

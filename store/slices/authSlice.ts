@@ -87,16 +87,38 @@ const authSlice = createSlice({
 // app/utils/authHelpers.ts
 export const saveTokensToCookies = (accessToken: string, refreshToken?: string) => {
   if (typeof window !== 'undefined') {
-    // تخزين في localStorage (لـ Redux persist)
-    localStorage.setItem('accessToken', accessToken)
-    if (refreshToken) {
-      localStorage.setItem('refreshToken', refreshToken)
-    }
-    
-    // تخزين في الكوكيز (للميدل وير)
-    document.cookie = `accessToken=${accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict`
-    if (refreshToken) {
-      document.cookie = `refreshToken=${refreshToken}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`
+    try {
+      // تخزين في localStorage (لـ Redux persist)
+      localStorage.setItem('accessToken', accessToken)
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken)
+      }
+      
+      // تخزين في sessionStorage (بديل إذا cookies ما اشتغلت)
+      sessionStorage.setItem('accessToken', accessToken)
+      if (refreshToken) {
+        sessionStorage.setItem('refreshToken', refreshToken)
+      }
+      
+      console.log('💾 Tokens saved to localStorage and sessionStorage');
+      
+      // محاولة حفظ في الكوكيز أيضاً
+      // لـ localhost with subdomains، جرّب بدون domain attribute أولاً
+      const cookieOptions = `path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      
+      document.cookie = `accessToken=${encodeURIComponent(accessToken)}; ${cookieOptions}`;
+      console.log('🍪 Cookie set (method 1 - no domain):', document.cookie.substring(0, 50));
+      
+      // جرّب أيضاً مع domain=.localhost
+      const cookieOptionsWithDomain = `path=/; domain=.localhost; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      document.cookie = `accessToken=${encodeURIComponent(accessToken)}; ${cookieOptionsWithDomain}`;
+      console.log('🍪 Cookie set (method 2 - with .localhost):', document.cookie.substring(0, 50));
+      
+      if (refreshToken) {
+        document.cookie = `refreshToken=${encodeURIComponent(refreshToken)}; ${cookieOptions}`;
+      }
+    } catch (error) {
+      console.error('❌ Error saving tokens:', error);
     }
   }
 }
@@ -106,22 +128,14 @@ export const removeTokensFromCookies = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     
-    document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-    document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-  }
-}
-
-export const getTokenFromCookies = () => {
-  if (typeof window !== 'undefined') {
-    const cookies = document.cookie.split(';')
-    for (const cookie of cookies) {
-      const [name, value] = cookie.trim().split('=')
-      if (name === 'accessToken') {
-        return value
-      }
+    let domain = window.location.hostname;
+    if (domain === 'localhost' || domain.endsWith('.localhost')) {
+      domain = '.localhost';
     }
+    
+    document.cookie = `accessToken=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    document.cookie = `refreshToken=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   }
-  return null
 }
 
 export const { logout } = authSlice.actions;

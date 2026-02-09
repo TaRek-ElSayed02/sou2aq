@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Edit2, Trash2, Image as ImageIcon, X } from 'lucide-react';
 import { useAppSelector } from '@/store/hooks';
 import toast from 'react-hot-toast';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 interface User {
   id: string;
@@ -27,6 +28,7 @@ export default function AllUsersPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { accessToken, user: currentUser } = useAppSelector((state) => state.auth);
+  const { t } = useLanguage();
 
   // جلب المستخدمين
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function AllUsersPage() {
 
   const handleDeleteClick = (userId: string) => {
     if (currentUser?.id === userId) {
-      toast.error('You cannot delete your own account');
+      toast.error(t("dashboard.users.cannotDeleteOwn"));
       return;
     }
     setDeletingUserId(userId);
@@ -172,8 +174,8 @@ export default function AllUsersPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">All Users</h1>
-        <p className="text-sm md:text-base text-gray-600 mt-2">Manage all user accounts</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{t("dashboard.users.title")}</h1>
+        <p className="text-sm md:text-base text-gray-600 mt-2">{t("dashboard.users.manage")}</p>
       </div>
 
       {/* Users Table */}
@@ -181,15 +183,15 @@ export default function AllUsersPage() {
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Photo</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Full Name</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">User Name</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">Email</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Role</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">DoB</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">Phone</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">Status</th>
-              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 sticky right-0 bg-gray-50 z-10">Actions</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700">{t("dashboard.users.profileImage")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700">{t("dashboard.users.fullName")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">{t("dashboard.users.userName")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">{t("dashboard.users.email")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700">{t("dashboard.users.role")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">{t("dashboard.users.dateOfBirth")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">{t("dashboard.users.phone")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell">{t("dashboard.users.status")}</th>
+              <th className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 sticky right-0 bg-gray-50 z-10">{t("common.actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">

@@ -7,14 +7,14 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function Header() {
+  const { t, language, setLanguage, isArabic } = useLanguage();
   const Logo = "/logo.png";
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [language, setLanguage] = useState<'en' | 'ar'>('en');
-  const [langMenuOpen, setLangMenuOpen] = useState(false);
 
   const { user, accessToken } = useAppSelector((state) => state.auth);
 
@@ -51,58 +51,31 @@ export default function Header() {
         <img src={Logo} className="h-8 w-auto" alt="Logo" />
 
         <nav className="hidden md:flex gap-10 items-center">
-          <Link href="/">Home</Link>
-          <Link href="/About">About</Link>
-          <Link href="/Blogs">Blogs</Link>
-          <Link href="/">Our App</Link>
-          <Link href="/contacts">Contacts</Link>
+          <Link href="/">{t('common.home')}</Link>
+          <Link href="/About">{t('common.about')}</Link>
+          <Link href="/Blogs">{t('common.blogs')}</Link>
+          <Link href="/">{t('common.ourApp')}</Link>
+          <Link href="/contacts">{t('common.contacts')}</Link>
         </nav>
 
         <div className="hidden md:flex gap-6 items-center relative">
-          {/* Language Switcher */}
-          <div className="relative">
-            <button
-              onClick={() => setLangMenuOpen(!langMenuOpen)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-gray-700"
-            >
-              <Globe size={18} />
-              <span className="text-sm font-medium">{language.toUpperCase()}</span>
-            </button>
-
-            {langMenuOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
-                <button
-                  onClick={() => handleLanguageChange('en')}
-                  className={`w-full text-left px-4 py-2.5 text-sm font-medium transition ${
-                    language === 'en'
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'hover:bg-gray-50 text-gray-700'
-                  }`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => handleLanguageChange('ar')}
-                  className={`w-full text-left px-4 py-2.5 text-sm font-medium transition border-t border-gray-100 ${
-                    language === 'ar'
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'hover:bg-gray-50 text-gray-700'
-                  }`}
-                >
-                  العربية
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Language Toggle Button */}
+          <button
+            onClick={() => handleLanguageChange(isArabic ? 'en' : 'ar')}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
+          >
+            <Globe size={18} />
+            <span className="text-sm">{language.toUpperCase()}</span>
+          </button>
 
           {!accessToken ? (
             <>
-              <Link href="/auth/login">Log in</Link>
+              <Link href="/auth/login">{t('common.logIn')}</Link>
               <Link
                 href="/auth/register"
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
               >
-                Sign up
+                {t('common.signUp')}
               </Link>
             </>
           ) : (
@@ -121,16 +94,16 @@ export default function Header() {
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                <div className={`absolute ${isArabic ? 'left-0' : 'right-0'} mt-2 w-60 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden`}>
                   {/* User Info Header */}
                   <div className="bg-gray-50 px-5 py-5 border-b border-gray-100">
-                    <div className="flex items-center gap-3">
+                    <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
                       <img
                         src={profileImage}
                         alt="User"
                         className="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
                       />
-                      <div className="flex-1 min-w-0">
+                      <div className={`flex-1 min-w-0 ${isArabic ? 'text-right' : ''}`}>
                         <p className="font-semibold text-gray-900 text-sm truncate">{user?.personalInfo?.fullName}</p>
                         <p className="text-xs text-gray-500 truncate">{user?.personalInfo?.email}</p>
                       </div>
@@ -147,7 +120,7 @@ export default function Header() {
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span className="font-medium">Profile</span>
+                      <span className="font-medium">{t('common.profile')}</span>
                     </Link>
                     
                     <Link
@@ -158,7 +131,7 @@ export default function Header() {
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="font-medium">Dashboard</span>
+                      <span className="font-medium">{t('common.dashboard')}</span>
                     </Link>
 
                     <div className="border-t border-gray-100 my-1"></div>
@@ -170,7 +143,7 @@ export default function Header() {
                       <svg className="w-4 h-4 text-red-400 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      <span className="font-medium">Logout</span>
+                      <span className="font-medium">{t('common.logout')}</span>
                     </button>
                   </div>
                 </div>
@@ -210,21 +183,24 @@ export default function Header() {
 
         <nav className="flex flex-col gap-6 px-6 py-8 text-lg">
           <Link onClick={() => setOpen(false)} href="/">
-            Home
+            {t('common.home')}
+          </Link>
+          <Link onClick={() => setOpen(false)} href="/About">
+            {t('common.about')}
+          </Link>
+          <Link onClick={() => setOpen(false)} href="/Blogs">
+            {t('common.blogs')}
           </Link>
           <Link onClick={() => setOpen(false)} href="/">
-            About
+            {t('common.ourApp')}
           </Link>
-          <Link onClick={() => setOpen(false)} href="/">
-            Our App
-          </Link>
-          <Link onClick={() => setOpen(false)} href="/">
-            Contacts
+          <Link onClick={() => setOpen(false)} href="/contacts">
+            {t('common.contacts')}
           </Link>
 
           {/* Mobile Language Switcher */}
           <div className="border-t pt-6 mt-6">
-            <p className="text-sm font-medium text-gray-600 mb-3">Language</p>
+            <p className="text-sm font-medium text-gray-600 mb-3">{t('common.language')}</p>
             <div className="flex gap-2">
               <button
                 onClick={() => handleLanguageChange('en')}
@@ -254,14 +230,14 @@ export default function Header() {
           {!accessToken ? (
             <>
               <Link href="/auth/login" onClick={() => setOpen(false)}>
-                Log in
+                {t('common.logIn')}
               </Link>
               <Link
                 href="/auth/register"
                 className="bg-blue-600 text-white text-center py-2 rounded-lg"
                 onClick={() => setOpen(false)}
               >
-                Sign up
+                {t('common.signUp')}
               </Link>
             </>
           ) : (
@@ -290,7 +266,7 @@ export default function Header() {
                 onClick={() => setOpen(false)}
                 className="text-left"
               >
-                Profile
+                {t('common.profile')}
               </Link>
 
               <Link
@@ -298,11 +274,11 @@ export default function Header() {
                 onClick={() => setOpen(false)}
                 className="text-left"
               >
-                Dashboard
+                {t('common.dashboard')}
               </Link>
 
               <button onClick={handleLogout} className="text-left text-red-600">
-                Logout
+                {t('common.logout')}
               </button>
             </>
           )}

@@ -1,9 +1,14 @@
+"use client";
+
 import React from "react";
 import { motion, Transition } from "framer-motion";
 import { Variants } from "framer-motion";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 
 export default function ClientsReviews() {
+  const { t } = useLanguage();
+  
   const clients = [
     {
       img: "/Clients/client1.png",
@@ -43,7 +48,7 @@ export default function ClientsReviews() {
   return (
     <div className="w-full px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto mb-16">
       <h2 className="text-[#0F172A] text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-10">
-        What Clients say about us
+        {t('common.whatClientsSay')}
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
