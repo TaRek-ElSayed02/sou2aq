@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useBlog } from '../../hooks/useBlog';
 import { useLanguage } from '../../context/LanguageContext';
+import RichTextEditor from '../../Components/RichTextEditor/Richbox';
 
 // أنواع البيانات
 interface EditModalData {
@@ -767,26 +768,27 @@ const BlogPage = () => {
 
             {/* Edit/Add Modal */}
             {editModal.isOpen && editModal.data && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
-                        <div className="p-8">
-                            <div className="flex items-center justify-between mb-8">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">
-                                        {editModal.mode === 'add' ? 'Add New Post' : 'Edit Post'}
-                                    </h2>
-                                    <p className="text-gray-500 mt-1">
-                                        {editModal.mode === 'add' ? 'Create a new blog post' : 'Update post details and content'}
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={() => setEditModal({ isOpen: false, data: null, mode: 'edit' })}
-                                    className="p-3 hover:bg-gray-100 rounded-xl transition-all hover:scale-110"
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl w-[75vw] h-[85vh] max-w-[95vw] max-h-[95vh] overflow-y-auto shadow-lg border border-gray-100">
+                        {/* Header */}
+                        <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50 z-10">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">
+                                    {editModal.mode === 'add' ? 'Add New Post' : 'Edit Post'}
+                                </h2>
+                                <p className="text-gray-500 mt-1">
+                                    {editModal.mode === 'add' ? 'Create a new blog post' : 'Update post details and content'}
+                                </p>
                             </div>
+                            <button
+                                onClick={() => setEditModal({ isOpen: false, data: null, mode: 'edit' })}
+                                className="p-2 md:p-3 hover:bg-gray-100 rounded-lg transition-all"
+                            >
+                                <X className="w-6 h-6 text-gray-600" />
+                            </button>
+                        </div>
 
+                        <div className="p-6 md:p-8 bg-white">
                             <div className="space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div>
@@ -863,7 +865,7 @@ const BlogPage = () => {
                                                 ...prev,
                                                 data: { ...prev.data!, author: e.target.value }
                                             }))}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                            className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                             placeholder="Author name"
                                         />
                                     </div>
@@ -880,7 +882,7 @@ const BlogPage = () => {
                                             data: { ...prev.data!, description: e.target.value }
                                         }))}
                                         rows={3}
-                                        className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
+                                        className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
                                         placeholder="Brief description of the post"
                                     />
                                 </div>
@@ -889,26 +891,16 @@ const BlogPage = () => {
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                                         Content *
                                     </label>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4">
                                         <div>
-                                            <p className="text-xs font-semibold text-gray-500 mb-2">Editor</p>
-                                            <textarea
-                                                value={editModal.data.content}
-                                                onChange={(e) => setEditModal(prev => ({
-                                                    ...prev,
-                                                    data: { ...prev.data!, content: e.target.value }
-                                                }))}
-                                                rows={8}
-                                                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none font-mono"
-                                                placeholder="Write your post content here..."
-                                            />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-semibold text-gray-500 mb-2">Preview</p>
-                                            <div className="prose max-w-none text-gray-700 leading-relaxed prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-lg prose-strong:font-bold prose-em:italic prose-code:bg-gray-200 prose-code:px-1 prose-code:rounded prose-a:text-blue-600 prose-a:hover:underline p-4 border-2 border-gray-200 rounded-xl bg-gray-50 overflow-auto h-96">
-                                                <div dangerouslySetInnerHTML={{
-                                                    __html: editModal.data.content.replace(/\n/g, '<br />')
-                                                }} />
+                                            <div className="border-2 border-gray-100 rounded-xl overflow-hidden">
+                                                <RichTextEditor
+                                                    value={editModal.data.content}
+                                                    onChange={(html) => setEditModal(prev => ({
+                                                        ...prev,
+                                                        data: { ...prev.data!, content: html }
+                                                    }))}
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -919,7 +911,7 @@ const BlogPage = () => {
                                         <label className="block text-sm font-semibold text-gray-700 mb-3">
                                             Post Image *
                                         </label>
-                                        <div className="relative">
+                                            <div className="relative">
                                             <input
                                                 type="file"
                                                 accept="image/*"
@@ -947,7 +939,7 @@ const BlogPage = () => {
                                                     <img
                                                         src={editModal.data.image.startsWith('data:') ? editModal.data.image : `http://localhost:5000${editModal.data.image}`}
                                                         alt="Preview"
-                                                        className="w-full h-48 object-cover rounded-lg border-2 border-gray-200"
+                                                        className="w-full h-48 object-cover rounded-lg border-2 border-gray-100"
                                                     />
                                                 </div>
                                             )}
@@ -965,7 +957,7 @@ const BlogPage = () => {
                                                 ...prev,
                                                 data: { ...prev.data!, imgAlt: e.target.value }
                                             }))}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                            className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                             placeholder="Description of the image for accessibility"
                                         />
                                     </div>
@@ -990,7 +982,7 @@ const BlogPage = () => {
                                                 data: { ...prev.data!, tags }
                                             }));
                                         }}
-                                        className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                        className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                         placeholder="Technology, Web Development, Programming"
                                     />
                                     <p className="mt-2 text-sm text-gray-500">
@@ -998,16 +990,16 @@ const BlogPage = () => {
                                     </p>
                                 </div>
 
-                                <div className="flex justify-end gap-4 pt-8 border-t">
+                                <div className="sticky bottom-0 flex gap-3 p-4 md:p-6 border-t border-gray-100 bg-white rounded-b-xl">
                                     <button
                                         onClick={() => setEditModal({ isOpen: false, data: null, mode: 'edit' })}
-                                        className="px-8 py-3.5 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all hover:scale-105 active:scale-95"
+                                        className="flex-1 px-6 py-3 text-sm md:text-base border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={() => handleSaveEdit(editModal.data!)}
-                                        className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                                        className="flex-1 px-6 py-3 text-sm md:text-base bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-900 transition"
                                     >
                                         {editModal.mode === 'add' ? 'Add Post' : 'Save Changes'}
                                     </button>

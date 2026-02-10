@@ -2457,10 +2457,10 @@ const ProductsPage = () => {
 
             {/* Edit/Add Modal */}
             {editModal.isOpen && editModal.data && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
-                        <div className="p-8">
-                            <div className="flex items-center justify-between mb-8">
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl w-[75vw] h-[85vh] max-w-[95vw] max-h-[95vh] overflow-y-auto shadow-lg border border-gray-100">
+                        <div className="p-6 md:p-8 bg-white">
+                            <div className="sticky top-0 flex items-center justify-between mb-6 p-4 md:p-6 border-b border-gray-100 bg-gray-50 z-10 rounded-t-xl">
                                 <div>
                                     <h2 className="text-2xl font-bold text-gray-900">
                                         {editModal.mode === 'add' ? 'Add New Product' : 'Edit Product'}
@@ -2474,9 +2474,9 @@ const ProductsPage = () => {
                                         setUploadedImage(null);
                                         setEditModal({ isOpen: false, data: null, mode: 'edit' });
                                     }}
-                                    className="p-3 hover:bg-gray-100 rounded-xl transition-all hover:scale-110"
+                                    className="p-2 md:p-3 hover:bg-gray-100 rounded-lg transition-all"
                                 >
-                                    <X className="w-6 h-6" />
+                                    <X className="w-6 h-6 text-gray-600" />
                                 </button>
                             </div>
 
@@ -2500,7 +2500,7 @@ const ProductsPage = () => {
                                                     }
                                                 }));
                                             }}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                            className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                             placeholder="Enter product name"
                                         />
                                     </div>
@@ -2517,7 +2517,7 @@ const ProductsPage = () => {
                                                     ...prev,
                                                     data: { ...prev.data!, url: e.target.value }
                                                 }))}
-                                                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-gray-50"
+                                                className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-gray-50"
                                             />
                                             <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
                                                 /products/{editModal.data.url}
@@ -2539,7 +2539,7 @@ const ProductsPage = () => {
                                                     ...prev,
                                                     data: { ...prev.data!, category: e.target.value }
                                                 }))}
-                                                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none"
+                                                className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none"
                                             >
                                                 <option value="">Select or type category</option>
                                                 {allCategories
@@ -2587,7 +2587,7 @@ const ProductsPage = () => {
                                                     ...prev,
                                                     data: { ...prev.data!, price: parseFloat(e.target.value) || 0 }
                                                 }))}
-                                                className="w-full pl-10 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                className="w-full pl-10 pr-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                                 step="0.01"
                                                 min="0"
                                             />
@@ -2610,7 +2610,7 @@ const ProductsPage = () => {
                                                         data: { ...prev.data!, discount: discountValue }
                                                     }));
                                                 }}
-                                                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                className="w-full mt-2 px-4 py-3 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 min="0"
                                                 max="100"
                                                 placeholder="0"
@@ -2649,7 +2649,7 @@ const ProductsPage = () => {
                                                     ...prev,
                                                     data: { ...prev.data!, quantityInStock: parseInt(e.target.value) || 0 }
                                                 }))}
-                                                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                                 min="0"
                                             />
                                         </div>
@@ -2683,7 +2683,7 @@ const ProductsPage = () => {
                                             ...prev,
                                             data: { ...prev.data!, materials: e.target.value }
                                         }))}
-                                        className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                         placeholder="e.g., Cotton, Leather, Wood"
                                     />
                                 </div>
@@ -2776,7 +2776,7 @@ const ProductsPage = () => {
                                             data: { ...prev.data!, description: e.target.value }
                                         }))}
                                         rows={4}
-                                        className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
+                                        className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
                                         placeholder="Enter detailed product description..."
                                     />
                                 </div>
@@ -2798,7 +2798,7 @@ const ProductsPage = () => {
                                                 ...prev,
                                                 data: { ...prev.data!, seoTitle: e.target.value }
                                             }))}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                            className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                         />
                                         <p className="mt-2 text-sm text-gray-500">
                                             {editModal.data.seoTitle.length}/60 characters
@@ -2816,7 +2816,7 @@ const ProductsPage = () => {
                                                 data: { ...prev.data!, seoDescription: e.target.value }
                                             }))}
                                             rows={3}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
+                                            className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
                                         />
                                         <p className="mt-2 text-sm text-gray-500">
                                             {editModal.data.seoDescription.length}/160 characters
@@ -2824,19 +2824,19 @@ const ProductsPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-end gap-4 pt-8 border-t">
+                                <div className="sticky bottom-0 flex gap-3 p-4 md:p-6 border-t border-gray-100 bg-white rounded-b-xl">
                                     <button
                                         onClick={() => {
                                             setUploadedImage(null);
                                             setEditModal({ isOpen: false, data: null, mode: 'edit' });
                                         }}
-                                        className="px-8 py-3.5 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all hover:scale-105 active:scale-95"
+                                        className="flex-1 px-6 py-3 text-sm md:text-base border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleSaveEdit}
-                                        className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                                        className="flex-1 px-6 py-3 text-sm md:text-base bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-900 transition"
                                     >
                                         {editModal.mode === 'add' ? 'Add Product' : 'Save Changes'}
                                     </button>

@@ -1418,17 +1418,15 @@ const SiteCreationPage = () => {
                             <label className="block text-sm font-semibold text-gray-700 mb-3">
                                 {t('dashboard.site.shortDescription')} *
                             </label>
-                            <textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    description: e.target.value
-                                }))}
-                                rows={3}
-                                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                placeholder={t('dashboard.site.briefDescription')}
-                                maxLength={160}
-                            />
+                            <div className="border-2 border-gray-200 rounded-xl overflow-hidden">
+                                <RichTextEditor
+                                    value={formData.description}
+                                    onChange={(html) => setFormData(prev => ({
+                                        ...prev,
+                                        description: html
+                                    }))}
+                                />
+                            </div>
                             <div className="flex justify-between mt-2">
                                 <p className="text-sm text-gray-500">
                                     {t('dashboard.site.keepItShort')}
@@ -1803,13 +1801,12 @@ const SiteCreationPage = () => {
                                             {index + 1}
                                         </div>
                                         <div className="flex-1">
-                                            <input
-                                                type="text"
-                                                value={point.text}
-                                                onChange={(e) => updateWhyUsPoint(point.id, e.target.value)}
-                                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                placeholder={t('dashboard.site.enterCompelling')}
-                                            />
+                                            <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                                                <RichTextEditor
+                                                    value={point.text}
+                                                    onChange={(html) => updateWhyUsPoint(point.id, html)}
+                                                />
+                                            </div>
                                         </div>
                                         {formData.whyUs.length > 1 && (
                                             <button
@@ -1862,13 +1859,12 @@ const SiteCreationPage = () => {
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                                     {t('dashboard.site.answer')}
                                                 </label>
-                                                <textarea
-                                                    value={faq.answer}
-                                                    onChange={(e) => updateFAQ(faq.id, 'answer', e.target.value)}
-                                                    rows={3}
-                                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                                    placeholder={t('dashboard.site.weOffer30Day')}
-                                                />
+                                                <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                                                    <RichTextEditor
+                                                        value={faq.answer}
+                                                        onChange={(html) => updateFAQ(faq.id, 'answer', html)}
+                                                    />
+                                                </div>
                                               
                                             </div>
                                             <div className="flex justify-end">

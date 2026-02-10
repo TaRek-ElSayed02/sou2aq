@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Edit2, Trash2, Image as ImageIcon, X, ExternalLink } from 'lucide-react';
+import RichTextEditor from '../../Components/RichTextEditor/Richbox';
 import { useAppSelector } from '@/store/hooks';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -35,6 +36,7 @@ export default function SitesPage() {
   const [editFormData, setEditFormData] = useState<Partial<Site>>({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [qaList, setQaList] = useState<Array<{ id: number; question: string; answer: string }>>([]);
 
   const { accessToken, user: currentUser } = useAppSelector((state) => state.auth);
   const router = useRouter();
@@ -151,6 +153,24 @@ export default function SitesPage() {
   const handleEditClick = (site: Site) => {
     setEditingSite(site);
     setEditFormData(site);
+
+    // Initialize QA list from site's QandA string if possible.
+    try {
+      if (site.QandA) {
+        // Expected format: "question1|answer1,question2|answer2"
+        const pairs = site.QandA.split(',').map(p => p.trim()).filter(Boolean);
+        const parsed = pairs.map((pair, idx) => {
+          const [q, a] = pair.split('|');
+          return { id: idx + 1, question: (q || '').trim(), answer: (a || '').trim() };
+        });
+        setQaList(parsed.length ? parsed : [{ id: 1, question: '', answer: '' }]);
+      } else {
+        setQaList([{ id: 1, question: '', answer: '' }]);
+      }
+    } catch (e) {
+      setQaList([{ id: 1, question: '', answer: site.QandA || '' }]);
+    }
+
     setShowEditModal(true);
   };
 
@@ -159,19 +179,39 @@ export default function SitesPage() {
     setShowDeleteModal(true);
   };
 
+  // Q&A helpers for edit modal
+  const addQA = () => {
+    const newId = qaList.length ? Math.max(...qaList.map(q => q.id)) + 1 : 1;
+    setQaList(prev => [...prev, { id: newId, question: '', answer: '' }]);
+  };
+
+  const updateQA = (id: number, field: 'question' | 'answer', value: string) => {
+    setQaList(prev => prev.map(q => q.id === id ? { ...q, [field]: value } : q));
+  };
+
+  const removeQA = (id: number) => {
+    setQaList(prev => prev.filter(q => q.id !== id));
+  };
+
   const handleEditSave = async () => {
     if (!editingSite) return;
 
     try {
       // تنظيف البيانات - إزالة الحقول الفارغة والحقول التي لم تتغير
       const dataToSend: Record<string, any> = {};
-      
+
+      // Prepare Q&A string from qaList: "question|answer,question2|answer2"
+      const qaPairs = qaList
+        .filter(q => q.question && q.answer)
+        .map(q => `${q.question.toString().trim()}|${q.answer.toString().trim()}`)
+        .join(',');
+
       Object.entries(editFormData).forEach(([key, value]) => {
         // تخطي الحقول التي لا يجب إرسالها
         if (['id', 'user_id', 'createdAt'].includes(key)) {
           return;
         }
-        
+
         // تخطي القيم الفارغة والـ undefined
         if (value !== undefined && value !== null && value !== '') {
           // التأكد من أن البيانات النصية لا تكون فقط مسافات
@@ -181,6 +221,11 @@ export default function SitesPage() {
           dataToSend[key] = value;
         }
       });
+
+      // Attach Q&A if present
+      if (qaPairs) {
+        dataToSend['QandA'] = qaPairs;
+      }
 
       // التأكد من أن هناك حقولاً للتحديث
       if (Object.keys(dataToSend).length === 0) {
@@ -350,10 +395,10 @@ export default function SitesPage() {
 
       {/* Edit Modal */}
       {showEditModal && editingSite && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 md:p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-[75vw] h-[85vh] max-w-[95vw] max-h-[95vh] overflow-y-auto shadow-lg border border-gray-100">
             {/* Header */}
-            <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-200 bg-white rounded-t-xl">
+            <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50">
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t("dashboard.sites.editSite")}</h2>
                 <p className="text-xs md:text-sm text-gray-600 mt-1">{editingSite.name}</p>
@@ -367,7 +412,7 @@ export default function SitesPage() {
             </div>
 
             {/* Content */}
-            <div className="p-4 md:p-6">
+            <div className="p-6 md:p-8 bg-white">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {/* Site Name */}
                 <div>
@@ -455,73 +500,111 @@ export default function SitesPage() {
                 {/* About */}
                 <div className="md:col-span-2">
                   <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.about")}</label>
-                  <textarea
-                    value={editFormData.about || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, about: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.about")}
-                    rows={3}
-                  />
+                  <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                    <RichTextEditor
+                      value={editFormData.about || ''}
+                      onChange={(html) => setEditFormData({ ...editFormData, about: html })}
+                    />
+                  </div>
                 </div>
 
                 {/* Why Us */}
                 <div className="md:col-span-2">
                   <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.whyUs")}</label>
-                  <textarea
-                    value={editFormData.whyUs || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, whyUs: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.whyUs")}
-                    rows={3}
-                  />
+                  <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                    <RichTextEditor
+                      value={editFormData.whyUs || ''}
+                      onChange={(html) => setEditFormData({ ...editFormData, whyUs: html })}
+                    />
+                  </div>
                 </div>
 
                 {/* Q&A */}
                 <div className="md:col-span-2">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.qAndA")}</label>
-                  <textarea
-                    value={editFormData.QandA || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, QandA: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.qAndA")}
-                    rows={3}
-                  />
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs md:text-sm font-semibold text-gray-700">{t("dashboard.sites.qAndA")}</label>
+                    <button
+                      type="button"
+                      onClick={addQA}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-xs"
+                    >
+                      + {t('common.add')}
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {qaList.map((qa) => (
+                      <div key={qa.id} className="bg-white border-2 border-gray-200 rounded-xl p-4">
+                        <div className="mb-3">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">{t('dashboard.site.question')}</label>
+                          <input
+                            type="text"
+                            value={qa.question}
+                            onChange={(e) => updateQA(qa.id, 'question', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+                            placeholder={t('dashboard.site.whatReturnPolicy')}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">{t('dashboard.site.answer')}</label>
+                          <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                            <RichTextEditor
+                              value={qa.answer}
+                              onChange={(html) => updateQA(qa.id, 'answer', html)}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end mt-3">
+                          <button
+                            type="button"
+                            onClick={() => removeQA(qa.id)}
+                            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            {t('common.delete')}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    {qaList.length === 0 && (
+                      <div className="text-sm text-gray-500">{t('dashboard.sites.noQandA')}</div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Privacy Policy */}
                 <div className="md:col-span-2">
                   <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.privacyPolicy")}</label>
-                  <textarea
-                    value={editFormData.privacy_policy || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, privacy_policy: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.privacyPolicy")}
-                    rows={3}
-                  />
+                  <div className="border-2 border-gray-100 rounded-lg overflow-hidden">
+                    <RichTextEditor
+                      value={editFormData.privacy_policy || ''}
+                      onChange={(html) => setEditFormData({ ...editFormData, privacy_policy: html })}
+                    />
+                  </div>
                 </div>
 
                 {/* Terms of Use */}
                 <div className="md:col-span-2">
                   <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.termsOfUse")}</label>
-                  <textarea
-                    value={editFormData.termsOfUse || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, termsOfUse: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.termsOfUse")}
-                    rows={3}
-                  />
+                  <div className="border-2 border-gray-100 rounded-lg overflow-hidden">
+                    <RichTextEditor
+                      value={editFormData.termsOfUse || ''}
+                      onChange={(html) => setEditFormData({ ...editFormData, termsOfUse: html })}
+                    />
+                  </div>
                 </div>
 
                 {/* Returning Customers */}
                 <div className="md:col-span-2">
                   <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.returningCustomers")}</label>
-                  <textarea
-                    value={editFormData.returning || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, returning: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.returningCustomers")}
-                    rows={3}
-                  />
+                  <div className="border-2 border-gray-100 rounded-lg overflow-hidden">
+                    <RichTextEditor
+                      value={editFormData.returning || ''}
+                      onChange={(html) => setEditFormData({ ...editFormData, returning: html })}
+                    />
+                  </div>
                 </div>
 
                 {/* Status */}
@@ -540,16 +623,16 @@ export default function SitesPage() {
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 flex gap-2 md:gap-3 p-4 md:p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+            <div className="sticky bottom-0 flex gap-3 p-4 md:p-6 border-t border-gray-100 bg-white rounded-b-xl">
               <button
                 onClick={() => setShowEditModal(false)}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition"
+                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition"
               >
                 {t("dashboard.sites.cancel")}
               </button>
               <button
                 onClick={handleEditSave}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-900 transition"
               >
                 {t("dashboard.sites.save")}
               </button>

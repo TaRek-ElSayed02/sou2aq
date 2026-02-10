@@ -270,10 +270,10 @@ export default function AllUsersPage() {
 
       {/* Edit Modal */}
       {showEditModal && editingUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 md:p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-[75vw] h-[85vh] max-w-[95vw] max-h-[95vh] overflow-y-auto shadow-lg border border-gray-100">
             {/* Header */}
-            <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-200 bg-white rounded-t-xl">
+            <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50">
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">Edit User</h2>
                 <p className="text-xs md:text-sm text-gray-600 mt-1">{editingUser.fullName}</p>
@@ -287,7 +287,7 @@ export default function AllUsersPage() {
             </div>
 
             {/* Content */}
-            <div className="p-4 md:p-6">
+            <div className="p-6 md:p-8 bg-white">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {/* Full Name */}
                 <div>
@@ -296,7 +296,7 @@ export default function AllUsersPage() {
                     type="text"
                     value={editFormData.fullName || ''}
                     onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     placeholder="Enter full name"
                   />
                 </div>
@@ -313,7 +313,7 @@ export default function AllUsersPage() {
                       const sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
                       setEditFormData({ ...editFormData, userName: sanitized });
                     }}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     placeholder="Enter user name (letters and numbers only)"
                   />
                 </div>
@@ -325,7 +325,7 @@ export default function AllUsersPage() {
                     type="email"
                     value={editFormData.email || ''}
                     onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     placeholder="Enter email"
                   />
                 </div>
@@ -342,7 +342,7 @@ export default function AllUsersPage() {
                       const sanitized = value.replace(/[^0-9]/g, '');
                       setEditFormData({ ...editFormData, phone: sanitized });
                     }}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     placeholder="Enter phone number (numbers only)"
                   />
                 </div>
@@ -354,7 +354,7 @@ export default function AllUsersPage() {
                     type="date"
                     value={editFormData.DoB ? new Date(editFormData.DoB).toISOString().split('T')[0] : ''}
                     onChange={(e) => setEditFormData({ ...editFormData, DoB: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   />
                 </div>
 
@@ -364,7 +364,7 @@ export default function AllUsersPage() {
                   <select
                     value={editFormData.role || ''}
                     onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
@@ -388,16 +388,16 @@ export default function AllUsersPage() {
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 flex gap-2 md:gap-3 p-4 md:p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+            <div className="sticky bottom-0 flex gap-3 p-4 md:p-6 border-t border-gray-100 bg-white rounded-b-xl">
               <button
                 onClick={() => setShowEditModal(false)}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition"
+                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleEditSave}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-900 transition"
               >
                 Save Changes
               </button>
