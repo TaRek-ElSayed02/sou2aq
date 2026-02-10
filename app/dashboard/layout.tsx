@@ -52,25 +52,7 @@ export default function DashboardLayout({
     // جرب الوصول للـ role من طرق مختلفة
     const userRole = user?.role || (user as any)?.accountInfo?.role || (user as any)?.type;
     
-    // خريطة الصفحات المسموحة
-    const rolePages = {
-      'admin': [
-        '/dashboard/site',
-        '/dashboard/products',
-        '/dashboard/stock',
-        '/dashboard/contact',
-      ],
-      'superAdmin': [
-        '/dashboard/blog',
-        '/dashboard/users',
-        '/dashboard/sites',
-      ],
-      'user': [
-        '/dashboard/wishlist',
-        '/dashboard/cart',
-        '/dashboard/contact',
-      ],
-    };
+    console.log('🔍 Dashboard Access Check:', { userRole, pathname })
 
     // الصفحات المتاحة للجميع
     const commonPages = [
@@ -79,6 +61,39 @@ export default function DashboardLayout({
       '/dashboard/team',
       '/dashboard/settings',
     ];
+
+    // خريطة الصفحات المسموحة حسب الدور
+    const rolePages = {
+      'admin': [
+        '/dashboard/site',
+        '/dashboard/products',
+        '/dashboard/stock',
+        '/dashboard/contact',
+        // إضافة جميع الصفحات للـ admin
+        '/dashboard/blog',
+        '/dashboard/users',
+        '/dashboard/sites',
+        '/dashboard/wishlist',
+        '/dashboard/cart',
+      ],
+      'superAdmin': [
+        '/dashboard/blog',
+        '/dashboard/users',
+        '/dashboard/sites',
+        // إضافة جميع الصفحات للـ superAdmin
+        '/dashboard/site',
+        '/dashboard/products',
+        '/dashboard/stock',
+        '/dashboard/contact',
+        '/dashboard/wishlist',
+        '/dashboard/cart',
+      ],
+      'user': [
+        '/dashboard/wishlist',
+        '/dashboard/cart',
+        '/dashboard/contact',
+      ],
+    };
 
     // تحقق إذا كانت الصفحة في الصفحات المشتركة
     if (commonPages.includes(pathname)) {
@@ -95,10 +110,9 @@ export default function DashboardLayout({
       setContentToRender(children)
       setShouldRender(true)
     } else {
-      // أعد التوجيه في الخلفية بدون إخفاء الـ layout
-      router.replace('/dashboard')
-      // عرض محتوى فارغ بدلاً من المحتوى غير المصرح
-      setContentToRender(null)
+      // عرض الصفحة بدون إعادة توجيه
+      console.warn(`Access denied to ${pathname}. User role: ${userRole}. Allowed:`, allowedPages)
+      setContentToRender(children)
       setShouldRender(true)
     }
   }, [accessToken, user, pathname, router, children])

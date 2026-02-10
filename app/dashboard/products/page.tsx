@@ -1898,10 +1898,14 @@ const ProductsPage = () => {
     };
 
     // دالة حساب السعر بعد الخصم
-    const calculateDiscountedPrice = (price: number, discount?: number) => {
-        if (!discount || discount <= 0) return price;
-        if (discount > 100) return 0;
-        return price * (1 - Math.min(discount, 100) / 100);
+    const calculateDiscountedPrice = (price: number | string, discount?: number | string) => {
+        // تحويل القيم إلى أرقام للتأكد من النوع الصحيح
+        const numPrice = typeof price === 'string' ? parseFloat(price) || 0 : (price || 0);
+        const numDiscount = typeof discount === 'string' ? parseFloat(discount) || 0 : (discount || 0);
+        
+        if (!numDiscount || numDiscount <= 0) return numPrice;
+        if (numDiscount > 100) return 0;
+        return numPrice * (1 - Math.min(numDiscount, 100) / 100);
     };
 
     // فلترة وترتيب المنتجات
@@ -2338,7 +2342,7 @@ const ProductsPage = () => {
                                                         ${calculateDiscountedPrice(selectedProduct.price, selectedProduct.discount).toFixed(2)}
                                                     </span>
                                                     <span className="text-2xl text-gray-400 line-through">
-                                                        ${selectedProduct.price.toFixed(2)}
+                                                        ${selectedProduct.price}
                                                     </span>
                                                 </div>
                                                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full">
@@ -2351,7 +2355,7 @@ const ProductsPage = () => {
                                         ) : (
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                                    ${selectedProduct.price.toFixed(2)}
+                                                    ${selectedProduct.price}
                                                 </span>
                                             </div>
                                         )}
@@ -2622,7 +2626,7 @@ const ProductsPage = () => {
                                                     <span className="text-sm font-medium text-gray-700">Final Price:</span>
                                                     <div className="flex items-baseline gap-2">
                                                         <span className="text-2xl font-bold text-gray-900">
-                                                            ${calculateDiscountedPrice(editModal.data.price, editModal.data.discount)}
+                                                            ${calculateDiscountedPrice(editModal.data.price, editModal.data.discount).toFixed(2)}
                                                         </span>
                                                         <span className="text-sm text-green-600 font-semibold">
                                                             Save ${(editModal.data.price - calculateDiscountedPrice(editModal.data.price, editModal.data.discount)).toFixed(2)}

@@ -182,10 +182,15 @@ export default function MysitePage() {
         setLoading(true);
         
         const siteIdResponse = await fetch(`http://localhost:5000/api/site/idBySubdomain/${subdomain}`);
+        
+        if (!siteIdResponse.ok) {
+          throw new Error(`Site not found for subdomain: ${subdomain}`);
+        }
+        
         const siteIdData = await siteIdResponse.json();
         
-        if (!siteIdData.success) {
-          throw new Error('Site not found');
+        if (!siteIdData.success || !siteIdData.data || !siteIdData.data.id) {
+          throw new Error(`Invalid site data structure: ${JSON.stringify(siteIdData)}`);
         }
         
         const siteId = siteIdData.data.id;
@@ -1075,18 +1080,15 @@ export default function MysitePage() {
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
-                      allowFullScreen
+                      allowFullScreen={true}
                       loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`Map - ${mapData[currentMapIndex]?.address || 'Location'}`}
                     />
                   ) : (
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.1848894825364!2d46.6771311!3d24.7745312!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03d6d7d7d7d7%3A0x7d7d7d7d7d7d7d7d!2sRiyadh%2C%20Saudi%20Arabia!5e0!3m2!1sen!2s!4v1234567890"
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen
-                      loading="lazy"
-                    />
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <p className="text-gray-500">{isArabic ? 'لا توجد خريطة' : 'No map available'}</p>
+                    </div>
                   )}
 
                   {/* Navigation Arrows */}

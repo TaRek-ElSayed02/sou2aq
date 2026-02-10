@@ -71,7 +71,24 @@ export default function SubdomainLayout({
     const fetchSiteData = async () => {
       try {
         const siteIdResponse = await fetch(`http://localhost:5000/api/site/idBySubdomain/${subdomain}`);
+        
+        if (!siteIdResponse.ok) {
+          console.warn(`⚠️ Site not found for subdomain: ${subdomain}`);
+          setSiteData(null);
+          setSocialData([]);
+          return;
+        }
+        
         const siteIdData = await siteIdResponse.json();
+        
+        // Check if response has data and id
+        if (!siteIdData.data || !siteIdData.data.id) {
+          console.warn(`⚠️ Invalid site data structure:`, siteIdData);
+          setSiteData(null);
+          setSocialData([]);
+          return;
+        }
+        
         const siteId = siteIdData.data.id;
 
         const [siteRes, socialRes] = await Promise.all([

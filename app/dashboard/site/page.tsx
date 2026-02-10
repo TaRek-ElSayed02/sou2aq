@@ -1732,28 +1732,41 @@ const SiteCreationPage = () => {
                                                     value={map.mapUrl}
                                                     onChange={(e) => updateMapLocation(map.id, 'mapUrl', e.target.value)}
                                                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                                    placeholder="https://maps.google.com/embed?pb=..."
+                                                    placeholder="https://www.google.com/maps/embed?pb=..."
                                                 />
-                                                <p className="mt-2 text-sm text-gray-500">
-                                                    {t('dashboard.site.getEmbedUrl')}
-                                                </p>
+                                                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                                    <p className="text-sm text-blue-900 font-medium mb-2">📍 كيفية الحصول على رابط الخريطة:</p>
+                                                    <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                                                        <li>اذهب إلى <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Maps</a></li>
+                                                        <li>ابحث عن موقعك</li>
+                                                        <li>اضغط على <strong>المشاركة (Share)</strong></li>
+                                                        <li>اضغط على <strong>تضمين خريطة (Embed a map)</strong></li>
+                                                        <li>انسخ رابط iframe الكامل وضعه هنا</li>
+                                                    </ol>
+                                                </div>
                                             </div>
                                         </div>
 
                                         {map.mapUrl && (
                                             <div className="mt-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
-                                                <div className="rounded-lg overflow-hidden border-2 border-gray-200 h-48">
+                                                <div className="rounded-lg overflow-hidden border-2 border-gray-200 h-64">
                                                     <iframe
                                                         src={map.mapUrl}
                                                         width="100%"
                                                         height="100%"
                                                         style={{ border: 0 }}
-                                                        allowFullScreen
+                                                        allowFullScreen={true}
                                                         loading="lazy"
                                                         referrerPolicy="no-referrer-when-downgrade"
                                                         title={`Map - ${map.title}`}
                                                     ></iframe>
                                                 </div>
+                                            </div>
+                                        )}
+                                        {!map.mapUrl && (
+                                            <div className="mt-4 bg-gray-50 rounded-xl p-4 border-2 border-dashed border-gray-300 text-center">
+                                                <MapPin className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                                <p className="text-sm text-gray-500">ادخل رابط الخريطة لعرض المعاينة</p>
                                             </div>
                                         )}
                                     </div>
