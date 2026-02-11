@@ -16,6 +16,7 @@ export const getMenuItemsByRole = (role: string | null | undefined) => {
   // عناصر إضافية حسب الدور
   if (role === 'admin') {
     menuItems.push(
+      { icon: 'BookOpen', label: 'Articles', path: '/dashboard/articles' },
       { icon: 'Globe2', label: 'My Site', path: '/dashboard/site' },
       { icon: 'Package', label: 'Products', path: '/dashboard/products' },
       { icon: 'Archive', label: 'Product Stock', path: '/dashboard/stock' }
@@ -64,6 +65,7 @@ export const roleAccessMap: Record<string, string[]> = {
     '/dashboard/pricing',
     '/dashboard/team',
     '/dashboard/settings',
+    '/dashboard/articles',
     '/dashboard/products',
     '/dashboard/stock',
     '/dashboard/contact',

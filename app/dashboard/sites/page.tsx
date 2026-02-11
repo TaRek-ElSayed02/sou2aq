@@ -40,7 +40,7 @@ export default function SitesPage() {
 
   const { accessToken, user: currentUser } = useAppSelector((state) => state.auth);
   const router = useRouter();
-  const { t, locale } = useLanguage();
+  const { t, language } = useLanguage();
 
   // استخراج الـ role بطرق متعددة (مثل SideBar)
   const userRole = (currentUser as any)?.role || (currentUser as any)?.accountInfo?.role || (currentUser as any)?.type;
@@ -315,16 +315,16 @@ export default function SitesPage() {
 
       {/* Sites Table */}
       <div className="bg-white rounded-lg shadow overflow-x-auto -mx-6 md:mx-0">
-        <table className={`w-full ${locale === 'ar' ? 'rtl' : ''}`}>
+        <table className={`w-full ${language === 'ar' ? 'rtl' : ''}`}>
           <thead className="bg-gray-50 border-b border-gray-200">
-            <tr className={locale === 'ar' ? 'flex flex-row-reverse' : ''}>
+            <tr className={language === 'ar' ? 'flex flex-row-reverse' : ''}>
               <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 text-right`}>{t("dashboard.sites.image")}</th>
               <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 text-right`}>{t("dashboard.sites.siteName")}</th>
               <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell text-right`}>{t("dashboard.sites.subdomain")}</th>
               <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell text-right`}>{t("dashboard.sites.email")}</th>
               <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 hidden lg:table-cell text-right`}>{t("dashboard.sites.phone")}</th>
               <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 text-right`}>{t("dashboard.sites.status")}</th>
-              <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 sticky ${locale === 'ar' ? 'left-0' : 'right-0'} bg-gray-50 z-10 text-right`}>{t("dashboard.sites.actions")}</th>
+              <th className={`px-2 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold text-gray-700 sticky ${language === 'ar' ? 'left-0' : 'right-0'} bg-gray-50 z-10 text-right`}>{t("dashboard.sites.actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -395,111 +395,142 @@ export default function SitesPage() {
 
       {/* Edit Modal */}
       {showEditModal && editingSite && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-[75vw] h-[85vh] max-w-[95vw] max-h-[95vh] overflow-y-auto shadow-lg border border-gray-100">
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-[75vw] h-[85vh] overflow-hidden flex flex-col">
             {/* Header */}
-            <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50">
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t("dashboard.sites.editSite")}</h2>
-                <p className="text-xs md:text-sm text-gray-600 mt-1">{editingSite.name}</p>
+            <div className="sticky top-0 bg-white p-6 border-b border-gray-200 flex items-center justify-between z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Edit2 className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">{t("dashboard.sites.editSite")}</h2>
+                  <p className="text-sm text-gray-500">{editingSite.name}</p>
+                </div>
               </div>
               <button
                 onClick={() => setShowEditModal(false)}
-                className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <X size={20} className="md:size-6 text-gray-600" />
+                <X className="w-6 h-6 text-gray-500" />
               </button>
             </div>
 
-            {/* Content */}
-            <div className="p-6 md:p-8 bg-white">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                {/* Site Name */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.siteName")}</label>
-                  <input
-                    type="text"
-                    value={editFormData.name || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.siteName")}
-                  />
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  {/* Site Name */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.siteName")}</label>
+                    <input
+                      type="text"
+                      value={editFormData.name || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder={t("dashboard.sites.siteName")}
+                      required
+                    />
+                  </div>
+
+                  {/* Subdomain */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.subdomain")}</label>
+                    <input
+                      type="text"
+                      value={editFormData.subdomain || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const sanitized = value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                        setEditFormData({ ...editFormData, subdomain: sanitized });
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white font-mono text-sm"
+                      placeholder={t("dashboard.sites.subdomain")}
+                      required
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.email")}</label>
+                    <input
+                      type="email"
+                      value={editFormData.email || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder={t("dashboard.sites.email")}
+                      required
+                    />
+                  </div>
+
+                  {/* Phone */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.phone")}</label>
+                    <input
+                      type="tel"
+                      value={editFormData.phone || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const sanitized = value.replace(/[^0-9]/g, '');
+                        setEditFormData({ ...editFormData, phone: sanitized });
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder={t("dashboard.sites.phone")}
+                      maxLength={15}
+                      required
+                    />
+                  </div>
+
+                  {/* Status */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.status")}</label>
+                    <select
+                      value={editFormData.isActive || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, isActive: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                    >
+                      <option value="yes">{t("dashboard.sites.active")}</option>
+                      <option value="no">{t("dashboard.sites.inactive")}</option>
+                    </select>
+                  </div>
                 </div>
 
-                {/* Subdomain */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.subdomain")}</label>
-                  <input
-                    type="text"
-                    value={editFormData.subdomain || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // السماح بالحروف والأرقام فقط، بدون مسافات
-                      const sanitized = value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-                      setEditFormData({ ...editFormData, subdomain: sanitized });
-                    }}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.subdomain")}
-                  />
-                </div>
+                {/* Right Column */}
+                <div className="space-y-4">
+                  {/* Image Alt */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.siteImage")}</label>
+                    <input
+                      type="text"
+                      value={editFormData.imageAlt || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, imageAlt: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder={t("dashboard.sites.siteImage")}
+                    />
+                  </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.email")}</label>
-                  <input
-                    type="email"
-                    value={editFormData.email || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.email")}
-                  />
+                  {/* Description */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.description")}</label>
+                    <input
+                      type="text"
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder={t("dashboard.sites.description")}
+                    />
+                  </div>
                 </div>
+              </div>
 
-                {/* Phone */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.phone")}</label>
-                  <input
-                    type="tel"
-                    value={editFormData.phone || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // السماح بالأرقام فقط
-                      const sanitized = value.replace(/[^0-9]/g, '');
-                      setEditFormData({ ...editFormData, phone: sanitized });
-                    }}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.phone")}
-                    maxLength={15}
-                  />
-                </div>
-
-                {/* Image Alt */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.siteImage")}</label>
-                  <input
-                    type="text"
-                    value={editFormData.imageAlt || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, imageAlt: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.siteImage")}
-                  />
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.description")}</label>
-                  <input
-                    type="text"
-                    value={editFormData.description || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder={t("dashboard.sites.description")}
-                  />
-                </div>
+              {/* Full Width Sections */}
+              <div className="mt-6 pt-6 border-t border-gray-200 space-y-6">
 
                 {/* About */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.about")}</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.about")}</label>
                   <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                     <RichTextEditor
                       value={editFormData.about || ''}
@@ -509,8 +540,8 @@ export default function SitesPage() {
                 </div>
 
                 {/* Why Us */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.whyUs")}</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.whyUs")}</label>
                   <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                     <RichTextEditor
                       value={editFormData.whyUs || ''}
@@ -520,13 +551,13 @@ export default function SitesPage() {
                 </div>
 
                 {/* Q&A */}
-                <div className="md:col-span-2">
+                <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs md:text-sm font-semibold text-gray-700">{t("dashboard.sites.qAndA")}</label>
+                    <label className="block text-sm font-medium text-gray-700">{t("dashboard.sites.qAndA")}</label>
                     <button
                       type="button"
                       onClick={addQA}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-xs"
+                      className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-medium"
                     >
                       + {t('common.add')}
                     </button>
@@ -534,14 +565,14 @@ export default function SitesPage() {
 
                   <div className="space-y-4">
                     {qaList.map((qa) => (
-                      <div key={qa.id} className="bg-white border-2 border-gray-200 rounded-xl p-4">
+                      <div key={qa.id} className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
                         <div className="mb-3">
                           <label className="block text-sm font-medium text-gray-700 mb-2">{t('dashboard.site.question')}</label>
                           <input
                             type="text"
                             value={qa.question}
                             onChange={(e) => updateQA(qa.id, 'question', e.target.value)}
-                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
                             placeholder={t('dashboard.site.whatReturnPolicy')}
                           />
                         </div>
@@ -560,7 +591,7 @@ export default function SitesPage() {
                           <button
                             type="button"
                             onClick={() => removeQA(qa.id)}
-                            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg"
+                            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg text-sm"
                           >
                             <Trash2 className="w-4 h-4" />
                             {t('common.delete')}
@@ -569,15 +600,15 @@ export default function SitesPage() {
                       </div>
                     ))}
                     {qaList.length === 0 && (
-                      <div className="text-sm text-gray-500">{t('dashboard.sites.noQandA')}</div>
+                      <div className="text-sm text-gray-500 bg-gray-50 p-4 rounded-lg">{t('dashboard.sites.noQandA')}</div>
                     )}
                   </div>
                 </div>
 
                 {/* Privacy Policy */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.privacyPolicy")}</label>
-                  <div className="border-2 border-gray-100 rounded-lg overflow-hidden">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.privacyPolicy")}</label>
+                  <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                     <RichTextEditor
                       value={editFormData.privacy_policy || ''}
                       onChange={(html) => setEditFormData({ ...editFormData, privacy_policy: html })}
@@ -586,9 +617,9 @@ export default function SitesPage() {
                 </div>
 
                 {/* Terms of Use */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.termsOfUse")}</label>
-                  <div className="border-2 border-gray-100 rounded-lg overflow-hidden">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.termsOfUse")}</label>
+                  <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                     <RichTextEditor
                       value={editFormData.termsOfUse || ''}
                       onChange={(html) => setEditFormData({ ...editFormData, termsOfUse: html })}
@@ -597,49 +628,46 @@ export default function SitesPage() {
                 </div>
 
                 {/* Returning Customers */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.returningCustomers")}</label>
-                  <div className="border-2 border-gray-100 rounded-lg overflow-hidden">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("dashboard.sites.returningCustomers")}</label>
+                  <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                     <RichTextEditor
                       value={editFormData.returning || ''}
                       onChange={(html) => setEditFormData({ ...editFormData, returning: html })}
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+            </div>
 
-                {/* Status */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">{t("dashboard.sites.status")}</label>
-                  <select
-                    value={editFormData.isActive || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, isActive: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            {/* Footer - Action Buttons */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-500">
+                  All fields are important for site configuration
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowEditModal(false)}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                   >
-                    <option value="yes">{t("dashboard.sites.active")}</option>
-                    <option value="no">{t("dashboard.sites.inactive")}</option>
-                  </select>
+                    {t("dashboard.sites.cancel")}
+                  </button>
+                  <button
+                    onClick={handleEditSave}
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all font-medium shadow-md hover:shadow-lg"
+                  >
+                    {t("dashboard.sites.save")}
+                  </button>
                 </div>
               </div>
             </div>
-
-            {/* Footer */}
-            <div className="sticky bottom-0 flex gap-3 p-4 md:p-6 border-t border-gray-100 bg-white rounded-b-xl">
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition"
-              >
-                {t("dashboard.sites.cancel")}
-              </button>
-              <button
-                onClick={handleEditSave}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-900 transition"
-              >
-                {t("dashboard.sites.save")}
-              </button>
-            </div>
           </div>
         </div>
+        
       )}
+
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

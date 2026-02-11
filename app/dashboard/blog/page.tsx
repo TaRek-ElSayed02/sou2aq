@@ -768,241 +768,297 @@ const BlogPage = () => {
 
             {/* Edit/Add Modal */}
             {editModal.isOpen && editModal.data && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl w-[75vw] h-[85vh] max-w-[95vw] max-h-[95vh] overflow-y-auto shadow-lg border border-gray-100">
+                <div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl w-full max-w-[75vw] h-[85vh] overflow-hidden flex flex-col">
                         {/* Header */}
-                        <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50 z-10">
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-900">
-                                    {editModal.mode === 'add' ? 'Add New Post' : 'Edit Post'}
-                                </h2>
-                                <p className="text-gray-500 mt-1">
-                                    {editModal.mode === 'add' ? 'Create a new blog post' : 'Update post details and content'}
-                                </p>
+                        <div className="sticky top-0 bg-white p-6 border-b border-gray-200 flex items-center justify-between z-10">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    {editModal.mode === 'add' ? <Plus className="w-5 h-5 text-blue-600" /> : <Edit className="w-5 h-5 text-blue-600" />}
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-bold text-gray-900">
+                                        {editModal.mode === 'add' ? 'New Blog Post' : 'Edit Post'}
+                                    </h2>
+                                    <p className="text-sm text-gray-500">
+                                        {editModal.mode === 'add' ? 'Create a new blog post' : 'Update post details'}
+                                    </p>
+                                </div>
                             </div>
                             <button
                                 onClick={() => setEditModal({ isOpen: false, data: null, mode: 'edit' })}
-                                className="p-2 md:p-3 hover:bg-gray-100 rounded-lg transition-all"
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                             >
-                                <X className="w-6 h-6 text-gray-600" />
+                                <X className="w-6 h-6 text-gray-500" />
                             </button>
                         </div>
 
-                        <div className="p-6 md:p-8 bg-white">
-                            <div className="space-y-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                            Title *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={editModal.data.title}
-                                            onChange={(e) => {
-                                                const title = e.target.value;
-                                                const slug = title
-                                                    .toLowerCase()
-                                                    .replace(/\s+/g, '-')
-                                                    .replace(/[^a-z0-9-]/g, '')
-                                                    .substring(0, 50);
-                                                setEditModal(prev => ({
-                                                    ...prev,
-                                                    data: { ...prev.data!, title, url: slug }
-                                                }));
-                                            }}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                            placeholder="Enter post title"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                            URL Slug
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={editModal.data.url}
-                                            onChange={(e) => {
-                                                const url = e.target.value
-                                                    .toLowerCase()
-                                                    .replace(/\s+/g, '-')
-                                                    .replace(/[^a-z0-9-]/g, '')
-                                                    .substring(0, 50);
-                                                setEditModal(prev => ({
-                                                    ...prev,
-                                                    data: { ...prev.data!, url }
-                                                }));
-                                            }}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                            placeholder="url-slug"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                            Category *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={editModal.data.category}
-                                            onChange={(e) => setEditModal(prev => ({
-                                                ...prev,
-                                                data: { ...prev.data!, category: e.target.value }
-                                            }))}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                            placeholder="e.g., Technology, Design, Programming"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                            Author *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={editModal.data.author}
-                                            onChange={(e) => setEditModal(prev => ({
-                                                ...prev,
-                                                data: { ...prev.data!, author: e.target.value }
-                                            }))}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                            placeholder="Author name"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                        Description *
-                                    </label>
-                                    <textarea
-                                        value={editModal.data.description}
-                                        onChange={(e) => setEditModal(prev => ({
-                                            ...prev,
-                                            data: { ...prev.data!, description: e.target.value }
-                                        }))}
-                                        rows={3}
-                                        className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
-                                        placeholder="Brief description of the post"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                        Content *
-                                    </label>
-                                    <div className="grid grid-cols-1 gap-4">
-                                        <div>
-                                            <div className="border-2 border-gray-100 rounded-xl overflow-hidden">
-                                                <RichTextEditor
-                                                    value={editModal.data.content}
-                                                    onChange={(html) => setEditModal(prev => ({
+                        {/* Content - Scrollable */}
+                        <div className="flex-1 overflow-y-auto p-6">
+                            <div className="max-w-6xl mx-auto">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {/* Left Column */}
+                                    <div className="space-y-4">
+                                        {/* Title */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                                <Tag className="w-4 h-4 text-blue-600" />
+                                                Title <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={editModal.data?.title || ''}
+                                                onChange={(e) => {
+                                                    const title = e.target.value;
+                                                    const slug = title
+                                                        .toLowerCase()
+                                                        .replace(/\s+/g, '-')
+                                                        .replace(/[^a-z0-9-]/g, '')
+                                                        .substring(0, 50);
+                                                    setEditModal(prev => ({
                                                         ...prev,
-                                                        data: { ...prev.data!, content: html }
-                                                    }))}
-                                                />
-                                            </div>
+                                                        data: { ...prev.data!, title, url: slug }
+                                                    }));
+                                                }}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                                                placeholder="Enter post title"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* URL Slug */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                                <BookOpen className="w-4 h-4 text-blue-600" />
+                                                URL Slug
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={editModal.data?.url || ''}
+                                                onChange={(e) => {
+                                                    const url = e.target.value
+                                                        .toLowerCase()
+                                                        .replace(/\s+/g, '-')
+                                                        .replace(/[^a-z0-9-]/g, '')
+                                                        .substring(0, 50);
+                                                    setEditModal(prev => ({
+                                                        ...prev,
+                                                        data: { ...prev.data!, url }
+                                                    }));
+                                                }}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white font-mono text-sm"
+                                                placeholder="url-slug"
+                                            />
+                                        </div>
+
+                                        {/* Category */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                                <Tag className="w-4 h-4 text-blue-600" />
+                                                Category <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={editModal.data?.category || ''}
+                                                onChange={(e) => setEditModal(prev => ({
+                                                    ...prev,
+                                                    data: { ...prev.data!, category: e.target.value }
+                                                }))}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                                                placeholder="e.g., Technology, Design"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Author */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                                <User className="w-4 h-4 text-blue-600" />
+                                                Author <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={editModal.data?.author || ''}
+                                                onChange={(e) => setEditModal(prev => ({
+                                                    ...prev,
+                                                    data: { ...prev.data!, author: e.target.value }
+                                                }))}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                                                placeholder="Author name"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Description */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Description <span className="text-red-500">*</span>
+                                            </label>
+                                            <textarea
+                                                value={editModal.data?.description || ''}
+                                                onChange={(e) => setEditModal(prev => ({
+                                                    ...prev,
+                                                    data: { ...prev.data!, description: e.target.value }
+                                                }))}
+                                                rows={3}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white resize-none"
+                                                placeholder="Brief description of the post"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Tags */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Tags
+                                            </label>
+                                            <input
+                                                type="text"
+                                                key={`tags-${editModal.mode}`}
+                                                defaultValue={editModal.data?.tags?.join(', ') || ''}
+                                                onBlur={(e) => {
+                                                    const input = e.currentTarget.value;
+                                                    const tags = input
+                                                        .split(',')
+                                                        .map(tag => tag.trim())
+                                                        .filter(tag => tag.length > 0);
+                                                    setEditModal(prev => ({
+                                                        ...prev,
+                                                        data: { ...prev.data!, tags }
+                                                    }));
+                                                }}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                                                placeholder="comma-separated tags"
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">Separate with commas</p>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                            Post Image *
-                                        </label>
-                                            <div className="relative">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (file) {
-                                                        const reader = new FileReader();
-                                                        reader.onload = (event) => {
-                                                            setEditModal(prev => ({
-                                                                ...prev,
-                                                                data: { ...prev.data!, image: event.target?.result as string }
-                                                            }));
-                                                        };
-                                                        reader.readAsDataURL(file);
-                                                    }
-                                                }}
-                                                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer"
-                                            />
-                                            <p className="mt-2 text-sm text-gray-500">
-                                                Upload image (JPG, PNG, GIF, etc.)
-                                            </p>
+                                    {/* Right Column */}
+                                    <div className="space-y-4">
+                                        {/* Post Image */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                                <BookOpen className="w-4 h-4 text-blue-600" />
+                                                Post Image <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            const reader = new FileReader();
+                                                            reader.onload = (event) => {
+                                                                setEditModal(prev => ({
+                                                                    ...prev,
+                                                                    data: { ...prev.data!, image: event.target?.result as string }
+                                                                }));
+                                                            };
+                                                            reader.readAsDataURL(file);
+                                                        }
+                                                    }}
+                                                    className="hidden"
+                                                    id="image-upload-blog"
+                                                />
+                                                <label htmlFor="image-upload-blog" className="cursor-pointer">
+                                                    <div className="flex flex-col items-center">
+                                                        <BookOpen className="w-8 h-8 text-gray-400 mb-2" />
+                                                        <p className="text-sm text-gray-600 mb-1">Click to upload</p>
+                                                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                                                    </div>
+                                                </label>
+                                            </div>
                                             
-                                            {editModal.data.image && (
+                                            {editModal.data?.image && (
                                                 <div className="mt-4">
-                                                    <img
-                                                        src={editModal.data.image.startsWith('data:') ? editModal.data.image : `http://localhost:5000${editModal.data.image}`}
-                                                        alt="Preview"
-                                                        className="w-full h-48 object-cover rounded-lg border-2 border-gray-100"
-                                                    />
+                                                    <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                                                    <div className="relative">
+                                                        <img
+                                                            src={editModal.data.image.startsWith('data:') ? editModal.data.image : `http://localhost:5000${editModal.data.image}`}
+                                                            alt="Preview"
+                                                            className="w-full h-40 object-cover rounded-lg border"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&fit=crop';
+                                                            }}
+                                                        />
+                                                        <button
+                                                            onClick={() => setEditModal(prev => ({ 
+                                                                ...prev, 
+                                                                data: { ...prev.data!, image: '' } 
+                                                            }))}
+                                                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                            Image Alt Text
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={editModal.data.imgAlt}
-                                            onChange={(e) => setEditModal(prev => ({
+                                        {/* Image Alt Text */}
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Image Alt Text
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={editModal.data?.imgAlt || ''}
+                                                onChange={(e) => setEditModal(prev => ({
+                                                    ...prev,
+                                                    data: { ...prev.data!, imgAlt: e.target.value }
+                                                }))}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                                                placeholder="Description for accessibility and SEO"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Content Editor - Full Width */}
+                                <div className="mt-6 pt-6 border-t border-gray-200">
+                                    <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                                        <BookOpen className="w-4 h-4 text-blue-600" />
+                                        Content <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                                        <RichTextEditor
+                                            value={editModal.data?.content || ''}
+                                            onChange={(html) => setEditModal(prev => ({
                                                 ...prev,
-                                                data: { ...prev.data!, imgAlt: e.target.value }
+                                                data: { ...prev.data!, content: html }
                                             }))}
-                                            className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                            placeholder="Description of the image for accessibility"
                                         />
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                        Tags (comma-separated)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        key={`tags-${editModal.mode}`}
-                                        defaultValue={editModal.data.tags.join(', ')}
-                                        onBlur={(e) => {
-                                            const input = e.currentTarget.value;
-                                            const tags = input
-                                                .split(',')
-                                                .map(tag => tag.trim())
-                                                .filter(tag => tag.length > 0);
-                                            setEditModal(prev => ({
-                                                ...prev,
-                                                data: { ...prev.data!, tags }
-                                            }));
-                                        }}
-                                        className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                        placeholder="Technology, Web Development, Programming"
-                                    />
-                                    <p className="mt-2 text-sm text-gray-500">
-                                        Separate tags with commas
-                                    </p>
-                                </div>
-
-                                <div className="sticky bottom-0 flex gap-3 p-4 md:p-6 border-t border-gray-100 bg-white rounded-b-xl">
-                                    <button
-                                        onClick={() => setEditModal({ isOpen: false, data: null, mode: 'edit' })}
-                                        className="flex-1 px-6 py-3 text-sm md:text-base border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={() => handleSaveEdit(editModal.data!)}
-                                        className="flex-1 px-6 py-3 text-sm md:text-base bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-900 transition"
-                                    >
-                                        {editModal.mode === 'add' ? 'Add Post' : 'Save Changes'}
-                                    </button>
+                                {/* Action Buttons */}
+                                <div className="mt-8 pt-6 border-t border-gray-200">
+                                    <div className="flex items-center justify-between">
+                                        <div className="text-sm text-gray-500">
+                                            Fields marked with <span className="text-red-500">*</span> are required
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() => setEditModal({ isOpen: false, data: null, mode: 'edit' })}
+                                                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                onClick={() => handleSaveEdit(editModal.data!)}
+                                                disabled={!editModal.data?.title || !editModal.data?.content}
+                                                className={`px-6 py-3 rounded-lg transition-all font-medium ${
+                                                    !editModal.data?.title || !editModal.data?.content
+                                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                        : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg'
+                                                }`}
+                                            >
+                                                {editModal.mode === 'add' ? 'Add Post' : 'Save Changes'}
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

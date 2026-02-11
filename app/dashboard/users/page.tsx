@@ -270,137 +270,160 @@ export default function AllUsersPage() {
 
       {/* Edit Modal */}
       {showEditModal && editingUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-[75vw] h-[85vh] max-w-[95vw] max-h-[95vh] overflow-y-auto shadow-lg border border-gray-100">
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-[75vw] h-[85vh] overflow-hidden flex flex-col">
             {/* Header */}
-            <div className="sticky top-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50">
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Edit User</h2>
-                <p className="text-xs md:text-sm text-gray-600 mt-1">{editingUser.fullName}</p>
+            <div className="sticky top-0 bg-white p-6 border-b border-gray-200 flex items-center justify-between z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Edit2 className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Edit User</h2>
+                  <p className="text-sm text-gray-500">{editingUser.fullName}</p>
+                </div>
               </div>
               <button
                 onClick={() => setShowEditModal(false)}
-                className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <X size={20} className="md:size-6 text-gray-600" />
+                <X className="w-6 h-6 text-gray-500" />
               </button>
             </div>
 
-            {/* Content */}
-            <div className="p-6 md:p-8 bg-white">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                {/* Full Name */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    value={editFormData.fullName || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder="Enter full name"
-                  />
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  {/* Full Name */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input
+                      type="text"
+                      value={editFormData.fullName || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder="Enter full name"
+                      required
+                    />
+                  </div>
+
+                  {/* Username */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">User Name</label>
+                    <input
+                      type="text"
+                      value={editFormData.userName || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
+                        setEditFormData({ ...editFormData, userName: sanitized });
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white font-mono text-sm"
+                      placeholder="letters and numbers only"
+                      required
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input
+                      type="email"
+                      value={editFormData.email || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder="user@example.com"
+                      required
+                    />
+                  </div>
+
+                  {/* Phone */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <input
+                      type="tel"
+                      value={editFormData.phone || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const sanitized = value.replace(/[^0-9]/g, '');
+                        setEditFormData({ ...editFormData, phone: sanitized });
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      placeholder="Phone number"
+                    />
+                  </div>
+
+                  {/* Date of Birth */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                    <input
+                      type="date"
+                      value={editFormData.DoB ? new Date(editFormData.DoB).toISOString().split('T')[0] : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, DoB: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                    />
+                  </div>
                 </div>
 
-                {/* Username */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">User Name</label>
-                  <input
-                    type="text"
-                    value={editFormData.userName || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // السماح بالحروف والأرقام فقط (بدون مسافات)
-                      const sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
-                      setEditFormData({ ...editFormData, userName: sanitized });
-                    }}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder="Enter user name (letters and numbers only)"
-                  />
-                </div>
+                {/* Right Column */}
+                <div className="space-y-4">
+                  {/* Role */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                    <select
+                      value={editFormData.role || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                      required
+                    >
+                      <option value="">Select role</option>
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                      <option value="superAdmin">Super Admin</option>
+                    </select>
+                  </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    value={editFormData.email || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder="Enter email"
-                  />
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Phone</label>
-                  <input
-                    type="tel"
-                    value={editFormData.phone || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // السماح بالأرقام فقط
-                      const sanitized = value.replace(/[^0-9]/g, '');
-                      setEditFormData({ ...editFormData, phone: sanitized });
-                    }}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder="Enter phone number (numbers only)"
-                  />
-                </div>
-
-                {/* Date of Birth */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Date of Birth</label>
-                  <input
-                    type="date"
-                    value={editFormData.DoB ? new Date(editFormData.DoB).toISOString().split('T')[0] : ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, DoB: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  />
-                </div>
-
-                {/* Role */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Role</label>
-                  <select
-                    value={editFormData.role || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                    <option value="superAdmin">Super Admin</option>
-                  </select>
-                </div>
-
-                {/* Status */}
-                <div>
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Status</label>
-                  <select
-                    value={editFormData.isActive ? 'active' : 'inactive'}
-                    onChange={(e) => setEditFormData({ ...editFormData, isActive: e.target.value === 'active' })}
-                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+                  {/* Status */}
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select
+                      value={editFormData.isActive ? 'active' : 'inactive'}
+                      onChange={(e) => setEditFormData({ ...editFormData, isActive: e.target.value === 'active' })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="sticky bottom-0 flex gap-3 p-4 md:p-6 border-t border-gray-100 bg-white rounded-b-xl">
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleEditSave}
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-900 transition"
-              >
-                Save Changes
-              </button>
+            {/* Footer - Action Buttons */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-500">
+                  All fields marked with * are required
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowEditModal(false)}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleEditSave}
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all font-medium shadow-md hover:shadow-lg"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
             </div>
           </div>
         </div>
